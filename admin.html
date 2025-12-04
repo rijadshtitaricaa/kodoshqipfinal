@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KodoShqip - Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <span class="logo-text">Kodo<span style="color: var(--primary-blue);">Shqip</span></span>
+  </div>
+
+  <button class="menu-toggle" aria-label="Hap menunë" aria-expanded="false">☰</button>
+
+  <ul class="nav-links">
+    <li><a href="index.html#te-gjitha-kurset">Kurset</a></li>
+    <li><a href="index.html#misioni">Rreth Nesh</a></li>
+    <li><a href="index.html#kontakt">Kontakt</a></li>
+    <li><a href="developers.html">Ekipa</a></li>
+    <li id="adminNavItem" style="display: none;"><a href="admin.html">Admin</a></li>
+    <li id="loginNavItem"><a href="login.html">Kyçu</a></li>
+    <li id="profileNavItem" class="profile-nav-item" style="display: none;">
+      <div class="profile-dropdown">
+        <button class="profile-trigger" id="profileTrigger">
+          <img id="profileNavImage" src="" alt="Profile" class="profile-nav-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span id="profileNavInitial" class="profile-nav-initial" style="display: none;"></span>
+          <span id="profileNavName" class="profile-nav-name"></span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="profile-dropdown-menu" id="profileDropdown">
+          <a href="#" class="dropdown-item" id="editProfileBtn">✏️ Përditëso Profilin</a>
+          <a href="#" class="dropdown-item" id="logoutBtn">🚪 Dil</a>
+        </div>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<div id="profileModal" class="profile-modal">
+  <div class="profile-modal-content">
+    <span class="profile-modal-close" id="closeProfileModal">&times;</span>
+    <h2>Përditëso Profilin</h2>
+    <form id="profileForm">
+      <div class="profile-image-section">
+        <div class="profile-image-preview">
+          <img id="profileImagePreview" src="" alt="Profile Preview" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div id="profileImagePlaceholder" class="profile-image-placeholder" style="display: none;">
+            <span id="profileInitialPreview"></span>
+          </div>
+        </div>
+        <label for="profileImageInput" class="profile-image-upload-btn">
+          📷 Zgjidh Foto Profili
+        </label>
+        <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+      </div>
+      <div class="profile-form-group">
+        <label for="profileNameInput">Emri</label>
+        <input type="text" id="profileNameInput" placeholder="Shkruani emrin tuaj" required>
+      </div>
+      <div class="profile-form-group">
+        <label for="profileEmailInput">Email</label>
+        <input type="email" id="profileEmailInput" disabled>
+      </div>
+      <div id="profileMessage" class="profile-message"></div>
+      <div class="profile-form-actions">
+        <button type="submit" class="profile-save-btn">💾 Ruaj Ndryshimet</button>
+        <button type="button" class="profile-cancel-btn" id="cancelProfileBtn">Anulo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<main class="admin-page container">
+  <section class="admin-header">
+    <div>
+      <p class="admin-eyebrow">Paneli i Administrimit</p>
+      <h1>Menaxho Përdoruesit</h1>
+      <p class="admin-subtitle">Shiko të gjithë përdoruesit që janë regjistruar në platformë në kohë reale.</p>
+    </div>
+    <div class="admin-actions">
+      <input type="search" id="userSearchInput" placeholder="Kërko me emër ose email..." aria-label="Kërkim përdoruesish">
+      <button type="button" class="refresh-btn" id="refreshUsersBtn">↻ Rifresko</button>
+    </div>
+  </section>
+
+  <section class="admin-cards">
+    <div class="admin-card">
+      <p class="admin-card-label">Numri total i përdoruesve</p>
+      <h2 id="totalUsersCount">0</h2>
+    </div>
+    <div class="admin-card">
+      <p class="admin-card-label">Përdoruesit e rinj (24h)</p>
+      <h2 id="newUsersCount">0</h2>
+    </div>
+    <div class="admin-card">
+      <p class="admin-card-label">Përditësimi i fundit</p>
+      <h2 id="lastUpdatedTime">-</h2>
+    </div>
+  </section>
+
+  <section class="admin-table-card">
+    <header class="admin-table-header">
+      <div>
+        <h3>Lista e Përdoruesve</h3>
+        <p id="tableSummary">0 përdorues të shfaqur</p>
+      </div>
+      <button type="button" class="export-btn" id="downloadCsvBtn">⬇️ Shkarko CSV</button>
+    </header>
+
+    <div class="admin-table-wrapper">
+      <table class="admin-table" aria-live="polite">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Emri</th>
+            <th>Email</th>
+            <th>Foto</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <tr>
+            <td colspan="5" class="empty-state">Duke ngarkuar të dhënat...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="adminError" class="admin-error" role="alert" style="display: none;"></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>&copy; 2025 KodoShqip. Të gjitha të drejtat të rezervuara.</p>
+</footer>
+
+<script src="main.js"></script>
+<script>
+(function() {
+  const ADMIN_EMAILS = (window.ADMIN_EMAILS || ['admin@kodoshqip.com']).map(email => email.toLowerCase());
+  let allUsers = [];
+
+  const userSearchInput = document.getElementById('userSearchInput');
+  const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+  const usersTableBody = document.getElementById('usersTableBody');
+  const adminError = document.getElementById('adminError');
+  const totalUsersCount = document.getElementById('totalUsersCount');
+  const newUsersCount = document.getElementById('newUsersCount');
+  const lastUpdatedTime = document.getElementById('lastUpdatedTime');
+  const tableSummary = document.getElementById('tableSummary');
+  const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+
+  document.addEventListener('DOMContentLoaded', () => {
+    enforceAdminAccess();
+    fetchUsers();
+  });
+
+  function enforceAdminAccess() {
+    const userData = localStorage.getItem('loggedInUser');
+    if (!userData) {
+      alert('Ju duhet të kyçeni si admin për të parë këtë faqe.');
+      location.href = 'login.html';
+      return;
+    }
+    const user = JSON.parse(userData);
+    if (!ADMIN_EMAILS.includes(user.email.toLowerCase())) {
+      alert('Nuk keni akses në panelin e adminit.');
+      location.href = 'index.html';
+    }
+  }
+
+  async function fetchUsers() {
+    setLoadingState(true);
+    try {
+      const res = await fetch('http://localhost:5000/admin/users');
+      if (!res.ok) {
+        throw new Error('Nuk mund të marr përdoruesit');
+      }
+      const data = await res.json();
+      allUsers = data;
+      renderUsers(data);
+      updateStats(data);
+      showError('');
+    } catch (err) {
+      console.error('Admin fetch error:', err);
+      showError('Gabim gjatë marrjes së të dhënave. Sigurohuni që serveri është aktiv.');
+      usersTableBody.innerHTML = '<tr><td colspan="5" class="empty-state">Nuk u gjetën të dhëna.</td></tr>';
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
+  function renderUsers(users) {
+    if (!users.length) {
+      usersTableBody.innerHTML = '<tr><td colspan="4" class="empty-state">Ende nuk ka përdorues të regjistruar.</td></tr>';
+      tableSummary.textContent = '0 përdorues të shfaqur';
+      return;
+    }
+
+    usersTableBody.innerHTML = users.map((user, index) => {
+      const displayName = user.name || user.email.split('@')[0];
+      const avatar = user.profile_image
+        ? `<img src="http://localhost:5000/uploads/${user.profile_image}" alt="${displayName}" class="admin-avatar">`
+        : `<span class="admin-avatar placeholder">${displayName.charAt(0).toUpperCase()}</span>`;
+
+      return `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${displayName}</td>
+          <td>${user.email}</td>
+          <td>${avatar}</td>
+        </tr>
+      `;
+    }).join('');
+
+    tableSummary.textContent = users.length === allUsers.length
+      ? `${users.length} përdorues të shfaqur`
+      : `${users.length} nga ${allUsers.length} përdorues të shfaqur`;
+  }
+
+  function updateStats(users) {
+    totalUsersCount.textContent = users.length;
+    lastUpdatedTime.textContent = new Date().toLocaleTimeString('sq-AL');
+    newUsersCount.textContent = '0';
+  }
+
+  function showError(message) {
+    if (!adminError) return;
+    if (message) {
+      adminError.textContent = message;
+      adminError.style.display = 'block';
+    } else {
+      adminError.style.display = 'none';
+    }
+  }
+
+  function setLoadingState(isLoading) {
+    if (refreshUsersBtn) {
+      refreshUsersBtn.disabled = isLoading;
+      refreshUsersBtn.textContent = isLoading ? 'Duke u Rifreskuar...' : '↻ Rifresko';
+    }
+  }
+
+  if (refreshUsersBtn) {
+    refreshUsersBtn.addEventListener('click', fetchUsers);
+  }
+
+  if (userSearchInput) {
+    userSearchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = allUsers.filter(user =>
+        user.email.toLowerCase().includes(term) ||
+        (user.name || '').toLowerCase().includes(term)
+      );
+      renderUsers(filtered);
+    });
+  }
+
+  if (downloadCsvBtn) {
+    downloadCsvBtn.addEventListener('click', () => {
+      if (!allUsers.length) return;
+      const csvRows = [
+        ['ID', 'Emri', 'Email', 'Foto']
+      ];
+      allUsers.forEach(user => {
+        csvRows.push([
+          user.id,
+          user.name || '',
+          user.email,
+          user.profile_image ? `uploads/${user.profile_image}` : ''
+        ]);
+      });
+      const csvContent = csvRows.map(row => row.join(',')).join('\\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'kodo-shqip-users.csv';
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
+

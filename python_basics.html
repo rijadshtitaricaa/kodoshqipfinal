@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Themeloret e Python: Shikuesi i Mësimeve me JS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="progress.js"></script>
+    <style>
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; 
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-3xl bg-gray-900 rounded-xl shadow-2xl overflow-hidden p-6 md:p-8 border border-indigo-700">
+            
+            <div class="text-center mb-6 border-b border-gray-700 pb-4">
+                <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">
+                    <span class="text-indigo-400">Python</span> Themeloret
+                </h1>
+                <p id="lesson-title" class="text-xl font-medium text-gray-200"></p>
+            </div>
+
+            
+            <div id="lesson-content" class="text-gray-300 leading-relaxed min-h-[250px] mb-6 overflow-y-auto max-h-[60vh]">
+                
+                <p class="text-center text-gray-500 italic">Ngarkohet mësimi...</p>
+            </div>
+
+            
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <button id="prev-btn" 
+                            class="py-2 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                            onclick="prevLesson()">
+                        &larr; Paraprak
+                    </button>
+                    
+                    <span id="lesson-counter" class="text-sm font-mono text-indigo-400"></span>
+
+                    <button id="next-btn" 
+                            class="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                            onclick="nextLesson()">
+                        Tjetër &rarr;
+                    </button>
+                </div>
+                
+                <div class="h-2 w-full bg-gray-700 rounded-full">
+                    <div id="progress-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300 ease-out" style="width: 0%;"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const lessons = [
+            // Lesson 1: Introduction & Print (Existing)
+            {
+                title: "Mësimi 1: Hyrje dhe print()",
+                content: `
+                    <p class="mb-4">Python është një gjuhë programimi e nivelit të lartë, e interpretuar, e njohur për **lexueshmërinë** dhe sintaksën e saj të thjeshtë. Përdoret gjerësisht në zhvillimin e uebit, shkencën e të dhënave dhe automatizimin.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Komanda Juaj e Parë në Python: print()</h3>
+                    <p class="mb-4">Funksioni <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">print()</code> shfaq daljen në konsolë. Zakonisht është funksioni i parë që mëson çdo kush.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Ky është një koment në Python
+print("Hello, Python World!")</code></pre>
+                `
+            },
+            // Lesson 2: Variables and Assignment (Existing)
+            {
+                title: "Mësimi 2: Variablat dhe Caktimi",
+                content: `
+                    <p class="mb-4">Variablat përdoren për të ruajtur vlerat e të dhënave. Ndryshe nga JavaScript, ju nuk përdorni fjalë kyçe si <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">var</code>, <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">let</code>, ose <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">const</code> për t'i deklaruar ato.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Deklarimi dhe Inferenca e Tipit</h3>
+                    <p class="mb-4">Python përcakton automatikisht tipin e variablës bazuar në vlerën e caktuar. Kjo e bën kodin të shkruhet më shpejt.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Caktimi i një numri të plotë
+age = 30 
+
+# Caktimi i një vargu
+name = "Alice" 
+
+# Caktimi i një float (numër me dhjetore)
+pi_value = 3.14159
+
+print(name)
+print(age)</code></pre>
+                `
+            },
+            // Lesson 3: Core Data Types (Existing)
+            {
+                title: "Mësimi 3: Tipet Themelore të të Dhënave",
+                content: `
+                    <p class="mb-4">Python menaxhon disa tipe themelore të të dhënave, por më të zakonshmet janë numrat, vargjet (**strings**) dhe vlerat boolean.</p>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><strong class="text-yellow-300">Numrat:</strong> <code class="bg-gray-700 px-1 py-0.5 rounded">int</code> (p.sh., 10, -5) dhe <code class="bg-gray-700 px-1 py-0.5 rounded">float</code> (p.sh., 3.14, -0.5).</li>
+                        <li><strong class="text-yellow-300">Vargjet (str):</strong> Sekuenca të karaktereve, të përcaktuara duke përdorur thonjëza teke ose dopio.</li>
+                        <li><strong class="text-yellow-300">Boolean (bool):</strong> Përfaqësojnë vlera të vërteta: <code class="bg-gray-700 px-1 py-0.5 rounded">True</code> ose <code class="bg-gray-700 px-1 py-0.5 rounded">False</code>. (<strong class="text-red-400">Shënim:</strong> Shkronja e madhe ka rëndësi!)</li>
+                    </ul>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Koleksionet: Listat dhe Fjalorët</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Lista (koleksion i renditur, i ndryshueshëm)
+fruits = ["apple", "banana", "cherry"]
+
+# Fjalori (çifte çelës-vlerë, si objektet në JS)
+person = {"name": "Bob", "age": 25}
+
+print(fruits[0]) 
+print(person["name"])</code></pre>
+                `
+            },
+            // Lesson 4: Control Flow (Indentation) (Existing)
+            {
+                title: "Mësimi 4: Fluksi i Kontrollit (Zgërvrimi)",
+                content: `
+                    <p class="mb-4">Strukturat e fluksit të kontrollit (si if/else) lejojnë programin tuaj të marrë vendime. Koncepti më kritik në fluksin e kontrollit të Python është **zgërvrimi (indentation)**.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Fuqia e Hapësirës së Bardhë</h3>
+                    <p class="mb-4">Python përdor hapësirën e bardhë (zakonisht **4 hapësira**) për të përcaktuar blloqet e kodit, ndërsa gjuhët e tjera përdorin kllapa kaçurrela <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">{}</code>. Zgërvrimi i gabuar do të shkaktojë një gabim: <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">IndentationError</code>.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">score = 85
+
+if score >= 90:
+    print("Grade A")
+elif score >= 80: # elif eshte "else if" ne Python
+    print("Grade B")
+else:
+    print("Study harder!")</code></pre>
+                `
+            },
+            // Lesson 5: Loops (For and While) (Existing)
+            {
+                title: "Mësimi 5: Ciklet (For dhe While)",
+                content: `
+                    <p class="mb-4">Ciklet ju lejojnë të ekzekutoni një bllok kodi në mënyrë të përsëritur. Python ofron dy lloje kryesore ciklesh: <strong class="text-yellow-300">for</strong> dhe <strong class="text-yellow-300">while</strong>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Cikli 'for' dhe 'range()'</h3>
+                    <p class="mb-4">Cikli <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">for</code> zakonisht përdoret për të iteruar mbi një sekuencë (si një listë ose një varg numrash).</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Cikli nga 0 deri ne 5
+for i in range(5): 
+    print(i) 
+
+# Cikli mbi një listë
+names = ["John", "Jane", "Jim"]
+for name in names:
+    print(f"Hello, {name}") # f-string formatting</code></pre>
+                `
+            },
+            // --- NEW LESSONS START HERE (6-50) ---
+
+            // Lesson 6: String Methods
+            {
+                title: "Mësimi 6: Metodat e Vargjeve (String Methods)",
+                content: `
+                    <p class="mb-4">Vargjet (strings) në Python janë objekte që kanë shumë metoda të dobishme për manipulimin e tekstit. Ato janë të pandryshueshme (immutable), kështu që metodat kthejnë një varg të ri.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Shembuj të Metodave të Zakonshme</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">.upper()</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">.lower()</code>: Konvertojnë në shkronja të mëdha/vogla.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">.strip()</code>: Heq hapësirat e bardha nga fillimi dhe fundi.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">.split()</code>: Ndajnë vargun në një listë bazuar në një ndarës.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">text = " Hello World "
+print(text.strip()) # "Hello World"
+print(text.upper()) # " HELLO WORLD "</code></pre>
+                `
+            },
+            // Lesson 7: User Input
+            {
+                title: "Mësimi 7: Marrja e Inputit nga Përdoruesi",
+                content: `
+                    <p class="mb-4">Funksioni <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">input()</code> ndalon ekzekutimin e programit dhe pret që përdoruesi të shkruajë diçka. Vlera e kthyer është gjithmonë një varg (<code class="bg-gray-700 px-1 py-0.5 rounded">str</code>).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Shembull Input</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Përdoruesi shkruan emrin
+name = input("Shkruani emrin tuaj: ") 
+
+print(f"Përshëndetje, {name}!")</code></pre>
+                    <p class="mt-4 text-sm text-gray-400">Shënim: Nëse dëshironi numra, duhet të bëni konvertimin e tipit (Type Casting) në mësimin tjetër.</p>
+                `
+            },
+            // Lesson 8: Type Casting
+            {
+                title: "Mësimi 8: Konvertimi i Tipit (Type Casting)",
+                content: `
+                    <p class="mb-4">Konvertimi i tipit është procesi i ndryshimit të tipit të të dhënave të një variable. Për shkak se <code class="bg-gray-700 px-1 py-0.5 rounded">input()</code> kthen një varg, shpesh duhet ta konvertoni atë në një numër për llogaritje.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Funksionet e Konvertimit</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">int()</code>: Konverton në numër të plotë.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">float()</code>: Konverton në numër me dhjetore.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">str()</code>: Konverton në varg.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Kujdes: input() kthen nje str
+age_str = "25"
+age_int = int(age_str)
+
+result = age_int + 5
+print(result) # 30</code></pre>
+                `
+            },
+            // Lesson 9: Tuples
+            {
+                title: "Mësimi 9: Tërheqjet (Tuples)",
+                content: `
+                    <p class="mb-4">Një <strong class="text-yellow-300">Tërheqje (Tuple)</strong> është një koleksion i renditur dhe i pa ndryshueshëm (immutable). Kjo do të thotë që elementët nuk mund të ndryshohen pas krijimit. Tërheqjet përdorin kllapa rrethore <code class="bg-gray-700 px-1 py-0.5 rounded">()</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Kur Përdoren Tërheqjet?</h3>
+                    <p class="mb-4">Përdoren për të dhëna që nuk duhet të ndryshojnë, si p.sh. koordinatat (x, y) ose datat.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">coordinates = (10, 20)
+print(coordinates[0]) # 10
+
+# Tentativa per ndryshim do te shkaktoje gabim (TypeError)
+# coordinates[0] = 5 </code></pre>
+                `
+            },
+            // Lesson 10: Sets
+            {
+                title: "Mësimi 10: Setet (Sets)",
+                content: `
+                    <p class="mb-4">Një <strong class="text-yellow-300">Set</strong> është një koleksion i pa renditur dhe i pa indeksuar. Karakteristika kryesore e tij është se nuk lejon vlera të dyfishta (duplicates).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Heqja e Vlerave të Dyfishta</h3>
+                    <p class="mb-4">Setet janë shumë të dobishme për të filtruar në mënyrë të shpejtë vlerat unike nga një listë. Ato përdorin kllapa kaçurrela <code class="bg-gray-700 px-1 py-0.5 rounded">{}</code>.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">numbers = {1, 2, 2, 3, 4, 4, 4}
+print(numbers) # {1, 2, 3, 4}
+
+unique_list = list(set([1, 1, 2, 3, 3]))
+print(unique_list) # [1, 2, 3]</code></pre>
+                `
+            },
+            // Lesson 11: Arithmetic Operators
+            {
+                title: "Mësimi 11: Operatorët Aritmetikë",
+                content: `
+                    <p class="mb-4">Python mbështet operatorët standardë aritmetikë. Disa prej tyre kanë sjellje specifike.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Operatorë Specialë</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">+</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">-</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">*</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">/</code>: Standarde.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">//</code>: Pjesëtimi i plotë (Floor Division).</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">**</code>: Eksponenti (Power).</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">print(10 / 3)   # 3.3333... (Pjesetimi float)
+print(10 // 3)  # 3 (Pjesetimi i plote)
+print(2 ** 3)   # 8 (Eksponenti)
+print(10 % 3)   # 1 (Mbetja)</code></pre>
+                `
+            },
+            // Lesson 12: Comparison and Logical Operators
+            {
+                title: "Mësimi 12: Operatorët Krahasues dhe Logjikë",
+                content: `
+                    <p class="mb-4">Këta operatorë përdoren në kushte (<code class="bg-gray-700 px-1 py-0.5 rounded">if</code>) për të kthyer një vlerë <code class="bg-gray-700 px-1 py-0.5 rounded">True</code> ose <code class="bg-gray-700 px-1 py-0.5 rounded">False</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Krahasuesit dhe Logjikët</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><strong class="text-yellow-300">Krahasuesit:</strong> <code class="bg-gray-700 px-1 py-0.5 rounded">==</code> (Barazim), <code class="bg-gray-700 px-1 py-0.5 rounded">!=</code> (Jo i barabartë), <code class="bg-gray-700 px-1 py-0.5 rounded">></code>, <code class="bg-gray-700 px-1 py-0.5 rounded"><</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">>=</code>, <code class="bg-gray-700 px-1 py-0.5 rounded"><=</code>.</li>
+                        <li><strong class="text-yellow-300">Logjikët:</strong> <code class="bg-gray-700 px-1 py-0.5 rounded">and</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">or</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">not</code>.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">age = 20
+is_student = True
+
+if age > 18 and is_student:
+    print("Adult student")
+
+if not is_student:
+    print("Not a student")</code></pre>
+                `
+            },
+            // Lesson 13: Function Definition
+            {
+                title: "Mësimi 13: Përcaktimi i Funksionit (def)",
+                content: `
+                    <p class="mb-4">Funksionet përdoren për të organizuar kodin në blloqe të ripërdorshme. Ato përcaktohen duke përdorur fjalën kyçe <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">def</code>, e ndjekur nga emri i funksionit dhe kllapat rrethore.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Struktura Bazë e Funksionit</h3>
+                    <p class="mb-4">Funksioni <code class="bg-gray-700 px-1 py-0.5 rounded">return</code> përdoret për të kthyer një vlerë nga funksioni.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def greet(name):
+    # Ky eshte blloku i funksionit, i zgervryer
+    return f"Përshëndetje, {name}!"
+
+message = greet("Filan")
+print(message)</code></pre>
+                `
+            },
+            // Lesson 14: Function Arguments (Positional and Keyword)
+            {
+                title: "Mësimi 14: Argumentet e Funksionit",
+                content: `
+                    <p class="mb-4">Ju mund t'u kaloni informacion funksioneve nëpërmjet argumenteve. Argumentet mund të jenë pozicionale (rendi ka rëndësi) ose të bazuara në fjalë kyçe (rendi nuk ka rëndësi).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Argumentet e Bazuara në Fjalë Kyçe</h3>
+                    <p class="mb-4">Përdorimi i argumenteve të bazuara në fjalë kyçe rrit lexueshmërinë e kodit tuaj.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def describe_pet(animal, name):
+    print(f"I kam nje {animal} me emrin {name}.")
+
+# Pozicional
+describe_pet("qen", "Rexhi")
+
+# Bazohet ne fjale kyce (rendi ndryshon)
+describe_pet(name="Maca", animal="mace")</code></pre>
+                `
+            },
+            // Lesson 15: Lambda Functions
+            {
+                title: "Mësimi 15: Funksionet Lambda (Anonime)",
+                content: `
+                    <p class="mb-4">Funksionet Lambda janë funksione të vogla anonime (pa emër) që mund të kenë çdo numër argumentesh, por vetëm një shprehje. Ato krijohen me fjalën kyçe <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">lambda</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa e Shkurtër</h3>
+                    <p class="mb-4">Lambdat përdoren zakonisht si argumente për funksione të rendit më të lartë (si <code class="bg-gray-700 px-1 py-0.5 rounded">map()</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">filter()</code>).</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Funksion lambda per te shtuar 10 ne nje numer
+add_ten = lambda x: x + 10
+print(add_ten(5)) # 15
+
+# Funksion lambda me shume argumente
+multiply = lambda a, b: a * b
+print(multiply(4, 5)) # 20</code></pre>
+                `
+            },
+            // Lesson 16: Modules (Import)
+            {
+                title: "Mësimi 16: Modulet dhe Importimi",
+                content: `
+                    <p class="mb-4">Modulet janë thjesht skedarë Python me shtesën <code class="bg-gray-700 px-1 py-0.5 rounded">.py</code> që përmbajnë kode, funksione ose klasa. Përdorimi i tyre ndihmon në organizimin e kodit. Ju i përdorni ato me fjalën kyçe <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">import</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Importimi i Modulit 'math'</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">import math
+
+# Perdorim i nje funksioni nga moduli
+pi_val = math.pi
+sqrt_of_16 = math.sqrt(16)
+
+print(pi_val) # 3.14159...
+print(sqrt_of_16) # 4.0</code></pre>
+                `
+            },
+            // Lesson 17: File I/O (Reading)
+            {
+                title: "Mësimi 17: Punë me Skedarët (Leximi)",
+                content: `
+                    <p class="mb-4">Për të punuar me skedarë, përdorni funksionin e integruar <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">open()</code>. Përdorimi i deklaratës <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">with</code> siguron që skedari të mbyllet automatikisht.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Leximi i Përmbajtjes</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li>Modaliteti <code class="bg-gray-700 px-1 py-0.5 rounded">'r'</code>: Për lexim.</li>
+                        <li>Modaliteti <code class="bg-gray-700 px-1 py-0.5 rounded">.read()</code>: Lexon të gjithë përmbajtjen e skedarit.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Supozoni qe ekziston nje skedar 'data.txt'
+try:
+    with open('data.txt', 'r') as file:
+        content = file.read()
+    print("Permbajtja u lexua me sukses.")
+except FileNotFoundError:
+    print("Gabim: Skedari nuk u gjet.")</code></pre>
+                `
+            },
+            // Lesson 18: File I/O (Writing)
+            {
+                title: "Mësimi 18: Punë me Skedarët (Shkrimi)",
+                content: `
+                    <p class="mb-4">Për të shkruar në një skedar, përdorni modalitetet <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">'w'</code> ose <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">'a'</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Modalitetet e Shkrimit</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">'w'</code> (write): Krijon skedarin nëse nuk ekziston. **Mbishkruan** përmbajtjen nëse ekziston.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">'a'</code> (append): Shton përmbajtjen në fund të skedarit.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">new_data = "Kjo eshte nje rresht i ri.\n"
+
+with open('output.txt', 'a') as file:
+    file.write(new_data)
+
+print("Të dhënat u shkruan në output.txt")</code></pre>
+                `
+            },
+            // Lesson 19: Exception Handling (Try/Except)
+            {
+                title: "Mësimi 19: Trajtimi i Përjashtimeve",
+                content: `
+                    <p class="mb-4">Trajtimi i përjashtimeve (gabimeve) ju lejon të menaxhoni situatat kur kodi nuk ekzekutohet siç pritet. Përdorni blloqet <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">try</code> dhe <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">except</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Blloku Try-Except</h3>
+                    <p class="mb-4">Kodi i rrezikshëm vendoset në bllokun <code class="bg-gray-700 px-1 py-0.5 rounded">try</code>. Nëse ndodh një gabim, ekzekutohet blloku <code class="bg-gray-700 px-1 py-0.5 rounded">except</code>.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">try:
+    result = 10 / 0 # Kjo shkakton ZeroDivisionError
+except ZeroDivisionError:
+    print("Gabim: Nuk lejohet pjesetimi me zero!")
+except TypeError:
+    print("Gabim: Tip i te dhenave i pasakte.")
+else:
+    print(result) # Ekzekutohet nese nuk ka gabim</code></pre>
+                `
+            },
+            // Lesson 20: Classes and Objects
+            {
+                title: "Mësimi 20: Klasat dhe Objektet (OOP)",
+                content: `
+                    <p class="mb-4">Python është një gjuhë e orientuar nga objekti. Një **Klasë** është një vizatim (blueprint) për krijimin e objekteve. Një **Objekt** është një instancë e një klase.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Përcaktimi i një Klase</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">class Dog:
+    # Atributi i klases (i njejte per te gjitha instancat)
+    species = "Canis familiaris" 
+
+    # Metoda per shtypjen e nje mesazhi
+    def bark(self):
+        print("Woof!")
+
+# Krijimi i nje objekti (instance)
+my_dog = Dog()
+print(my_dog.species)
+my_dog.bark()</code></pre>
+                `
+            },
+            // Lesson 21: Constructors (__init__)
+            {
+                title: "Mësimi 21: Konstruktorët (__init__)",
+                content: `
+                    <p class="mb-4">Metoda <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">__init__</code> është konstruktori i klasës. Ajo ekzekutohet automatikisht sa herë që krijohet një objekt i ri i klasës.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Atributet e Instancës</h3>
+                    <p class="mb-4">Përdoreni atë për të caktuar vlerat për atributet e objektit (si emri dhe mosha).</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">class Person:
+    # Konfigurimi i atributeve te instances
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def display(self):
+        print(f"Emri: {self.name}, Mosha: {self.age}")
+
+p1 = Person("Ana", 22)
+p1.display()</code></pre>
+                `
+            },
+            // Lesson 22: Inheritance
+            {
+                title: "Mësimi 22: Trashëgimia (Inheritance)",
+                content: `
+                    <p class="mb-4">Trashëgimia lejon një klasë të marrë atributet dhe metodat e një klase tjetër (Klasa Prind/Parent Class). Kjo promovon ripërdorimin e kodit.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Klasa Fëmijë (Child Class)</h3>
+                    <p class="mb-4">Klasa fëmijë trashëgon funksionalitetin dhe mund të shtojë funksionalitetin e vet.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">class Vehicle:
+    def __init__(self, brand):
+        self.brand = brand
+    def display_brand(self):
+        print(f"Marka: {self.brand}")
+
+class Car(Vehicle):
+    def drive(self):
+        print(f"{self.brand} po ngarret.")
+
+my_car = Car("Toyota")
+my_car.display_brand()
+my_car.drive()</code></pre>
+                `
+            },
+            // Lesson 23: Polymorphism
+            {
+                title: "Mësimi 23: Polimorfizmi",
+                content: `
+                    <p class="mb-4">Polimorfizmi (shumë forma) lejon që metodat të përdoren në mënyra të ndryshme për objekte të ndryshme. Në Python, kjo shpesh manifestohet si 'Duck Typing' (Nëse ecën si rosë...).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Metoda të Njëjta, Rezultate të Ndryshme</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">class Cat:
+    def sound(self):
+        return "Meow"
+class Dog:
+    def sound(self):
+        return "Woof"
+
+def make_sound(animal):
+    # Funksioni funksionon me cdo objekt qe ka metoden 'sound'
+    print(animal.sound())
+
+make_sound(Cat())
+make_sound(Dog())</code></pre>
+                `
+            },
+            // Lesson 24: List Comprehensions
+            {
+                title: "Mësimi 24: Kuptimi i Listave (List Comprehensions)",
+                content: `
+                    <p class="mb-4">List Comprehensions ofrojnë një mënyrë të shkurtër për të krijuar lista të reja bazuar në listat ekzistuese. Ato janë më të lexueshme dhe zakonisht më të shpejta se ciklet <code class="bg-gray-700 px-1 py-0.5 rounded">for</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa: <code class="bg-gray-700 px-1 py-0.5 rounded">[shprehje for element in iterues]</code></h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">numbers = [1, 2, 3, 4]
+
+# Krijoni nje liste me numrat ne katror
+squares = [x * x for x in numbers]
+print(squares) # [1, 4, 9, 16]
+
+# Krijoni nje liste vetem me numrat çift
+evens = [x for x in numbers if x % 2 == 0]
+print(evens) # [2, 4]</code></pre>
+                `
+            },
+            // Lesson 25: Dictionary Comprehensions
+            {
+                title: "Mësimi 25: Kuptimi i Fjalorëve",
+                content: `
+                    <p class="mb-4">Ngjashëm me List Comprehensions, ju mund të përdorni Dictionary Comprehensions për të krijuar fjalorë shpejt. Sintaksa kërkon një çift çelës-vlerë.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa: <code class="bg-gray-700 px-1 py-0.5 rounded">{çelës: vlerë for element in iterues}</code></h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">keys = ['a', 'b', 'c']
+values = [1, 2, 3]
+
+# Krijoni nje fjalor nga dy lista
+my_dict = {k: v for k, v in zip(keys, values)}
+print(my_dict) # {'a': 1, 'b': 2, 'c': 3}</code></pre>
+                `
+            },
+            // Lesson 26: Looping with enumerate
+            {
+                title: "Mësimi 26: Iterimi me enumerate()",
+                content: `
+                    <p class="mb-4">Funksioni <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">enumerate()</code> përdoret për të marrë **indeksin** dhe **vlerën** gjatë ciklit mbi një sekuencë (si lista).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Gjetja e Indeksit</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">shopping_list = ["milk", "eggs", "bread"]
+
+for index, item in enumerate(shopping_list):
+    print(f"{index + 1}. {item}")
+
+# Output:
+# 1. milk
+# 2. eggs
+# 3. bread</code></pre>
+                `
+            },
+            // Lesson 27: Looping with zip
+            {
+                title: "Mësimi 27: Kombinimi me zip()",
+                content: `
+                    <p class="mb-4">Funksioni <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">zip()</code> ju lejon të iteroni mbi shumë koleksione në të njëjtën kohë, duke i 'zip' (lidhur) elementët përkatës së bashku.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Cikli Parallel</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">names = ["Ali", "Sara", "Tom"]
+scores = [90, 85, 92]
+
+# Zip i kombinon ne (name, score) tuple
+for name, score in zip(names, scores):
+    print(f"{name} ka shenuar {score} pike.")</code></pre>
+                `
+            },
+            // Lesson 28: Using break and continue
+            {
+                title: "Mësimi 28: break dhe continue",
+                content: `
+                    <p class="mb-4">Këto dy fjalë kyçe përdoren brenda cikleve (<code class="bg-gray-700 px-1 py-0.5 rounded">for</code>, <code class="bg-gray-700 px-1 py-0.5 rounded">while</code>) për të ndryshuar rrjedhën e tyre të ekzekutimit.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Kontrolli i Ciklit</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">break</code>: Ndërpret ciklin plotësisht.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">continue</code>: Ndalon iteracionin aktual dhe kalon te iteracioni tjetër.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">for i in range(10):
+    if i == 3:
+        continue # Kalon ne iteracionin i=4
+    if i == 7:
+        break # Del nga cikli
+    print(i) # Output: 0, 1, 2, 4, 5, 6</code></pre>
+                `
+            },
+            // Lesson 29: The pass statement
+            {
+                title: "Mësimi 29: Deklarata pass",
+                content: `
+                    <p class="mb-4">Deklarata <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">pass</code> është një zëvendësues null. Përdoret kur sintaksa kërkon një deklaratë, por ju nuk dëshironi të ekzekutoni ndonjë kod.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Përdorimi si Placeholder</h3>
+                    <p class="mb-4">Është e dobishme gjatë planifikimit të kodit për funksionet ose klasat që do të implementohen më vonë.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Meqe blloku if nuk mund te jete bosh
+if x > 10:
+    pass 
+else:
+    print("X eshte 10 ose me i vogel")
+
+# Klasa qe do te implementohet me vone
+class MyFutureClass:
+    pass </code></pre>
+                `
+            },
+            // Lesson 30: Function Default Arguments
+            {
+                title: "Mësimi 30: Argumentet Parazgjedhura",
+                content: `
+                    <p class="mb-4">Ju mund të vendosni vlera parazgjedhura për argumentet e funksionit. Kjo lejon që funksioni të thirret pa specifikuar ato argumente, nëse dëshironi.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Thirrja Opsionale</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def send_message(text, recipient="User", priority=1):
+    print(f"I dergohet {recipient} (Prioritet: {priority}): {text}")
+
+# Perdorim i vleres parazgjedhura
+send_message("Miremengjes!") # recipient eshte "User"
+
+# Zevendesimi i vlerave parazgjedhura
+send_message("Mbledhja eshte neser", "Shefi", 5)</code></pre>
+                `
+            },
+            // Lesson 31: Arbitrary Arguments (*args)
+            {
+                title: "Mësimi 31: Argumentet Arbitrare (*args)",
+                content: `
+                    <p class="mb-4">Nëse nuk e dini sa argumente do të merrni, shtoni një <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">*</code> para emrit të argumentit. Kjo e mbledh të gjithë argumentet pozicionale në një **Tërheqje (Tuple)**.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Mbledhja e Argumenteve</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def sum_all(*numbers):
+    total = 0
+    for num in numbers:
+        total += num
+    return total
+
+print(sum_all(1, 2, 3)) # 6
+print(sum_all(10, 20, 30, 40)) # 100</code></pre>
+                `
+            },
+            // Lesson 32: Arbitrary Keyword Arguments (**kwargs)
+            {
+                title: "Mësimi 32: Argumentet e Fjalëve Kyçe (**kwargs)",
+                content: `
+                    <p class="mb-4">Përdorimi i <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">**kwargs</code> (keyword arguments) ju lejon të merrni argumente me fjalë kyçe (si objekte në JS) si një **Fjalor (Dictionary)** brenda funksionit.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Mbledhja e Argumenteve me Çelës</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def show_profile(**details):
+    print("Profili:")
+    for key, value in details.items():
+        print(f"- {key}: {value}")
+
+show_profile(name="Beni", city="Tirane", job="Programues")</code></pre>
+                `
+            },
+            // Lesson 33: Docstrings
+            {
+                title: "Mësimi 33: Docstrings (Dokumentimi i Funksionit)",
+                content: `
+                    <p class="mb-4">Docstrings (dokumentimi i vargut) janë vargje me shumë rreshta të përfshira në thonjëza trefishe që shpjegojnë se çfarë bën një funksion, klasë ose modul. Ato aksesohen me <code class="bg-gray-700 px-1 py-0.5 rounded">help()</code> ose atributin <code class="bg-gray-700 px-1 py-0.5 rounded">__doc__</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Përdorimi Standard</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def power(a, b):
+    """Kthen 'a' te ngritur ne fuqine 'b'."""
+    return a ** b
+
+print(power.__doc__)
+# help(power) do te shfaqte dokumentimin e plote</code></pre>
+                `
+            },
+            // Lesson 34: Variable Scope (Local vs Global)
+            {
+                title: "Mësimi 34: Fushëveprimi (Scope) i Variablave",
+                content: `
+                    <p class="mb-4">Fushëveprimi përcakton se ku mund të aksesohet një variabël. Variablat e përcaktuara brenda një funksioni janë **lokale** dhe nuk mund të aksesohen jashtë tij. Variablat jashtë funksioneve janë **globale**.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Rregullat e Fushëveprimit (LEGB)</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">global_var = 10 
+
+def my_function():
+    local_var = 5
+    print(global_var) # Lejohet te lexohet variabla globale
+
+my_function()
+# print(local_var) # Gabim: local_var nuk eshte e definuar</code></pre>
+                `
+            },
+            // Lesson 35: The global Keyword
+            {
+                title: "Mësimi 35: Fjala Kyçe global",
+                content: `
+                    <p class="mb-4">Nëse dëshironi të **modifikoni** një variabël globale brenda një funksioni (ku normalisht ajo do të ishte vetëm e lexueshme), duhet të përdorni fjalën kyçe <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">global</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Modifikimi i Globaleve</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">count = 0 
+
+def increment():
+    global count # Deklarojme qe duam te modifikojme variablen globale
+    count += 1
+    print(f"Brenda: {count}")
+
+increment() # Brenda: 1
+print(f"Jashte: {count}") # Jashte: 1</code></pre>
+                `
+            },
+            // Lesson 36: Decorators (Simple Concept)
+            {
+                title: "Mësimi 36: Dekoratorët (@)",
+                content: `
+                    <p class="mb-4">Dekoratorët janë një mënyrë e shkurtër për të shtuar funksionalitet në një funksion ekzistues. Ata marrin një funksion dhe kthejnë një funksion tjetër të modifikuar.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa e Dekoratorit</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def wrapper_function(func):
+    def wrapper():
+        print("Para thirrjes se funksionit...")
+        func()
+        print("Pas thirrjes se funksionit...")
+    return wrapper
+
+@wrapper_function
+def say_hello():
+    print("Përshëndetje!")
+
+say_hello() 
+# Output:
+# Para thirrjes se funksionit...
+# Përshëndetje!
+# Pas thirrjes se funksionit...</code></pre>
+                `
+            },
+            // Lesson 37: Generators (yield)
+            {
+                title: "Mësimi 37: Gjeneratorët (yield)",
+                content: `
+                    <p class="mb-4">Gjeneratorët janë funksione që kthejnë një iterues. Ata përdorin fjalën kyçe <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">yield</code> në vend të <code class="bg-gray-700 px-1 py-0.5 rounded">return</code>, duke lejuar funksionin të ruajë gjendjen e tij midis thirrjeve.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Krijimi i Vlerave on-the-fly (Sipas Kërkesës)</h3>
+                    <p class="mb-4">Kjo është më efikase në kujtesë për sekuencat e mëdha.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def count_up_to(max_num):
+    count = 1
+    while count <= max_num:
+        yield count # Kthehet vlera dhe ruhet gjendja
+        count += 1
+
+# Perdoret si nje iterues
+for number in count_up_to(3):
+    print(number) # 1, 2, 3</code></pre>
+                `
+            },
+            // Lesson 38: Recursion (Factorial)
+            {
+                title: "Mësimi 38: Rekursioni",
+                content: `
+                    <p class="mb-4">Rekursioni është një metodë ku një funksion thërret veten. Duhet të ketë një kusht bazë për të ndaluar thirrjet, përndryshe do të rezultojë në një cikël të pafund (Stack Overflow).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Shembull: Faktorieli</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def factorial(n):
+    if n == 1 or n == 0: # Kushti Baze
+        return 1
+    else:
+        # Thirrja Rekursive
+        return n * factorial(n - 1) 
+
+print(factorial(5)) # 5 * 4 * 3 * 2 * 1 = 120</code></pre>
+                `
+            },
+            // Lesson 39: F-Strings (Formatted String Literals)
+            {
+                title: "Mësimi 39: F-Strings (Formatimi i Vargjeve)",
+                content: `
+                    <p class="mb-4">F-Strings janë mënyra më moderne dhe e preferuar për formatimin e vargjeve në Python. Ato ju lejojnë të futni shprehje direkt brenda një vargu duke përdorur kllapa kaçurrela <code class="bg-gray-700 px-1 py-0.5 rounded">{}</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa me 'f'</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">name = "Ema"
+age = 28
+calculation = 100 / 3
+
+# F-string e thjeshte
+message = f"Une jam {name} dhe jam {age} vjec."
+print(message)
+
+# Formatimi i nje float (2 shifra pas presjes)
+print(f"Rezultati: {calculation:.2f}") # Rezultati: 33.33</code></pre>
+                `
+            },
+            // Lesson 40: Date and Time (datetime module)
+            {
+                title: "Mësimi 40: Data dhe Ora (Moduli datetime)",
+                content: `
+                    <p class="mb-4">Moduli <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">datetime</code> është thelbësor për punën me datat dhe orët. Ju duhet ta importoni atë.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Marrja e Kohës Aktuale</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">import datetime
+
+now = datetime.datetime.now()
+print(f"Data dhe Ora Aktuale: {now}")
+
+# Formatimi i dates si varg
+formatted_date = now.strftime("%Y-%m-%d %H:%M:%S")
+print(f"E formatuar: {formatted_date}")</code></pre>
+                `
+            },
+            // Lesson 41: Ternary Operator
+            {
+                title: "Mësimi 41: Operatori Ternar (Sintaksa e Shkurtër If/Else)",
+                content: `
+                    <p class="mb-4">Operatori Ternar ofron një mënyrë të shkurtër për të ekzekutuar kushtet <code class="bg-gray-700 px-1 py-0.5 rounded">if/else</code> në një rresht të vetëm. Është shumë i dobishëm për caktimin e variablave bazuar në një kusht.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa: <code class="bg-gray-700 px-1 py-0.5 rounded">vlera_nese_true if kusht else vlera_nese_false</code></h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">age = 17
+
+# Sintaksa e shkurter
+status = "I rritur" if age >= 18 else "I mitur"
+print(status) # "I mitur"
+
+temperature = 30
+weather = "E nxehtë" if temperature > 25 else "E freskët"
+print(weather) # "E nxehtë"</code></pre>
+                `
+            },
+            // Lesson 42: Multiple Assignment
+            {
+                title: "Mësimi 42: Caktimi i Shumëfishtë",
+                content: `
+                    <p class="mb-4">Python lejon caktimin e vlerave të shumëfishta në shumë variabla në një rresht të vetëm. Kjo e bën kodin më të pastër dhe përdoret shpesh për shkëmbimin e variablave.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Shkëmbimi i Vlerave (Swapping)</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python"># Caktimi i shumefishte
+a, b, c = 1, 2.5, "tre"
+print(f"a: {a}, b: {b}, c: {c}")
+
+# Shkembimi i vlerave (shume me i lehte se ne JS)
+x = 10
+y = 20
+x, y = y, x # x behet 20, y behet 10
+print(f"x: {x}, y: {y}")</code></pre>
+                `
+            },
+            // Lesson 43: JSON Handling (Dumping)
+            {
+                title: "Mësimi 43: Punë me JSON (Shkrimi)",
+                content: `
+                    <p class="mb-4">Moduli <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">json</code> është thelbësor për të punuar me të dhëna JSON (JavaScript Object Notation), një format standard për shkëmbimin e të dhënave. Funksioni <code class="bg-gray-700 px-1 py-0.5 rounded">json.dump()</code> shkruan një fjalor në një skedar JSON.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Serializimi</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">import json
+
+data = {
+    "name": "Arben",
+    "is_active": True,
+    "projects": ["Web", "ML"]
+}
+
+# Shkrimi i te dhenave ne skedar (serializimi)
+with open('data.json', 'w') as f:
+    json.dump(data, f, indent=4) # indent=4 per formatim te bukur
+
+print("Te dhenat u ruajten ne data.json")</code></pre>
+                `
+            },
+            // Lesson 44: JSON Handling (Loading)
+            {
+                title: "Mësimi 44: Punë me JSON (Leximi)",
+                content: `
+                    <p class="mb-4">Për të lexuar të dhënat JSON nga një skedar dhe për t'i kthyer ato në një fjalor Python, përdorni funksionin <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">json.load()</code>.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Deserializimi</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">import json
+
+# Supozojme qe data.json ekziston
+try:
+    with open('data.json', 'r') as f:
+        loaded_data = json.load(f)
+    
+    print("Emri i ngarkuar: " + loaded_data["name"])
+
+except FileNotFoundError:
+    print("Gabim: Skedari data.json nuk u gjet.")</code></pre>
+                `
+            },
+            // Lesson 45: Virtual Environments (Concept)
+            {
+                title: "Mësimi 45: Mjediset Virtuale (Concept)",
+                content: `
+                    <p class="mb-4">Një Mjedis Virtual (<code class="bg-gray-700 px-1 py-0.5 rounded">venv</code>) është një izolim i varësive (libraries) për një projekt specifik. Kjo parandalon konfliktet midis projekteve të ndryshme që kërkojnë versione të ndryshme të të njëjtave paketa.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Krijimi dhe Aktivizimi (Në Terminal)</h3>
+                    <p class="mb-4">Krijimi (<code class="bg-gray-700 px-1 py-0.5 rounded">python -m venv myenv</code>) dhe aktivizimi (p.sh. <code class="bg-gray-700 px-1 py-0.5 rounded">source myenv/bin/activate</code>) janë hapa thelbësorë për çdo projekt Python.</p>
+                `
+            },
+            // Lesson 46: Installing Packages (pip)
+            {
+                title: "Mësimi 46: Instalimi i Paketave me pip",
+                content: `
+                    <p class="mb-4"><code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">pip</code> është menaxheri i paketave standarde për Python, i cili ju lejon të instaloni paketa nga PyPI (Python Package Index). Përdoret në terminal.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Shembull: Instalimi i Pandas</h3>
+                    <p class="mb-4">Nëse jeni brenda një mjedisi virtual, <code class="bg-gray-700 px-1 py-0.5 rounded">pip</code> instalon paketat vetëm aty.</p>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-bash"># Instalimi i nje pakete
+pip install requests
+
+# Ruajtja e varësive në një skedar
+pip freeze > requirements.txt
+
+# Instalimi nga skedari
+pip install -r requirements.txt</code></pre>
+                `
+            },
+            // Lesson 47: The sys Module
+            {
+                title: "Mësimi 47: Moduli sys (Sistemi)",
+                content: `
+                    <p class="mb-4">Moduli <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">sys</code> ofron akses në variablat dhe funksionet që ndërveprojnë fuqishëm me interpretuesin Python dhe mjedisin e tij.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Përdorimet Kryesore</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">sys.argv</code>: Lista e argumenteve të vijës së komandës.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">sys.exit()</code>: Për të dalë nga programi.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">sys.version</code>: Informacioni i versionit të Python.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">import sys
+
+# Merr versionin e Python
+print(sys.version.split()[0]) 
+
+# Shembull i shfaqjes se argumenteve
+# print(sys.argv) </code></pre>
+                `
+            },
+            // Lesson 48: The os Module
+            {
+                title: "Mësimi 48: Moduli os (Sistemi Operativ)",
+                content: `
+                    <p class="mb-4">Moduli <code class="bg-gray-700 px-1 py-0.5 rounded text-yellow-300">os</code> ofron një ndërfaqe për të ndërvepruar me sistemin operativ ku po ekzekutohet Python.</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Manipulimi i Skedarëve/Dosjeve</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">os.getcwd()</code>: Merr dosjen aktuale të punës.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">os.path.join()</code>: Ndërton rrugë (paths) në mënyrë të sigurt.</li>
+                        <li><code class="bg-gray-700 px-1 py-0.5 rounded">os.mkdir()</code>: Krijon një dosje.</li>
+                    </ul>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">import os
+
+current_dir = os.getcwd()
+print(f"Direktoria aktuale: {current_dir}")
+
+# Krijon nje rruge te sigurt, pavaresisht OS
+file_path = os.path.join(current_dir, "test", "file.txt")
+print(f"Rruga e skedarit: {file_path}")</code></pre>
+                `
+            },
+            // Lesson 49: Type Hinting (Concept)
+            {
+                title: "Mësimi 49: Përcaktimi i Tipit (Type Hinting)",
+                content: `
+                    <p class="mb-4">Python është e shtypur në mënyrë dinamike, por që nga versioni 3.5, ju mund të shtoni 'sugjerime' të tipit (Type Hints) për të rritur lexueshmërinë dhe për të ndihmuar mjetet e analizës statike (si <code class="bg-gray-700 px-1 py-0.5 rounded">mypy</code>).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Sintaksa e Sugjerimit</h3>
+                    <pre class="bg-gray-800 p-3 rounded text-sm overflow-x-auto"><code class="language-python">def add_numbers(a: int, b: int) -> int:
+    # Aty ku a eshte int, b eshte int, dhe funksioni kthen int
+    return a + b
+
+# Nje variabel e sugjeruar
+username: str = "john_doe"
+
+# Kjo nuk ndryshon sjelljen e programit ne runtime,
+# por e ben kodin me te kuptueshem.</code></pre>
+                `
+            },
+            // Lesson 50: Conclusion
+            {
+                title: "Mësimi 50: Përfundimi dhe Hapat e Ardhshëm",
+                content: `
+                    <p class="mb-4">Urime! Ju keni mbaruar këtë udhëtim të shpejtë nëpër 50 temat thelbësore të Python. Tani keni një bazë të fortë në sintaksën, strukturat e të dhënave dhe konceptet e Programimit të Orientuar nga Objektet (OOP).</p>
+                    <h3 class="font-semibold text-lg mb-2 text-indigo-400">Ku të Vazhdoni?</h3>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4">
+                        <li>**Zhvillimi i Uebit:** Mësoni <strong class="text-yellow-300">Django</strong> ose <strong class="text-yellow-300">Flask</strong>.</li>
+                        <li>**Shkenca e të Dhënave:** Filloni me <strong class="text-yellow-300">Pandas</strong> dhe <strong class="text-yellow-300">NumPy</strong>.</li>
+                        <li>**Automatizimi:** Eksploroni modulet si <code class="bg-gray-700 px-1 py-0.5 rounded">requests</code> dhe <code class="bg-gray-700 px-1 py-0.5 rounded">selenium</code>.</li>
+                    </ul>
+                    <p class="mt-4 text-lg font-semibold text-green-400 text-center">Programim të lumtur!</p>
+                `
+            }
+        ];
+
+        let currentLessonIndex = 0;
+
+        // DOM elements
+        const lessonTitle = document.getElementById('lesson-title');
+        const lessonContent = document.getElementById('lesson-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const lessonCounter = document.getElementById('lesson-counter');
+        const progressBar = document.getElementById('progress-bar');
+
+        
+        function showLesson(index) {
+            currentLessonIndex = index;
+            const lesson = lessons[index];
+
+            // 1. Update Lesson Content
+            lessonTitle.textContent = lesson.title;
+            let lessonHTML = lesson.content;
+            
+            // Add completion button on last lesson
+            if (index === lessons.length - 1) {
+                lessonHTML += `
+                    <div class="mt-8 p-4 bg-green-900 border border-green-500 rounded-lg">
+                        <p class="text-green-200 mb-4 font-semibold">🎉 Urime! Ju keni arritur në fund të kursit!</p>
+                        <button id="complete-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+                            ✅ Shënoni Kursin si të Përfunduar
+                        </button>
+                    </div>
+                `;
+            }
+            
+            lessonContent.innerHTML = lessonHTML;
+
+            // 2. Update Navigation Buttons
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === lessons.length - 1;
+
+            // 3. Update Counter and Progress Bar
+            lessonCounter.textContent = `${index + 1} / ${lessons.length}`;
+            
+            const progress = ((index + 1) / lessons.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // 4. Add click handler to completion button
+            if (index === lessons.length - 1) {
+                setTimeout(() => {
+                    const completeBtn = document.getElementById('complete-btn');
+                    if (completeBtn) {
+                        completeBtn.addEventListener('click', async () => {
+                            completeBtn.disabled = true;
+                            completeBtn.textContent = '⏳ Po ruhet...';
+                            
+                            if (typeof courseProgress !== 'undefined' && courseProgress) {
+                                try {
+                                    await courseProgress.saveCourseProgress('Python', lessons.length, lessons.length, lessons.length * 10);
+                                    completeBtn.textContent = '✅ Kursi u ruajt me sukses!';
+                                    completeBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                                    completeBtn.classList.add('bg-green-700');
+                                    console.log('✅ Python course marked as completed!');
+                                } catch (err) {
+                                    console.error('Error saving progress:', err);
+                                    completeBtn.textContent = '❌ Gabim në ruajtje';
+                                    completeBtn.disabled = false;
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            }
+
+            // 5. Scroll content to the top
+            lessonContent.scrollTop = 0;
+        }
+
+        
+        function nextLesson() {
+            if (currentLessonIndex < lessons.length - 1) {
+                showLesson(currentLessonIndex + 1);
+            }
+        }
+
+        
+        function prevLesson() {
+            if (currentLessonIndex > 0) {
+                showLesson(currentLessonIndex - 1);
+            }
+        }
+
+        // Initialize the app on load
+        window.onload = () => {
+            // Vendos funksionet ne dritare per t'u thirrur nga butonat
+            window.nextLesson = nextLesson;
+            window.prevLesson = prevLesson;
+
+            // Shfaq mësimin e parë
+            showLesson(currentLessonIndex);
+        };
+    </script>
+</body>
+</html>

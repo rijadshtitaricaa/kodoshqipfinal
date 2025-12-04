@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Themeloret - Kursi Interaktiv (50 Mësime)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="progress.js"></script>
+    <style>
+        
+        :root {
+            --dark-bg: #1A1A2E; 
+            --card-bg: #2C3E50; 
+            --primary-color: #4CAF50; 
+            --secondary-color: #FF9800; 
+            --text-light: #f0f0f0;
+            --text-muted: #B0B0B0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .course-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .header {
+            background-color: #233140; 
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+        }
+        .lesson-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+        .code-block-container {
+            background-color: #1f2a37; 
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .code-block {
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #FFEB3B; 
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+        }
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="course-card">
+        
+        <div class="header">
+            <h1 class="lesson-title">Java Themeloret</h1>
+            <h2 id="lesson-subtitle" class="text-xl text-secondary-color font-semibold mt-1">Mësimi 1: Hyrje dhe Komanda `main()`</h2>
+        </div>
+
+        
+        <div class="p-8">
+            <p id="lesson-explanation" class="text-lg mb-6 leading-relaxed text-text-light">
+                Java është një gjuhë programimi me qëllim të përgjithshëm, e orientuar drejt objekteve dhe e bazuar në klasa. Ajo është projektuar të jetë e varur sa më pak nga implementimi, duke ndjekur parimin "Shkruaje një herë, ekzekutoje kudo" (WORA). Komanda kryesore e ekzekutimit është `main`.
+            </p>
+
+            <h3 class="text-xl font-bold mb-3 text-secondary-color">Kodi Juaj i Parë në Java: `main()`</h3>
+            
+            <div id="lesson-code-description" class="text-text-muted mb-4">
+                Funksioni **`System.out.println()`** shfaq daljen në konsolë. Zakonisht është funksioni i parë që mëson çdo kush.
+            </div>
+
+            <div class="code-block-container">
+                <pre id="lesson-code" class="code-block">
+public class Hyrje {
+    // Pika e hyrjes së programit
+    public static void main(String[] args) {
+        // Funksioni për shfaqjen e tekstit në konsolë
+        System.out.println("Përshëndetje, Bota!");
+    }
+}
+                </pre>
+            </div>
+        </div>
+
+        
+        <div class="p-8 border-t border-gray-700 flex justify-between items-center">
+            <button id="prev-btn" class="nav-button bg-gray-600 hover:bg-gray-500 text-white py-2 px-6 rounded-lg flex items-center" disabled>
+                <span class="mr-2">←</span> Paraprak
+            </button>
+            
+            <div class="text-sm text-text-muted">
+                <span id="current-lesson">1</span> / 50
+            </div>
+            
+            <button id="next-btn" class="nav-button bg-primary-color hover:bg-green-600 text-white py-2 px-6 rounded-lg flex items-center">
+                Tjetër <span class="ml-2">→</span>
+            </button>
+        </div>
+        
+        
+        <div class="h-2 bg-gray-700">
+            <div id="progress-bar" class="h-full bg-primary-color transition-all duration-500" style="width: 2%;"></div>
+        </div>
+
+        <!-- Completion Section (Hidden by default, shown on last lesson) -->
+        <div id="completion-section" class="p-8 bg-green-900 border-t border-green-500" style="display: none;">
+            <p class="text-green-200 mb-4 font-semibold">🎉 Urime! Ju keni arritur në fund të kursit!</p>
+            <button id="java-complete-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+                ✅ Shënoni Kursin si të Përfunduar
+            </button>
+        </div>
+    </div>
+
+    
+    <script>
+        // Array me të 50 Mësimet e Java-s
+        const lessons = [
+            // ----------------------------------------------------
+            // MËSIMI 1: HYRJE
+            // ----------------------------------------------------
+            {
+                title: "Mësimi 1: Hyrje dhe Komanda `main()`",
+                explanation: "Java është një gjuhë programimi me qëllim të përgjithshëm, e orientuar drejt objekteve dhe e bazuar në klasa. Ajo është projektuar të jetë e varur sa më pak nga implementimi, duke ndjekur parimin 'Shkruaje një herë, ekzekutoje kudo' (WORA). Komanda kryesore e ekzekutimit është `main`.",
+                code_description: "Funksioni **`System.out.println()`** shfaq daljen në konsolë. Kjo është mënyra standarde e Java-s për të printuar tekstin.",
+                code: `public class Hyrje {
+    public static void main(String[] args) {
+        // Funksioni për shfaqjen e tekstit në konsolë
+        System.out.println("Përshëndetje, Bota!");
+    }
+}`
+            },
+            
+            // ----------------------------------------------------
+            // MËSIMI 2: VARIABLAT DHE TIPI I TË DHËNAVE
+            // ----------------------------------------------------
+            {
+                title: "Mësimi 2: Variablat dhe Tipi i Të Dhënave (Primitives)",
+                explanation: "Java kërkon që çdo variabël të ketë një tip të përcaktuar (fortësisht i tipizuar). Tipet primitive kryesore janë `int` (numra të plotë), `double` (numra me presje), `boolean` (e vërtetë/e gabuar) dhe `char` (karakter).",
+                code_description: "Deklarimi fillon me tipin, pastaj emrin e variablës, dhe mbyllet me pikëpresje (`;`).",
+                code: `public class Variablat {
+    public static void main(String[] args) {
+        int mosha = 30;
+        double temperatura = 98.6;
+        boolean ne_pune = true;
+        char iniciali = 'A';
+
+        System.out.println("Mosha: " + mosha);
+    }
+}`
+            },
+            
+            // ----------------------------------------------------
+            // MËSIMI 3: OPERATORËT
+            // ----------------------------------------------------
+            {
+                title: "Mësimi 3: Operatorët Aritmetikë dhe Relacionalë",
+                explanation: "Operatorët përdoren për të kryer veprime mbi variablat. Operatorët aritmetikë përfshijnë `+`, `-`, `*`, `/`, dhe `%` (moduli). Operatorët relacionalë përfshijnë `==`, `!=`, `>`, `<`, etj., dhe kthejnë një vlerë boolean.",
+                code_description: "Provoni të ndryshoni vlerat dhe operatorët për të parë rezultate të ndryshme.",
+                code: `public class Operatorat {
+    public static void main(String[] args) {
+        int a = 10;
+        int b = 3;
+        
+        int shuma = a + b; // 13
+        int moduli = a % b; // 1
+        boolean i_barabarte = (a == b); // false
+
+        System.out.println("Shuma: " + shuma);
+        System.out.println("I barabartë? " + i_barabarte);
+    }
+}`
+            },
+
+            // ----------------------------------------------------
+            // MËSIMI 4: KRIJIMI I KLASAVE DHE OBJEKTEVE (OOP)
+            // ----------------------------------------------------
+            {
+                title: "Mësimi 4: Krijimi i Klasave dhe Objekteve",
+                explanation: "Java është një gjuhë e orientuar nga objekti (OOP). Një **Klasë** është një plan i cili përkufizon atribute (variabla) dhe sjellje (metoda), ndërsa një **Objekt** është një instancë reale e asaj klase.",
+                code_description: "Përdorim fjalën kyçe **`new`** për të krijuar një instancë të klasës (një objekt).",
+                code: `class Qen { // Klasa (Plani)
+    String emer;
+    int mosha;
+}
+
+public class Objekte {
+    public static void main(String[] args) {
+        Qen rasti = new Qen(); // Objekti 1
+        Qen lapi = new Qen(); // Objekti 2
+
+        rasti.emer = "Rasti";
+        lapi.emer = "Lapi";
+
+        System.out.println("Qeni i parë quhet: " + rasti.emer);
+    }
+}`
+            },
+
+            // ----------------------------------------------------
+            // MËSIMI 5: METODAT DHE PARAMETRAT
+            // ----------------------------------------------------
+            {
+                title: "Mësimi 5: Metodat dhe Parametrat",
+                explanation: "Metodat përfaqësojnë sjelljen (funksionet) e një objekti. Ato mund të pranojnë të dhëna hyrëse (**parametrat**) dhe mund të kthejnë një vlerë dalëse (duke përdorur **`return`**).",
+                code_description: "Metoda `shumezo` pranon dy parametra `a` dhe `b`, kryen veprimin dhe kthen rezultatin.",
+                code: `class Llogarites {
+    public int shumezo(int a, int b) {
+        return a * b;
+    }
+}
+
+public class Metodat {
+    public static void main(String[] args) {
+        Llogarites l = new Llogarites();
+        int rezultat = l.shumezo(5, 4); 
+        
+        System.out.println("Rezultati i shumëzimit: " + rezultat); // 20
+    }
+}`
+            },
+
+            // ----------------------------------------------------
+            // MËSIMET 6-50 (Pjesa tjetër e Temave të Java-s)
+            // ----------------------------------------------------
+            
+            // 6. Deklarimi dhe Përdorimi i Fushave (Fields)
+            { title: "Mësimi 6: Deklarimi dhe Përdorimi i Fushave (`Fields`)", explanation: "Fusha (`fields`) janë variabla të deklaruara brenda një klase, por jashtë metodave. Ato përcaktojnë gjendjen (state) e objektit.", code_description: "Përdorimi i fushave `private` kërkon metoda `getter` dhe `setter` (Mësimet e ardhshme).", code: `class Telefoni {
+    String model;
+    double cmimi; 
+}
+//... Krijoni objekte dhe vendosni vlerat e fushave.` },
+
+            // 7. Konstruktorët
+            { title: "Mësimi 7: Konstruktorët", explanation: "Një Konstruktor është një metodë speciale që ka të njëjtin emër si klasa dhe thirret automatikisht kur krijohet një objekt (duke përdorur `new`). Ai inicializon fushave të objektit.", code_description: "Një klasë mund të ketë shumë konstruktorë (të mbushur/pa parametra).", code: `class Pije {
+    String emri;
+    // Konstruktori
+    public Pije(String emri) {
+        this.emri = emri;
+    }
+}
+//... Krijoni objekte si: new Pije("Kafe");` },
+
+            // 8. Fjala kyçe `this`
+            { title: "Mësimi 8: Fjala kyçe `this`", explanation: "Fjala kyçe **`this`** i referohet instancës aktuale të klasës. Përdoret zakonisht brenda konstruktorëve dhe metodave për të dalluar variablat lokale nga fushat e klasës me të njëjtin emër.", code_description: "`this.emri` i referohet fushës, ndërsa `emri` i referohet parametrit të metodës.", code: `class Lenda {
+    String emri;
+    public Lenda(String emri) {
+        this.emri = emri; // this.emri është fusha
+    }
+}` },
+
+            // 9. Kushtet: `if`, `else if`, `else`
+            { title: "Mësimi 9: Kushtet: `if`, `else if`, `else`", explanation: "Komandat e kushtëzuara lejojnë programin të marrë vendime dhe të ekzekutojë bllok të ndryshëm kodi bazuar nëse një kusht (`boolean`) është i vërtetë apo i gabuar.", code_description: "Kushti shkruhet brenda kllapave `()`, dhe blloku i kodit brenda kllapave `{}`.", code: `int ore = 15;
+if (ore < 12) {
+    System.out.println("Mëngjes");
+} else if (ore < 18) {
+    System.out.println("Mbasdite");
+} else {
+    System.out.println("Mbrëmje");
+}` },
+
+            // 10. Struktura e Kontrollit: `switch`
+            { title: "Mësimi 10: Struktura e Kontrollit: `switch`", explanation: "Komanda `switch` përdoret për të zgjedhur njërin nga blloqet e kodit për t'u ekzekutuar. Është një alternativë më e pastër për zinxhirët e gjatë `if-else if` kur krahasoni një variabël të vetme kundrejt shumë vlerave.", code_description: "Çdo rast (`case`) duhet të mbyllet me `break` për të ndaluar ekzekutimin.", code: `int dita = 3;
+switch (dita) {
+    case 1: System.out.println("E Hënë"); break;
+    case 5: System.out.println("E Premte"); break;
+    default: System.out.println("Ditë tjetër");
+}` },
+
+            // 11. Ciklet: `while` dhe `do-while`
+            { title: "Mësimi 11: Ciklet: `while` dhe `do-while`", explanation: "Ciklet (Loops) përdoren për të përsëritur një bllok kodi vazhdimisht. `while` ekzekuton bllokun PËRPARA se të kontrollojë kushtin. `do-while` ekzekuton bllokun TË PAKTËN NJË HERË PËRPARA se të kontrollojë kushtin.", code_description: "Kujdes me ciklet e pafundme (infinite loops)!", code: `int i = 0;
+while (i < 5) {
+    System.out.println(i);
+    i++;
+}` },
+
+            // 12. Cikli `for`
+            { title: "Mësimi 12: Cikli `for`", explanation: "Cikli `for` është më kompakt dhe përdoret zakonisht kur dihet numri i saktë i përsëritjeve. Ai përmban inicializimin, kushtin dhe përditësimin të gjitha në një rresht.", code_description: "Sintaksa: `for (inicializimi; kushti; përditësimi)`.", code: `for (int j = 1; j <= 5; j++) {
+    System.out.println("Përsëritja: " + j);
+}` },
+
+            // 13. Cikli `for-each` (Enhanced For)
+            { title: "Mësimi 13: Cikli `for-each` (Enhanced For)", explanation: "Cikli `for-each` (ose Enhanced For Loop) përdoret për të iteruar lehtësisht mbi elementet e një vargu (Array) ose koleksioni, pa pasur nevojë të menaxhosh indeksin.", code_description: "Sintaksa: `for (Tip Elementi : Vargu/Koleksioni)`.", code: `String[] fruta = {"Mollë", "Banan", "Dardhë"};
+for (String fruta_aktuale : fruta) {
+    System.out.println(fruta_aktuale);
+}` },
+
+            // 14. Vargjet (Arrays) - Hyrje
+            { title: "Mësimi 14: Vargjet (Arrays) - Hyrje", explanation: "Një Varg (`Array`) është një strukturë e të dhënave që mban një numër fiks të vlerave të të njëjtit tip. Elementet arrihen me anë të indeksit, i cili fillon gjithmonë nga 0.", code_description: "Përdorimi i një indeksi jashtë kufijve (`ArrayIndexOutOfBoundsException`) është një gabim i zakonshëm.", code: `int[] numrat = {10, 20, 30, 40};
+System.out.println("Elementi i parë: " + numrat[0]); // 10
+System.out.println("Gjatësia e vargut: " + numrat.length);` },
+
+            // 15. Vargjet Shumëdimensionale
+            { title: "Mësimi 15: Vargjet Shumëdimensionale", explanation: "Vargjet Shumëdimensionale (p.sh., 2D Arrays) janë vargje të vargjeve. Këto përdoren shpesh për të përfaqësuar matrica ose tabela, siç është një fushë loje.", code_description: "Për të arritur një element në një varg 2D nevojiten dy indekse: [rreshti][kolona].", code: `int[][] tabela = {{1, 2}, {3, 4}, {5, 6}};
+System.out.println("Elementi (2, 1): " + tabela[1][0]); // 3` },
+
+            // 16. String-jet (Klasa `String`)
+            { title: "Mësimi 16: String-jet (Klasa `String`)", explanation: "Një `String` është një objekt (jo tip primitiv) në Java që përfaqëson një sekuencë karakteresh. String-jet janë të pandryshueshme (`immutable`), që do të thotë se sapo krijohen, ato nuk mund të ndryshohen.", code_description: "Krahasimi i string-jeve duhet bërë me metodën **`.equals()`**, jo me operatorin `==`.", code: `String emri = "KodoShqip";
+String gjuha = new String("Java");
+System.out.println(emri + " mëson " + gjuha);` },
+
+            // 17. Metodat e String-jeve
+            { title: "Mësimi 17: Metodat e String-jeve", explanation: "Klasa `String` ka shumë metoda të dobishme si `length()`, `toUpperCase()`, `toLowerCase()`, `substring()`, dhe `indexOf()`, të cilat ndihmojnë në manipulimin dhe analizimin e tekstit.", code_description: "`.length()` kthen numrin e karaktereve në string.", code: `String mesazhi = "Mëso Java";
+System.out.println("Gjatësia: " + mesazhi.length());
+System.out.println("Me shkronja të mëdha: " + mesazhi.toUpperCase());` },
+
+            // 18. Mbledhja e të Dhënave nga Përdoruesi (`Scanner`)
+            { title: "Mësimi 18: Mbledhja e të Dhënave nga Përdoruesi (`Scanner`)", explanation: "Për të lexuar të dhëna nga tastiera (input), përdoret klasa **`Scanner`**. Kjo klasë gjendet në paketën `java.util` dhe duhet të importohet.", code_description: "Metoda `.nextLine()` lexon të gjithë rreshtin e dhënë nga përdoruesi.", code: `import java.util.Scanner;
+
+public class Input {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Shkruaj emrin: ");
+        String emri = scan.nextLine();
+        System.out.println("Përshëndetje, " + emri + "!");
+    }
+}` },
+
+            // 19. Menaxhimi i Gabimeve: `try-catch`
+            { title: "Mësimi 19: Menaxhimi i Gabimeve: `try-catch`", explanation: "Menaxhimi i gabimeve (`Exception Handling`) përdoret për të trajtuar gabimet që ndodhin gjatë ekzekutimit të programit (`runtime errors`). Kjo bëhet duke përdorur blloqet **`try`** (ku kodi i rrezikshëm ndodhet) dhe **`catch`** (ku trajtohet gabimi).", code_description: "Blloku `try` tenton të ekzekutojë kodin, nëse ka gabim, kalon te `catch`.", code: `try {
+    int rezultat = 10 / 0; // Kjo shkakton gabim (ArithmeticException)
+} catch (ArithmeticException e) {
+    System.out.println("Gabim: Nuk lejohet pjesëtimi me zero.");
+}` },
+
+            // 20. Tipi i Gabimeve (`Exceptions`)
+            { title: "Mësimi 20: Tipi i Gabimeve (`Exceptions`)", explanation: "Gabimet ndahen në dy kategori: `Checked Exceptions` (duhet t'i trajtoni detyrimisht, p.sh., `IOException`) dhe `Unchecked Exceptions` (ose `Runtime Exceptions`, p.sh., `NullPointerException`, `ArrayIndexOutOfBoundsException`).", code_description: "Mund të përdorni blloqe të shumta `catch` për të trajtuar lloje të ndryshme gabimesh.", code: `try {
+    String s = null;
+    System.out.println(s.length()); 
+} catch (NullPointerException e) {
+    System.out.println("Gabim: Objekti është null.");
+}` },
+
+            // 21. Fjala kyçe `finally`
+            { title: "Mësimi 21: Fjala kyçe `finally`", explanation: "Blloku **`finally`** ekzekutohet gjithmonë, pavarësisht nëse ndodh apo jo një gabim në bllokun `try`. Përdoret zakonisht për të pastruar burimet (p.sh., mbyllja e lidhjeve me baza të dhënash apo skedarëve).", code_description: "`finally` ekzekutohet edhe nëse blloku `try` ka `return`.", code: `try {
+    // Kodi
+} catch (Exception e) {
+    // Trajtimi i gabimit
+} finally {
+    System.out.println("Kodi i 'finally' gjithmonë ekzekutohet.");
+}` },
+
+            // 22. Koncepti i Trashëgimisë (`Inheritance`)
+            { title: "Mësimi 22: Koncepti i Trashëgimisë (`Inheritance`)", explanation: "Trashëgimia është një shtyllë e OOP. Ajo lejon një klasë të re (Klasa Fëmijë/Subclass) të marrë atributet dhe metodat e një klase ekzistuese (Klasa Prind/Superclass). Kjo realizohet me fjalën kyçe `extends`.", code_description: "Klasa Fëmijë trashëgon vetitë e Klasës Prind.", code: `class Kafshe { 
+    void ha() { } 
+}
+class Qen extends Kafshe { // Trashëgon ha()
+    void lehe() { }
+}` },
+
+            // 23. Fjala kyçe `extends`
+            { title: "Mësimi 23: Fjala kyçe `extends`", explanation: "Fjala kyçe **`extends`** përdoret për të treguar se një klasë trashëgon nga një klasë tjetër. Java nuk mbështet trashëgiminë e shumëfishtë të klasave (vetëm një prind).", code_description: "Klasa `Automjet` është klasi prind për klasën `Makina`.", code: `class Automjet {
+    // metota te perbashketa
+}
+class Makina extends Automjet {
+    // metota specifike
+}` },
+
+            // 24. Fjala kyçe `super`
+            { title: "Mësimi 24: Fjala kyçe `super`", explanation: "Fjala kyçe **`super`** përdoret për të referuar instancën e klasës prind (superclass). Mund të përdoret për të thirrur konstruktorin e prindit ose për të aksesuar metodat/fushat e tij.", code_description: "Thirrja `super()` në konstruktor duhet të jetë gjithmonë rreshti i parë.", code: `class Prind { 
+    Prind(String n) { } 
+}
+class Fëmijë extends Prind {
+    Fëmijë() {
+        super("Emri"); // Thërret konstruktorin e prindit
+    }
+}` },
+
+            // 25. Modifikatorët e Qasjes (`Access Modifiers`)
+            { title: "Mësimi 25: Modifikatorët e Qasjes (`Access Modifiers`)", explanation: "Modifikatorët e qasjes kontrollojnë se ku mund të aksesohet një klasë, fushë ose metodë. Katër nivelet janë: **`public`**, **`protected`**, **`default`** (pa modifikator), dhe **`private`**.", code_description: "`private` lejon qasje vetëm brenda klasës.", code: `public class Shembull {
+    private int fusha_private;
+    protected String fusha_mbrojtur;
+}` },
+
+            // 26. Fjala kyçe `static`
+            { title: "Mësimi 26: Fjala kyçe `static`", explanation: "Fusha ose metodat e deklaruara si **`static`** i përkasin klasës vetë, jo ndonjë instance (objekti) specifike. Ato ndahen nga të gjitha instancat e klasës.", code_description: "Aksesohet direkt përmes emrit të klasës: `Math.PI` ose `Llogarites.shuma()`, pa pasur nevojë për një objekt.", code: `public class Llogarites {
+    static int shuma(int a, int b) {
+        return a + b;
+    }
+}` },
+
+            // 27. Fjala kyçe `final`
+            { title: "Mësimi 27: Fjala kyçe `final`", explanation: "Fjala kyçe **`final`** përdoret për të kufizuar. Kur aplikohet në një fushë, ajo bëhet një konstante (nuk ndryshon). Kur aplikohet në një metodë, ajo nuk mund të mbishkruhet nga klasat fëmijë. Kur aplikohet në një klasë, ajo nuk mund të trashëgohet.", code_description: "Konstantet shkruhen zakonisht me shkronja të mëdha.", code: `public final class Constants {
+    public static final double PI = 3.14159;
+}` },
+
+            // 28. Polimorfizmi
+            { title: "Mësimi 28: Polimorfizmi", explanation: "Polimorfizmi ('shumë forma') lejon që një referencë e tipit prind të referojë një objekt të tipit fëmijë. Përdoret për të kryer një veprim në mënyra të ndryshme bazuar në tipin e objektit.", code_description: "Klasat fëmijë kanë implementime të ndryshme të së njëjtës metodë të prindit.", code: `class Forma {
+    void vizato() { }
+}
+class Rrethi extends Forma {
+    void vizato() { 
+        System.out.println("Vizaton Rrethin");
+    }
+}` },
+
+            // 29. Mbi-ngarkesa e Metodave (`Method Overloading`)
+            { title: "Mësimi 29: Mbi-ngarkesa e Metodave (`Method Overloading`)", explanation: "Mbi-ngarkesa ndodh kur dy ose më shumë metoda në të njëjtën klasë kanë të njëjtin emër, por kanë lista të ndryshme parametrash (ose numër të ndryshëm, ose tip të ndryshëm).", code_description: "Kompilatori zgjedh metodën e duhur bazuar në numrin dhe tipin e argumenteve të dhënë.", code: `class Shtesa {
+    int shto(int a, int b) { }
+    double shto(double a, double b) { }
+}` },
+
+            // 30. Mbi-shkrimi i Metodave (`Method Overriding`)
+            { title: "Mësimi 30: Mbi-shkrimi i Metodave (`Method Overriding`)", explanation: "Mbi-shkrimi ndodh në trashëgimi kur një klasë fëmijë ofron një implementim specifik për një metodë që tashmë është deklaruar në klasën e saj prind.", code_description: "Metoda e fëmijës duhet të ketë të njëjtin emër, tip kthimi dhe parametra si metoda e prindit.", code: `class Prind { 
+    void meso() { } 
+}
+class Fëmijë extends Prind {
+    @Override
+    void meso() { 
+        // Implementimi i Fëmijës
+    }
+}` },
+
+            // 31. Klasat Abstrakte dhe Metodat
+            { title: "Mësimi 31: Klasat Abstrakte dhe Metodat", explanation: "Një klasë abstrakte (`abstract`) nuk mund të instancohet (nuk mund të krijoni objekte prej saj). Ajo përdoret për të siguruar një plan bazë për klasat fëmijë. Metodat abstrakte nuk kanë trup (implementim).", code_description: "Klasa fëmijë duhet të implementojë të gjitha metodat abstrakte të prindit.", code: `abstract class Forma {
+    abstract void vizato(); // Pa trup
+}` },
+
+            // 32. Ndërfaqet (`Interfaces`)
+            { title: "Mësimi 32: Ndërfaqet (`Interfaces`)", explanation: "Një Ndërfaqe (`Interface`) është një kontratë që përkufizon një grup metodash që duhet të implementohen nga çdo klasë që e zbaton atë. Ajo mbështet tipin e trashëgimisë së shumëfishtë të sjelljes (`multiple inheritance of behavior`).", code_description: "Klasat përdorin fjalën kyçe **`implements`** për të zbatuar një ndërfaqe.", code: `interface Lëvizshëm {
+    void lëviz(); // Metodë publike & abstrakte
+}` },
+
+            // 33. Përdorimi i Ndërfaqeve
+            { title: "Mësimi 33: Përdorimi i Ndërfaqeve", explanation: "Kur një klasë zbaton një ndërfaqe, ajo duhet të ofrojë implementime për të gjitha metodat e deklaruara në ndërfaqe. Kjo siguron që klasat e ndryshme mund të trajtohen në mënyrë uniforme.", code_description: "Klasa `Automjeti` tani duhet të ketë metodën `lëviz()`.", code: `class Automjeti implements Lëvizshëm {
+    public void lëviz() {
+        System.out.println("Po lëviz!");
+    }
+}` },
+
+            // 34. Paketat (`Packages`) dhe Importimi
+            { title: "Mësimi 34: Paketat (`Packages`) dhe Importimi", explanation: "Paketat përdoren për të organizuar klasat e Java-s dhe për të shmangur konfliktet e emrave. Komanda **`import`** përdoret për të përfshirë klasat nga paketa të tjera (p.sh., klasa standarde të Java si `Scanner`).", code_description: "Paketa zakonisht bazohet në domen: `com.emrikompanise.emriprojektit`.", code: `package com.kodo.aplikacion;
+import java.util.Scanner; 
+//... Kodi i klasës` },
+
+            // 35. Enkapsulimi (`Encapsulation`)
+            { title: "Mësimi 35: Enkapsulimi (`Encapsulation`)", explanation: "Enkapsulimi (fshehja e të dhënave) është akti i paketimit të të dhënave (fushat) dhe metodave që veprojnë mbi to, në një njësi të vetme (klasë). Kjo arrihet duke i bërë fushat **`private`** dhe duke ofruar qasje me metoda **`public getter/setter`**.", code_description: "Kjo mbron të dhënat nga qasja e drejtpërdrejtë dhe e pakontrolluar.", code: `class Llogari {
+    private double balanca;
+    public double getBalanca() { // Getter
+        return balanca;
+    }
+}` },
+
+            // 36. Koncepti i Gjerë (`Generics`)
+            { title: "Mësimi 36: Koncepti i Gjerë (`Generics`)", explanation: "Generics ju lejon të përcaktoni klasa, ndërfaqe dhe metoda me vendmbajtës (`placeholders`) për tipet e të dhënave. Kjo lejon krijimin e strukturave që mund të punojnë me çdo tip, por garanton sigurinë e tipit gjatë kompilimit.", code_description: "Koleksionet si `ArrayList<String>` përdorin Generics. Tipi shkruhet brenda kllapave këndore `<>`. ", code: `ArrayList<String> emrat = new ArrayList<String>();
+emrat.add("Agimi");` },
+
+            // 37. Klasat e Brenda (`Inner Classes`)
+            { title: "Mësimi 37: Klasat e Brenda (`Inner Classes`)", explanation: "Një Klasë e Brenda (`Inner Class`) është një klasë e deklaruar brenda një klase tjetër. Këto lejohen të qasen në të gjitha fushat dhe metodat e klasës së jashtme, duke përfshirë ato `private`.", code_description: "Klasa e brendshme mund të jetë `static` ose jo. Nëse nuk është `static`, kërkon një instancë të klasës së jashtme.", code: `class Outer {
+    class Inner {
+        // qasje te fushave private te Outer
+    }
+}` },
+
+            // 38. Klasat Anonime
+            { title: "Mësimi 38: Klasat Anonime", explanation: "Një Klasë Anonime (`Anonymous Class`) është një klasë pa emër. Ajo krijohet dhe instancohet në të njëjtën kohë, dhe përdoret zakonisht për të zbatuar një ndërfaqe me një metodë të vetme (p.sh., trajtimi i ngjarjeve - `event handling`).", code_description: "Përdoren shpesh para Lambda Ekspresioneve.", code: `Zbatues z = new Zbatues() {
+    void vepro() {
+        // Kodi i implementuar
+    }
+};` },
+
+            // 39. Enum-at
+            { title: "Mësimi 39: Enum-at", explanation: "Enum-at (`Enumerations`) janë tipe speciale të të dhënave që na lejojnë të punojmë me një grup konstantesh të emërtuara (të pandryshueshme). Përdoren për të përfaqësuar koleksione të fiksuara si ditët e javës ose muajt.", code_description: "Vlerat e Enum shkruhen zakonisht me shkronja të mëdha.", code: `enum Ditët {
+    E_HENE, E_MARTE, E_MERKURE
+}
+
+Ditët dita_sot = Ditët.E_HENE;` },
+
+            // 40. Koleksionet: `ArrayList`
+            { title: "Mësimi 40: Koleksionet: `ArrayList`", explanation: "Klasa **`ArrayList`** gjendet në kornizën e Koleksioneve dhe është një varg dinamik (ndryshon madhësinë). Ndryshe nga vargjet standarde, nuk keni nevojë të përcaktoni madhësinë fillestare.", code_description: "Përdor metoda si `.add()`, `.get(indeksi)`, `.set()`, dhe `.remove()`.", code: `ArrayList<String> lista = new ArrayList<>();
+lista.add("Prizren");
+lista.add("Prishtinë");
+System.out.println(lista.get(0));` },
+
+            // 41. Koleksionet: `LinkedList`
+            { title: "Mësimi 41: Koleksionet: `LinkedList`", explanation: "Ndryshe nga `ArrayList` që ruan elementet në vargje të njëpasnjëshme, `LinkedList` ruan elementet si nyje (`nodes`), ku çdo nyje përmban të dhënën dhe një lidhje me nyjen tjetër. E shkëlqyeshme për futje/fshirje të shpeshtë në mes të listës.", code_description: "Metodat janë të ngjashme me `ArrayList`, por performanca e tyre ndryshon.", code: `LinkedList<Integer> numrat = new LinkedList<>();
+numrat.add(1);
+numrat.addFirst(0); // Fut në fillim
+System.out.println(numrat);` },
+
+            // 42. Koleksionet: `HashSet`
+            { title: "Mësimi 42: Koleksionet: `HashSet`", explanation: "Një **`HashSet`** implementon ndërfaqen `Set`, që do të thotë se ruan vetëm vlera **unike** dhe nuk ruan rendin e futjes. Ajo bazohet në një tabelë hash (hashing) për kërkim dhe futje shumë të shpejtë.", code_description: "Nëse shtoni një vlerë ekzistuese, ajo injorohet.", code: `HashSet<String> fruta = new HashSet<>();
+fruta.add("Mollë");
+fruta.add("Mollë"); // Kjo injorohet
+System.out.println(fruta);` },
+
+            { title: "Mësimi 43: Koleksionet: `HashMap`", explanation: "Një **`HashMap`** implementon ndërfaqen `Map` dhe ruan të dhënat në çifte **Çelës-Vlerë** (`Key-Value`). Çdo çelës duhet të jetë unik. Përdoret kur duhet të ruani një lidhje mes dy objekteve (si fjalor/dictionary).", code_description: "Përdor metoda si `.put(çelësi, vlera)` dhe `.get(çelësi)`.", code: `HashMap<String, Integer> moshat = new HashMap<>();
+moshat.put("Filani", 25);
+System.out.println("Mosha: " + moshat.get("Filani"));` },
+
+            // 44. Iteratori (`Iterator`)
+            { title: "Mësimi 44: Iteratori (`Iterator`)", explanation: "Iteratori është një ndërfaqe që ju lejon të lëvizni nëpër koleksione. Përdoret për të pasur një mënyrë standarde për të përpunuar secilin element të një koleksioni, dhe është e vetmja mënyrë e sigurt për të fshirë elemente gjatë iterimit.", code_description: "Metodat kryesore janë `.hasNext()` dhe `.next()`.", code: `Iterator<String> it = lista.iterator();
+while(it.hasNext()) {
+    System.out.println(it.next());
+}` },
+
+            // 45. Lamda Ekspresionet
+            { title: "Mësimi 45: Lamda Ekspresionet", explanation: "Lambda Ekspresionet ofrojnë një mënyrë të shkurtër për të paraqitur një metodë anonime. Ato janë veçanërisht të dobishme për funksionalitetet e thjeshta, si p.sh., kalimi i veprimeve si argumente te metoda të tjera (p.sh., në Stream API).", code_description: "Sintaksa: `(parametrat) -> { trupi_i_kodit }`.", code: `// Shembull me ndërfaqe funksionale (Functional Interface)
+List<String> lista = Arrays.asList("a", "b");
+lista.forEach(n -> System.out.println(n));` },
+
+            // 46. Stream API: Hyrje
+            { title: "Mësimi 46: Stream API: Hyrje", explanation: "Stream API (Java 8+) ofron një mënyrë funksionale për të përpunuar sekuenca të dhënash (koleksione, vargje). 'Stream' nuk është një strukturë e të dhënave, por një rrjedhë veprimesh.", code_description: "Streame-t mundësojnë kod më të lexueshëm dhe efikas, veçanërisht për veprimet e filtrimit, transformimit dhe grumbullimit.", code: `List<Integer> numrat = Arrays.asList(1, 2, 3);
+numrat.stream().forEach(System.out::println);` },
+
+            // 47. Stream API: `filter` dhe `map`
+            { title: "Mësimi 47: Stream API: `filter` dhe `map`", explanation: "Metoda **`.filter()`** krijon një stream të ri që përmban vetëm elementet që plotësojnë një kusht. Metoda **`.map()`** transformon çdo element në stream në një element të ri.", code_description: "Këto janë operacione të ndërmjetme (`intermediate operations`).", code: `List<String> emrat = Arrays.asList("Arta", "Alban", "Ermira");
+emrat.stream()
+    .filter(n -> n.startsWith("A"))
+    .map(String::toUpperCase)
+    .forEach(System.out::println); // ARTA, ALBAN` },
+
+            // 48. Skedarët I/O (`File Handling`)
+            { title: "Mësimi 48: Skedarët I/O (`File Handling`)", explanation: "Skedarët I/O (Input/Output) merren me leximin dhe shkrimin e të dhënave në skedarët lokalë. Klasat kryesore janë `File`, `FileReader`, `FileWriter`, dhe `Scanner` (për lexim skedarësh). Këto kërkojnë trajtimin e gabimit `IOException`.", code_description: "Përdorimi i blloqeve `try-with-resources` siguron mbylljen automatike të burimeve.", code: `try {
+    FileWriter shkrues = new FileWriter("file.txt");
+    shkrues.write("Java po mësohet.");
+    shkrues.close();
+} catch (IOException e) {
+    // Trajto gabimin
+}` },
+
+            // 49. Data dhe Ora (`LocalDate`, `LocalDateTime`)
+            { title: "Mësimi 49: Data dhe Ora (`LocalDate`, `LocalDateTime`)", explanation: "Java 8 prezantoi një API të re për Data dhe Ora (`java.time`), e cila është më e qartë dhe më e lehtë për t'u përdorur. Klasat kryesore janë **`LocalDate`** (vetëm datën), **`LocalTime`** (vetëm orën) dhe **`LocalDateTime`** (të dyja).", code_description: "Këto objekte janë të pandryshueshme (`immutable`).", code: `LocalDate sot = LocalDate.now();
+LocalTime tani = LocalTime.now();
+System.out.println("Data: " + sot);` },
+
+            // 50. Përmbledhje dhe Projekti Final
+            { title: "Mësimi 50: Përmbledhje dhe Projekti Final", explanation: "Urime! Ju përfunduat themelet e Java-s. Ky mësim shërben si përmbledhje e koncepteve kryesore (OOP, Strukturat e Kontrollit, Koleksionet, Trajtimi i Gabimeve) dhe ju përgatit për Projektin Final, ku do të ndërtoni një aplikacion të vogël konsolë (p.sh., një sistem menaxhimi biblioteke) duke përdorur të gjitha njohuritë e fituara.", code_description: "Përdorni klasat, trashëgiminë, koleksionet, dhe `Scanner` për të krijuar një aplikacion funksional.", code: `System.out.println("Gati për Projektin Final?");
+// Vazhdoni me dizajnin tuaj!` }
+        ];
+
+        // Rijad pjesa
+
+        let currentLessonIndex = 0;
+        const totalLessons = lessons.length;
+
+        const lessonSubtitleEl = document.getElementById('lesson-subtitle');
+        const lessonExplanationEl = document.getElementById('lesson-explanation');
+        const lessonCodeDescriptionEl = document.getElementById('lesson-code-description');
+        const lessonCodeEl = document.getElementById('lesson-code');
+        const currentLessonEl = document.getElementById('current-lesson');
+        const progressBarEl = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+         
+        function loadLesson(index) {
+            if (index >= 0 && index < totalLessons) {
+                currentLessonIndex = index;
+                const lesson = lessons[index];
+
+                lessonSubtitleEl.textContent = lesson.title;
+                lessonExplanationEl.textContent = lesson.explanation;
+                lessonCodeDescriptionEl.innerHTML = lesson.code_description;
+                lessonCodeEl.textContent = lesson.code.trim(); 
+                currentLessonEl.textContent = index + 1;
+
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalLessons - 1;
+
+                const progress = ((index + 1) / totalLessons) * 100;
+                progressBarEl.style.width = `${progress}%`;
+
+                const completionDiv = document.getElementById('completion-section');
+                if (index === totalLessons - 1) {
+                    if (completionDiv) completionDiv.style.display = 'block';
+                    setTimeout(() => {
+                        const completeBtn = document.getElementById('java-complete-btn');
+                        if (completeBtn && !completeBtn.dataset.listenerAdded) {
+                            completeBtn.dataset.listenerAdded = 'true';
+                            completeBtn.addEventListener('click', async () => {
+                                completeBtn.disabled = true;
+                                completeBtn.textContent = '⏳ Po ruhet...';
+                                
+                                if (typeof courseProgress !== 'undefined' && courseProgress) {
+                                    try {
+                                        await courseProgress.saveCourseProgress('Java', totalLessons, totalLessons, totalLessons * 10);
+                                        completeBtn.textContent = '✅ Kursi u ruajt me sukses!';
+                                        completeBtn.className = 'w-full bg-green-700 text-white font-bold py-2 px-4 rounded transition';
+                                        console.log('✅ Java course marked as completed!');
+                                    } catch (err) {
+                                        console.error('Error saving progress:', err);
+                                        completeBtn.textContent = '❌ Gabim në ruajtje';
+                                        completeBtn.disabled = false;
+                                    }
+                                }
+                            });
+                        }
+                    }, 100);
+                } else if (completionDiv) {
+                    completionDiv.style.display = 'none';
+                }
+            }
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentLessonIndex > 0) {
+                loadLesson(currentLessonIndex - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentLessonIndex < totalLessons - 1) {
+                loadLesson(currentLessonIndex + 1);
+            }
+        });
+
+        loadLesson(currentLessonIndex);
+    </script>
+
+</body>
+</html>

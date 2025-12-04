@@ -1,0 +1,104 @@
+<!-- AI CODE -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live HTML/CSS/JS Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #editor-container { height: calc(100vh - 10rem); }
+        
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: #4a5568; 
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 p-4">
+
+    <div class="mb-6 p-4 rounded-xl shadow-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-center transform transition duration-500 hover:scale-[1.02] cursor-default">
+        <h1 class="text-4xl font-extrabold text-white tracking-tight">
+            Provo codin tënd live!
+        </h1>
+        <p class="text-white text-opacity-80 mt-1 text-lg">
+            (Try your code live!)
+        </p>
+    </div>
+
+    <div id="editor-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <div class="flex flex-col h-full">
+            <h2 class="text-lg font-semibold mb-2 text-blue-400">Kodet (HTML, CSS, JS)</h2>
+            <textarea id="htmlCode" class="flex-grow p-4 text-sm font-mono bg-gray-800 border border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 resize-none outline-none" placeholder="Write your HTML, CSS, and JavaScript here..." spellcheck="false">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8;
+        }
+        .card {
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 id="greeting" style="color: #3b82f6; margin-bottom: 1rem;">Pershendetje!!</h1>
+        <button id="colorButton" style="background-color: #10b981; color: white; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer;">
+            Kliko dhe ndrro ngjyren!
+        </button>
+    </div>
+
+    <script>
+        document.getElementById('colorButton').addEventListener('click', function() {
+            const greeting = document.getElementById('greeting');
+            greeting.style.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+        });
+    </script>
+</body>
+</html></textarea>
+        </div>
+
+        <div class="flex flex-col h-full">
+            <h2 class="text-lg font-semibold mb-2 text-green-400">Paraqitje e Drejtpërdrejtë</h2>
+            <iframe id="outputFrame" class="flex-grow bg-white border border-gray-700 rounded-lg w-full h-full"></iframe>
+        </div>
+
+    </div>
+
+    <script>
+        const htmlCodeEl = document.getElementById('htmlCode');
+        const outputFrameEl = document.getElementById('outputFrame');
+
+        const updatePreview = () => {
+            const code = htmlCodeEl.value;
+         
+            outputFrameEl.srcdoc = code;
+        };
+
+
+        htmlCodeEl.addEventListener('input', updatePreview);
+
+        window.addEventListener('DOMContentLoaded', updatePreview);
+    </script>
+</body>
+</html>

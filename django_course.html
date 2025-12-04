@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazat e Django: Shikuesi i Mësimeve me JS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="progress.js"></script>
+    <style>
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; 
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-4xl bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+            <header class="p-6 border-b border-gray-700">
+                <h1 class="text-2xl font-bold text-indigo-400">Bazat e Django: Kursi Themelor (50 Mësime)</h1>
+                <p class="text-sm text-gray-400 mt-1">Mëso si të ndërtosh aplikacione web me këtë framework të fuqishëm Python.</p>
+                
+                <div class="mt-4">
+                    <p id="lesson-counter" class="text-right text-sm font-medium text-gray-300 mb-1">1 / 50</p>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 2%;"></div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <h2 id="lesson-title" class="text-3xl font-extrabold text-white mb-4">1. Hyrje në Django dhe MVC</h2>
+                <div id="lesson-content" class="text-lg text-gray-300 h-96 overflow-y-auto pr-2 space-y-4">
+                    </div>
+            </main>
+
+            <footer class="p-6 border-t border-gray-700 flex justify-between">
+                <button id="prev-btn" onclick="prevLesson()" disabled class="flex items-center px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500 disabled:opacity-50 transition duration-300">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Mësimi i Kaluar
+                </button>
+                <button id="next-btn" onclick="nextLesson()" class="flex items-center px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition duration-300">
+                    Mësimi Tjetër
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elementet
+        const lessonTitle = document.getElementById('lesson-title');
+        const lessonContent = document.getElementById('lesson-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const lessonCounter = document.getElementById('lesson-counter');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentLessonIndex = 0;
+
+        // Lista e 50 Mësimeve të reja për Django
+        const lessons = [
+            { title: "1. Hyrje në Django dhe MVC", content: "<p>Django është një framework web Python me nivel të lartë që inkurajon zhvillimin e shpejtë dhe dizajnin praktik dhe të pastër.</p><p>Ai ndjek modelin **MVT (Model-View-Template)**, i cili është i ngjashëm me arkitekturën MVC.</p>" },
+            { title: "2. Përgatitja e Mjedisit", content: "<p>Instaloni Python (rekomandohet 3.8+). Krijoni një mjedis virtual (<code>python -m venv venv</code>). Aktivizojeni atë.</p><p>Instaloni Django: <code>pip install django</code>.</p>" },
+            { title: "3. Krijimi i një Projekti të Ri", content: "<p>Për të nisur një projekt, përdorni: <code>django-admin startproject myproject</code>.</p><p>Kjo krijon strukturën kryesore të dosjeve: <code>settings.py</code>, <code>urls.py</code>, <code>wsgi.py</code> etj.</p>" },
+            { title: "4. Rrjedha e Kërkesë-Përgjigje (Request-Response)", content: "<p>Kur një përdorues viziton një URL, Django e merr atë, e kalon nëpër <code>urls.py</code>, e dërgon në një funksion <code>view</code>, dhe ky funksion gjeneron një <code>HttpResponse</code>.</p>" },
+            { title: "5. Përdorimi i Serverit Zhvillues", content: "<p>Ekzekutoni projektin tuaj me <code>python manage.py runserver</code>. Serveri fillon në <code>http://127.0.0.1:8000/</code>.</p><p>Ai përditësohet automatikisht kur bëni ndryshime në kod.</p>" },
+            
+            // Seksioni i Aplikacioneve (Apps)
+            { title: "6. Krijimi i një Aplikacioni (App)", content: "<p>Një projekt Django mund të ketë shumë aplikacione. Krijoni një me: <code>python manage.py startapp myapp</code>.</p><p>Aplikacionet janë module të pavarura që kryejnë një detyrë specifike (p.sh., blog, galeri).</p>" },
+            { title: "7. Regjistrimi i Aplikacionit", content: "<p>Për të përdorur aplikacionin tuaj, duhet ta regjistroni duke shtuar emrin e tij në listën <code>INSTALLED_APPS</code> në <code>settings.py</code>.</p>" },
+            { title: "8. Krijimi i View-s tuaj të Parë", content: "<p>Në <code>myapp/views.py</code>, krijoni një funksion të thjeshtë që kthen tekst: <code>def index(request): return HttpResponse('Përshëndetje nga Django!')</code>.</p>" },
+            { title: "9. Lidhja e URLs me Views", content: "<p>Në <code>myapp/urls.py</code>, lidhni View-n tuaj me një URL duke përdorur funksionin <code>path()</code>.</p><p>Kujto: duhet të përfshini URLs-at e aplikacionit në <code>project/urls.py</code>.</p>" },
+            { title: "10. Përdorimi i funksionit `include()`", content: "<p>Për të mbajtur <code>project/urls.py</code> të pastër, përdorni <code>path('myapp/', include('myapp.urls'))</code> për të referuar të gjitha URLs-at e aplikacionit tuaj.</p>" },
+
+            // Seksioni i Template (MVT)
+            { title: "11. Përdorimi i Template-ve (Shablloneve)", content: "<p>Template-t përdoren për të ndarë logjikën e View nga prezantimi (HTML).</p><p>Krijoni dosjen <code>templates/</code> brenda aplikacionit tuaj.</p>" },
+            { title: "12. Krijimi i një Template bazë", content: "<p>Krijoni një skedar <code>index.html</code> në dosjen <code>templates/myapp/</code>.</p><p>Template Loader i Django do ta gjejë automatikisht.</p>" },
+            { title: "13. Renderimi i një Template", content: "<p>Në <code>views.py</code>, përdorni funksionin <code>render(request, 'myapp/index.html', context)</code> për të ngarkuar dhe kthyer Template-n.</p>" },
+            { title: "14. Variablat në Template", content: "<p>Dërgojini të dhëna në Template duke përdorur fjalorin <code>context</code>: <code>{'name': 'Django'}</code>.</p><p>Përdorni variablat në HTML me sintaksën: <code>{{ name }}</code>.</p>" },
+            { title: "15. Tag-et e Template-ve", content: "<p>Tag-et ofrojnë logjikë programimi si p.sh. ciklet dhe kushtet: <code>{% if user.is_authenticated %}</code>, <code>{% for item in list %}</code>.</p>" },
+
+            // Seksioni i Modeleve (Models) dhe Baza e të Dhënave
+            { title: "16. Koncepti i Modeleve (Models)", content: "<p>Modelet janë klasa Python që përshkruajnë strukturën e të dhënave dhe i menaxhojnë ato në bazën e të dhënave.</p><p>Çdo klasë model përfaqëson një tabelë në DB.</p>" },
+            { title: "17. Përkufizimi i një Model-i të Parë", content: "<p>Në <code>models.py</code>: <code>class Post(models.Model): title = models.CharField(max_length=200) content = models.TextField()</code>.</p>" },
+            { title: "18. Fusha Kryesore të Modelit", content: "<p>Përdorni <code>CharField</code>, <code>TextField</code>, <code>IntegerField</code>, <code>DateTimeField</code>, <code>BooleanField</code>, etj. për të përcaktuar llojet e të dhënave.</p>" },
+            { title: "19. Migrimet (Migrations) - Pjesa 1", content: "<p>Migrimet janë mënyra e Django-s për të ruajtur ndryshimet e Modeleve tuaja në skedarë. Krijoni migrimet me: <code>python manage.py makemigrations myapp</code>.</p>" },
+            { title: "20. Migrimet (Migrations) - Pjesa 2", content: "<p>Aplikoni migrimet në bazën e të dhënave (përdor SQLite si parazgjedhje): <code>python manage.py migrate</code>.</p>" },
+            
+            // Seksioni i Administrimit
+            { title: "21. Krijimi i Superuser-it", content: "<p>Krijoni një llogari administrimi për të hyrë në panelin e administrimit: <code>python manage.py createsuperuser</code>.</p>" },
+            { title: "22. Paneli i Administrimit të Django", content: "<p>Paneli është një ndërfaqe e ndërtuar automatikisht për menaxhimin e të dhënave (Modeleve). Mund të hyni në <code>/admin/</code>.</p>" },
+            { title: "23. Regjistrimi i Modelit në Admin", content: "<p>Në <code>admin.py</code>, regjistroni Modelin tuaj: <code>from .models import Post; admin.site.register(Post)</code>.</p>" },
+            { title: "24. Personalizimi i Panelit të Adminit", content: "<p>Përdorni <code>list_display</code>, <code>list_filter</code>, dhe <code>search_fields</code> brenda klasave <code>ModelAdmin</code> për të rregulluar pamjen.</p>" },
+            { title: "25. Fusha për Marrëdhënie (Relationships)", content: "<p>Përdorimi i <code>ForeignKey</code> (një-për-shumë) dhe <code>ManyToManyField</code> (shumë-për-shumë) për të lidhur Modelet.</p>" },
+
+            // Seksioni i QuerySet (ORMs)
+            { title: "26. Hyrje në QuerySet (ORM)", content: "<p>Object-Relational Mapper (ORM) ju lejon të bashkëveproni me DB duke përdorur kod Python (pa SQL të hapur).</p>" },
+            { title: "27. Kërkimi i të Dhënave (Getting Data)", content: "<p>Përdorni <code>Model.objects.all()</code> për të marrë të gjithë objektet, ose <code>Model.objects.get(pk=1)</code> për një objekt specifik.</p>" },
+            { title: "28. Filtimi i të Dhënave", content: "<p>Përdorni <code>.filter(title__contains='text')</code> ose <code>.filter(is_published=True)</code> për të aplikuar kushte.</p>" },
+            { title: "29. Krijimi dhe Ruajtja e Objekteve", content: "<p>Krijoni një objekt me: <code>post = Post(title='New', content='...')</code>. Ruani në DB me: <code>post.save()</code>.</p>" },
+            { title: "30. Përditësimi dhe Fshirja e Objekteve", content: "<p>Përditëso: <code>post.title = 'Updated Title'; post.save()</code>. Fshij: <code>post.delete()</code>.</p>" },
+
+            // Seksioni i Formulave (Forms)
+            { title: "31. Përdorimi i Formulave të Django", content: "<p>Formulat ndihmojnë në validimin, pastrimin dhe shfaqjen e të dhënave të futur nga përdoruesi.</p>" },
+            { title: "32. Krijimi i një Klase Form", content: "<p>Në <code>forms.py</code>, krijoni një klasë që trashëgon nga <code>forms.Form</code> dhe përcaktoni fushat.</p>" },
+            { title: "33. Paraqitja e Formës në Template", content: "<p>Dërgoni instancën e Formës në Template dhe përdorni <code>{{ form.as_p }}</code> ose <code>{{ form.as_ul }}</code> për ta renderuar atë.</p>" },
+            { title: "34. Trajtimi i Të Dhënave POST", content: "<p>Në View: Kontrolloni <code>if request.method == 'POST'</code>. Krijoni formën me të dhënat: <code>Form(request.POST)</code>.</p>" },
+            { title: "35. Validimi i Formës", content: "<p>Përdorni <code>if form.is_valid():</code> për të kontrolluar të dhënat dhe pastaj merrni të dhënat e pastruara me <code>form.cleaned_data</code>.</p>" },
+
+            // Seksioni i Formave të Modelit (ModelForms)
+            { title: "36. Hyrje në ModelForms", content: "<p>ModelForms gjenerojnë automatikisht formularë bazuar në Modelet e Django-s.</p><p>Kjo lehtëson shumë punën për formularët e krijimit/përditësimit.</p>" },
+            { title: "37. Krijimi i një ModelForm", content: "<p>Trashëgoni nga <code>forms.ModelForm</code> dhe përdorni klasën Meta për të specifikuar Modelin dhe fushat.</p>" },
+            { title: "38. Klasat e Bazuar në Gjenerike Views (Class-Based Views)", content: "<p>CBV-të (Views të bazuara në klasa) ofrojnë një mënyrë më të pastër dhe të ripërdorshme për shkrimin e Views.</p>" },
+            { title: "39. Përdorimi i `ListView`", content: "<p>Përdorni <code>ListView</code> për të shfaqur një listë të objekteve (p.sh., të gjitha Postimet). Është shumë e thjeshtë për t'u zbatuar.</p>" },
+            { title: "40. Përdorimi i `DetailView`", content: "<p>Përdorni <code>DetailView</code> për të shfaqur detajet e një objekti të vetëm (p.sh., një Postim specifik).</p>" },
+
+            // Seksioni i Autentifikimit dhe Sigurisë
+            { title: "41. Sistemi i Autentifikimit të Django", content: "<p>Django ofron një sistem të plotë për menaxhimin e përdoruesve, sesioneve, dhe lejeve.</p><p>Aplikacioni <code>'django.contrib.auth'</code> është i instaluar si parazgjedhje.</p>" },
+            { title: "42. Regjistrimi dhe Hyrja (Login/Logout) Views", content: "<p>Përdorni funksionet e ndërtuara si <code>login</code>, <code>logout</code> dhe <code>PasswordChangeView</code>.</p>" },
+            { title: "43. Kërkesa e Kufizuar (Login Required)", content: "<p>Përdorni dekoratorin <code>@login_required</code> në View-t tuaja të bazuara në funksione për të siguruar qasjen.</p>" },
+            { title: "44. Koncepti i Sesioneve (Sessions)", content: "<p>Sesionet përdoren për të ruajtur të dhëna specifike të përdoruesit në anën e serverit (p.sh., ID e përdoruesit të hyrë).</p>" },
+            { title: "45. Siguria (SQL Injection dhe XSS)", content: "<p>Django mbron automatikisht kundër shumicës së sulmeve të zakonshme si SQL Injection (falë ORM-s) dhe XSS (në Template).</p>" },
+
+            // Seksioni i Avancuar dhe Konfigurimi
+            { title: "46. Dosjet Statike (Static Files)", content: "<p>Përdorni <code>STATIC_URL</code> dhe <code>STATICFILES_DIRS</code> në <code>settings.py</code> për të menaxhuar CSS, JavaScript dhe imazhet tuaja.</p>" },
+            { title: "47. Përdorimi i Media Files", content: "<p>Dosjet media janë skedarë të ngarkuar nga përdoruesi. Konfiguro: <code>MEDIA_ROOT</code> dhe <code>MEDIA_URL</code>.</p>" },
+            { title: "48. Personalizimi i Përdoruesit (Custom User Model)", content: "<p>Për nevoja më komplekse, duhet të krijoni një model tuajin të përdoruesit me trashëgimi nga <code>AbstractUser</code>.</p>" },
+            { title: "49. Testimi i Njësisë (Unit Testing)", content: "<p>Django ka një kornizë të fuqishme testimi. Shkruani testet tuaja në <code>tests.py</code> për View-t, Modelet, dhe Formulat.</p>" },
+            { title: "50. Hapësirat e Emrave në URLs (Namespaces)", content: "<p>Përdorni <code>app_name</code> në <code>urls.py</code> dhe <code>{% url 'app_name:view_name' %}</code> në Template për të shmangur konfliktet e emrave.</p>" },
+        ];
+
+     // Rijad JS
+        
+        function showLesson(index) {
+            if (index < 0 || index >= lessons.length) {
+                return;
+            }
+
+            currentLessonIndex = index;
+            const lesson = lessons[index];
+
+            lessonTitle.textContent = `${index + 1}. ${lesson.title.substring(lesson.title.indexOf('.') + 1).trim()}`; // Heq numërimin e dyfishtë
+            let lessonHTML = lesson.content;
+            
+            if (index === lessons.length - 1) {
+                lessonHTML += `
+                    <div class="mt-8 p-4 bg-green-900 border border-green-500 rounded-lg">
+                        <p class="text-green-200 mb-4 font-semibold">🎉 Urime! Ju keni arritur në fund të kursit!</p>
+                        <button id="complete-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+                            ✅ Shënoni Kursin si të Përfunduar
+                        </button>
+                    </div>
+                `;
+            }
+            
+            lessonContent.innerHTML = lessonHTML;
+
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === lessons.length - 1;
+
+            lessonCounter.textContent = `${index + 1} / ${lessons.length}`;
+            
+            const progress = ((index + 1) / lessons.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            if (index === lessons.length - 1) {
+                setTimeout(() => {
+                    const completeBtn = document.getElementById('complete-btn');
+                    if (completeBtn) {
+                        completeBtn.addEventListener('click', async () => {
+                            completeBtn.disabled = true;
+                            completeBtn.textContent = '⏳ Po ruhet...';
+                            
+                            if (typeof courseProgress !== 'undefined' && courseProgress) {
+                                try {
+                                    await courseProgress.saveCourseProgress('Django', lessons.length, lessons.length, lessons.length * 10);
+                                    completeBtn.textContent = '✅ Kursi u ruajt me sukses!';
+                                    completeBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                                    completeBtn.classList.add('bg-green-700');
+                                    console.log('✅ Django course marked as completed!');
+                                } catch (err) {
+                                    console.error('Error saving progress:', err);
+                                    completeBtn.textContent = '❌ Gabim në ruajtje';
+                                    completeBtn.disabled = false;
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            }
+
+            lessonContent.scrollTop = 0;
+        }
+
+        
+        function nextLesson() {
+            if (currentLessonIndex < lessons.length - 1) {
+                showLesson(currentLessonIndex + 1);
+            }
+        }
+
+        
+        function prevLesson() {
+            if (currentLessonIndex > 0) {
+                showLesson(currentLessonIndex - 1);
+            }
+        }
+
+        window.onload = () => {
+            window.nextLesson = nextLesson;
+            window.prevLesson = prevLesson;
+
+            showLesson(currentLessonIndex);
+        }
+        
+    </script>
+</body>
+</html>

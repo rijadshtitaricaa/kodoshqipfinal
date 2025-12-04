@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kursi Statik: HTML dhe CSS - KodoShqip</title>
+    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.11/purify.min.js'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="progress.js"></script>
+    
+    <script>
+        const lessons = [
+            {
+                title: "MËSIMI 1: HTML Bazat dhe Struktura Kryesore",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Struktura_Baze",
+                content: `
+                    <h2>Çfarë është HTML?</h2>
+                    <p><strong>HTML (HyperText Markup Language)</strong> është gjuha themelore për krijimin e çdo faqeje ueb. Ajo përcakton strukturën dhe përmbajtjen (tekstin, imazhet, linket).</p>
+                    <p>Çdo dokument duhet të fillojë me <code>&lt;!DOCTYPE html&gt;</code> dhe të përmbajë etiketat <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code> dhe <code>&lt;body&gt;</code>.</p>
+                    <h3>Kodi i Mësimit: Struktura Bazë</h3>
+                    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="sq"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Faqja Ime&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Përmbajtja e dukshme shkon këtu --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 2: Etiketat e Titujve (H1 deri H6)",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Titujt_Header",
+                content: `
+                    <h2>Titujt dhe Hierarkia e tyre</h2>
+                    <p>Titujt HTML përdoren për të ndarë dhe organizuar përmbajtjen, duke krijuar një hierarki. Kjo është thelbësore për **SEO** (optimizimin për motorët e kërkimit).</p>
+                    <p><strong>&lt;h1&gt;</strong> është titulli më i rëndësishëm, ndërsa <strong>&lt;h6&gt;</strong> është më pak i rëndësishëm. Përdorni vetëm një &lt;h1&gt; për faqe.</p>
+                    <h3>Kodi i Mësimit: Përdorimi i Titujve</h3>
+                    <pre><code>&lt;h1&gt;Titulli Kryesor i Blogut&lt;/h1&gt;
+&lt;p&gt;Paragrafi hyrës.&lt;/p&gt;
+&lt;h2&gt;Seksioni Kryesor i Artikullit&lt;/h2&gt;
+&lt;h3&gt;Nën-titulli i Seksionit&lt;/h3&gt;
+&lt;p&gt;Teksti i përmbajtjes...&lt;/p&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 3: Paragrafët, Përdorimi i <p>, <br> dhe <hr>",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Paragrafet_Rreshtat",
+                content: `
+                    <h2>Formatimi Bazë i Tekstit</h2>
+                    <p>Etiketa **&lt;p&gt;** përdoret për tekste të zakonshme. Ajo krijon automatikisht hapësirë sipër dhe poshtë.</p>
+                    <p>**&lt;br&gt;** (break) krijon një ndërprerje të rreshtit (pa hapësirë paragrafi). **&lt;hr&gt;** (horizontal rule) vizaton një vijë ndarëse horizontale.</p>
+                    <h3>Kodi i Mësimit: Ndarja e Tekstit</h3>
+                    <pre><code>&lt;p&gt;Ky është paragrafi i parë.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Ky është paragrafi i dytë.&lt;br&gt;
+Ky rresht është ndërprerë me &lt;br&gt;
+pa filluar një paragraf të ri.&lt;/p&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 4: Lidhjet (Links) - Etiketa <a>",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Lidhjet",
+                content: `
+                    <h2>Navigimi me Hyperlinks</h2>
+                    <p>Etiketa **&lt;a&gt;** (anchor) përdoret për të krijuar lidhje. Atributi **href** (Hypertext Reference) është thelbësor dhe përmban destinacionin.</p>
+                    <p>Përdorni atributin **target="_blank"** për të hapur lidhjen në një dritare/skedë të re të shfletuesit.</p>
+                    <h3>Kodi i Mësimit: Krijimi i Linkeve</h3>
+                    <pre><code>&lt;!-- Lidhje e jashtme --&gt;
+&lt;p&gt;Vizitoni &lt;a href="https://www.google.com" target="_blank"&gt;Google&lt;/a&gt; në një dritare të re.&lt;/p&gt;
+
+&lt;!-- Lidhje e brendshme --&gt;
+&lt;p&gt;&lt;a href="rreth-nesh.html"&gt;Mëso më shumë për ne&lt;/a&gt;&lt;/p&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 5: Imazhet (Images) - Etiketa <img>",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Imazhet",
+                content: `
+                    <h2>Shfaqja e Imazheve në Faqe</h2>
+                    <p>Etiketa **&lt;img&gt;** përdoret për të shfaqur imazhe. Ajo është një etiketë vetë-mbyllëse (nuk ka &lt;/img&gt;).</p>
+                    <p>Atributi **src** (source) specifikon rrugën e imazhit. Atributi **alt** (alternative text) është i detyrueshëm për aksesueshmëri dhe SEO.</p>
+                    <h3>Kodi i Mësimit: Përfshirja e Imazhit</h3>
+                    <pre><code>&lt;!-- Përdorim një placeholder për shembull --&gt;
+&lt;img 
+    src="https://placehold.co/400x200" 
+    alt="Një imazh i thjeshtë placeholder" 
+    width="400" 
+    height="200"&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 6: Listat e Pa-renditura (<UL> dhe <LI>)",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Lista_UL",
+                content: `
+                    <h2>Listat me Pika (Bullets)</h2>
+                    <p>Për të grupuar elemente që nuk kanë një renditje specifike përdoret lista e pa-renditur (<strong>Unordered List - &lt;ul&gt;</strong>).</p>
+                    <p>Çdo element brenda listës (list item) përcaktohet nga etiketa **&lt;li&gt;**.</p>
+                    <h3>Kodi i Mësimit: Lista e Përbërësve</h3>
+                    <pre><code>&lt;h3&gt;Përbërësit e Recetës:&lt;/h3&gt;
+&lt;ul&gt;
+    &lt;li&gt;Miell gruri&lt;/li&gt;
+    &lt;li&gt;Sheqer pluhur&lt;/li&gt;
+    &lt;li&gt;Vezë&lt;/li&gt;
+    &lt;li&gt;Kakao&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 7: Listat e Renditura (<OL> dhe <LI>)",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Lista_OL",
+                content: `
+                    <h2>Listat me Numra</h2>
+                    <p>Për të grupuar elemente që duhet të ndjekin një renditje (p.sh., hapat e një procedure), përdoret lista e renditur (<strong>Ordered List - &lt;ol&gt;</strong>).</p>
+                    <p>Sikurse lista e pa-renditur, çdo element përcaktohet nga etiketa **&lt;li&gt;**.</p>
+                    <h3>Kodi i Mësimit: Lista e Hapave</h3>
+                    <pre><code>&lt;h3&gt;Hapat e Përgatitjes:&lt;/h3&gt;
+&lt;ol&gt;
+    &lt;li&gt;Përzieni të thatat.&lt;/li&gt;
+    &lt;li&gt;Shtoni të lëngshmet.&lt;/li&gt;
+    &lt;li&gt;Vendoseni në furrë.&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 8: Tabelat - Elementet Bazë",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Tabela_Baze",
+                content: `
+                    <h2>Paraqitja e Të Dhënave (Rresht & Kolonë)</h2>
+                    <p>Tabelat (**&lt;table&gt;**) përdoren për të shfaqur të dhëna në mënyrë të strukturuar. Etiketat thelbësore janë:</p>
+                    <ul>
+                        <li>**&lt;tr&gt;** (table row): Një rresht në tabelë.</li>
+                        <li>**&lt;th&gt;** (table header): Qeliza e kokës (e theksuar).</li>
+                        <li>**&lt;td&gt;** (table data): Qeliza standarde e të dhënave.</li>
+                    </ul>
+                    <h3>Kodi i Mësimit: Tabelë e Thjeshtë</h3>
+                    <pre><code>&lt;table border="1"&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Vendi&lt;/th&gt;
+        &lt;th&gt;Popullsia&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Kosova&lt;/td&gt;
+        &lt;td&gt;1.8 milion&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 9: Elementet Bllok (<DIV>) dhe Inline (<SPAN>)",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Block_Inline",
+                content: `
+                    <h2>Dallimi i Rëndësishëm i Shfaqjes</h2>
+                    <p>**Bllok (Block)**: Elementet (si **&lt;div&gt;**, &lt;p&gt;, &lt;h1&gt;) zënë gjithë gjerësinë dhe krijojnë një rresht të ri.</p>
+                    <p>**Inline**: Elementet (si **&lt;span&gt;**, &lt;a&gt;, &lt;img&gt;) zënë vetëm hapësirën e nevojshme dhe vendosen në të njëjtin rresht.</p>
+                    <h3>Kodi i Mësimit: Përdorimi i Div dhe Span</h3>
+                    <pre><code>&lt;div style="border: 1px solid red; margin-bottom: 5px;"&gt;Ky është Div 1 (Bllok).&lt;/div&gt;
+&lt;div style="border: 1px solid blue;"&gt;Ky është Div 2 (Bllok).&lt;/div&gt;
+
+&lt;p&gt;Tekst me një &lt;span style="color: purple; font-weight: bold;"&gt;Span Inline&lt;/span&gt; këtu.&lt;/p&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 10: Format (Forms) - Struktura <form>",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Format_Introduction",
+                content: `
+                    <h2>Mbledhja e Të Dhënave nga Përdoruesi</h2>
+                    <p>Etiketa **&lt;form&gt;** është kontejneri i të gjitha fushave të inputit. Ajo përdor atributet **action** (ku dërgohen të dhënat) dhe **method** (si dërgohen - GET/POST).</p>
+                    <h3>Kodi i Mësimit: Forma Bazë</h3>
+                    <pre><code>&lt;form action="/procesi-regjistrimin" method="POST"&gt;
+    &lt;!-- Inputet, butonat etj. shkojnë këtu --&gt;
+    &lt;input type="submit" value="Dërgo Formën"&gt;
+&lt;/form&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 11: Fushat e Inputit - type='text', 'email', 'password'",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Input_Types",
+                content: `
+                    <h2>Llojet Kryesore të Fushave <input></h2>
+                    <p>Etiketa **&lt;input&gt;** është më e përdorura në forma. Atributi **type** përcakton sjelljen e fushës.</p>
+                    <p>Përdorni **name** për të dërguar të dhënat në server. **label** përdoret për aksesueshmëri, duke u lidhur me inputin nëpërmjet **for** dhe **id**.</p>
+                    <h3>Kodi i Mësimit: Inputet Bazë</h3>
+                    <pre><code>&lt;label for="emri"&gt;Emri i Plotë:&lt;/label&gt;
+&lt;input type="text" id="emri" name="user_emri" placeholder="Emri Juaj"&gt;&lt;br&gt;&lt;br&gt;
+
+&lt;label for="email"&gt;Email:&lt;/label&gt;
+&lt;input type="email" id="email" name="user_email" required&gt;&lt;br&gt;&lt;br&gt;
+
+&lt;label for="fjalekalimi"&gt;Fjalëkalimi:&lt;/label&gt;
+&lt;input type="password" id="fjalekalimi" name="user_pass" required&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 12: Checkboxes dhe Radio Buttons",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Radio_Checkbox",
+                content: `
+                    <h2>Zgjedhjet në Formë</h2>
+                    <p>**Radio Buttons** (type="radio") lejon përdoruesin të zgjedhë **vetëm një** opsion nga një grup (i njëjti atribut **name**).</p>
+                    <p>**Checkboxes** (type="checkbox") lejon zgjedhjen e **një ose më shumë** opsioneve. Çdo checkbox ka emrin (name) e vet unik.</p>
+                    <h3>Kodi i Mësimit: Shembuj Zgjedhjesh</h3>
+                    <pre><code>&lt;h4&gt;Zgjidhni gjininë (Radio):&lt;/h4&gt;
+&lt;input type="radio" name="gjinia" value="M"&gt; Mashkull &lt;br&gt;
+&lt;input type="radio" name="gjinia" value="F"&gt; Femër &lt;br&gt;&lt;br&gt;
+
+&lt;h4&gt;Zgjidhni hobet (Checkbox):&lt;/h4&gt;
+&lt;input type="checkbox" name="hobi[]" value="Sport"&gt; Sport
+&lt;input type="checkbox" name="hobi[]" value="Lexim"&gt; Lexim</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 13: Textarea dhe Select (Dropdowns)",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Select_Textarea",
+                content: `
+                    <h2>Inpute të Përmbajtjes së Gjatë dhe Listat Zgjedhore</h2>
+                    <p>**&lt;textarea&gt;** përdoret për input me shumë rreshta (si komente ose mesazhe). Atributet **rows** dhe **cols** përcaktojnë madhësinë e paracaktuar.</p>
+                    <p>**&lt;select&gt;** krijon një listë zgjedhore (dropdown), me opsionet e definuara nga **&lt;option&gt;**.</p>
+                    <h3>Kodi i Mësimit: Textarea & Select</h3>
+                    <pre><code>&lt;label for="mesazhi"&gt;Mesazhi juaj:&lt;/label&gt;
+&lt;textarea id="mesazhi" name="mesazhi" rows="4" cols="50"&gt;&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+
+&lt;label for="qytetet"&gt;Zgjidh Qytetin:&lt;/label&gt;
+&lt;select id="qytetet" name="qyteti"&gt;
+    &lt;option value="" disabled selected&gt;Zgjidhni...&lt;/option&gt;
+    &lt;option value="PR"&gt;Prishtinë&lt;/option&gt;
+    &lt;option value="TR"&gt;Tiranë&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 14: Multimedia - Audio (<audio>)",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Audio_Element",
+                content: `
+                    <h2>Përfshirja e Zërit</h2>
+                    <p>Etiketa **&lt;audio&gt;** përdoret për të përfshirë skedarë audio. Duhet të përdoret atributi **controls** për të shfaqur kontrollet e luajtjes, pauzës etj. Përdorimi i **&lt;source&gt;** me formate të ndryshme (p.sh., mp3, ogg) siguron përputhshmëri me të gjithë shfletuesit.</p>
+                    <h3>Kodi i Mësimit: Elementi Audio</h3>
+                    <pre><code>&lt;audio controls&gt;
+    &lt;source src="muzika_ime.mp3" type="audio/mpeg"&gt;
+    &lt;source src="muzika_ime.ogg" type="audio/ogg"&gt;
+    &lt;p&gt;Shfletuesi juaj nuk e mbështet audion.&lt;/p&gt;
+&lt;/audio&gt;</code></pre>
+                `
+            },
+            {
+                title: "MËSIMI 15: Multimedia - Video (<video>) dhe Sfida e Parë",
+                videoLink: "https://www.youtube.com/watch?v=HTML_Video_Element",
+                content: `
+                    <h2>Përfshirja e Video</h2>
+                    <p>Etiketa **&lt;video&gt;** funksionon ngjashëm me **&lt;audio&gt;**, por ka atribute shtesë si **width**, **height**, dhe **poster** (një imazh që shfaqet përpara se të luhet video).</p>
+                    <p>Gjithmonë përdorni **controls** në mënyrë që përdoruesi të mund ta luajë videon.</p>
+                    <h3>Kodi i Mësimit: Elementi Video</h3>
+                    <pre><code>&lt;video width="640" height="360" controls poster="imazhi_poster.jpg"&gt;
+    &lt;source src="videoja_ime.mp4" type="video/mp4"&gt;
+    &lt;source src="videoja_ime.webm" type="video/webm"&gt;
+    &lt;p&gt;Shfletuesi juaj nuk e mbështet videon.&lt;/p&gt;
+&lt;/video&gt;</code></pre>
+
+                    <hr class="my-8 border-t-2 border-blue-400">
+
+                    <div class="p-6 bg-yellow-50 border-4 border-yellow-300 rounded-xl shadow-lg">
+                        <h2 class="text-2xl font-extrabold text-yellow-800 border-none pb-0">🏆 SFIDA E MODULIT BAZË (MËSIMET 1-15)</h2>
+                        <p class="text-lg text-yellow-700 mt-2">Tani që keni mbuluar thelbin e HTML-së, është koha të ndërtoni diçka reale!</p>
+
+                        <h3 class="text-xl font-bold text-yellow-900 mt-4">Projekti: Krijoni Faqen Tuaj të Recetave</h3>
+                        <p class="text-yellow-800">Përdorni të gjitha etiketat e mësuara për të krijuar një faqe të thjeshtë recetash. Faqja duhet të ketë:</p>
+                        <ul class="list-disc list-inside mt-2 ml-4 text-yellow-800 space-y-1">
+                            <li>Një **Titull Kryesor** (<code>&lt;h1&gt;</code>).</li>
+                            <li>Një **Imazh** të ushqimit (<code>&lt;img&gt;</code>).</li>
+                            <li>Një **Përshkrim** (<code>&lt;p&gt;</code>).</li>
+                            <li>Listën e **Përbërësve** (<code>&lt;ul&gt;</code>).</li>
+                            <li>Listën e **Hapave** (<code>&lt;ol&gt;</code>).</li>
+                            <li>Një **Formë Komentesh** të thjeshtë me fushën e Emrit (<code>type="text"</code>) dhe Mesazhit (<code>&lt;textarea&gt;</code>).</li>
+                            <li>Një **Link** drejt faqes suaj të preferuar të kuzhinës.</li>
+                        </ul>
+                        <p class="text-yellow-800 font-semibold mt-4">Shkruani kodin tuaj në redaktor (editor) dhe shihni rezultatin në Preview! Ky është hapi i parë drejt të qenit një zhvillues.</p>
+                    </div>
+                `
+            }
+        ];
+
+
+        // Nikiii JS pjesa
+        let currentLessonIndex = 0;
+
+        function displayLesson(lessonIndex, previousPrompt = null) {
+            const outputDiv = document.getElementById('lesson-output');
+            const topicDisplay = document.getElementById('current-topic-display');
+            
+            if (lessonIndex >= lessons.length) {
+                currentLessonIndex = 0; 
+                lessonIndex = 0;
+            }
+
+            const lesson = lessons[lessonIndex];
+
+            let conversationHtml = '';
+            if (previousPrompt) {
+                conversationHtml += `<div class="p-3 my-2 rounded-lg bg-blue-100 text-blue-900 border border-blue-200 shadow-sm">
+                    <strong>Ju:</strong> ${DOMPurify.sanitize(previousPrompt)}
+                </div>`;
+                conversationHtml += `<div class="p-3 my-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
+                    <strong>Mentori:</strong> Kalojmë tek mësimi tjetër...
+                </div>`;
+            } else {
+                conversationHtml += `<div class="p-3 my-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 shadow-sm">
+                    <strong>Mirë se vini!</strong> Ky kurs statik i HTML-së ka ${lessons.length} mësime. Përdorni butonin 'Dërgo' ose shtypni 'Enter' për të kaluar tek mësimet.
+                </div>`;
+            }
+
+            const lessonContent = `
+                ${conversationHtml}
+                <div class="lesson-box p-6 mt-4 border border-blue-300 rounded-xl shadow-lg bg-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <h1 class="text-2xl font-bold text-blue-800">${lesson.title}</h1>
+                        <a href="${lesson.videoLink}" target="_blank" class="text-white bg-red-600 hover:bg-red-700 py-2 px-4 rounded-full text-sm font-semibold shadow-md transition duration-200">
+                            &lt;Lidhu me Video&gt;
+                        </a>
+                    </div>
+                    ${lesson.content}
+                    <p class="mt-6 p-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg font-semibold">
+                        Sfidë: Për të kaluar tek mësimi tjetër (${(lessonIndex + 2 > lessons.length) ? 'Rinisja' : 'Mësimi ' + (lessonIndex + 2)}), shtypni sërish "Vazhdo" ose çfarëdo mesazhi.
+                    </p>
+                </div>
+            `;
+            
+            outputDiv.innerHTML = lessonContent;
+            topicDisplay.textContent = lesson.title;
+        }
+
+        function resetCourse() {
+            currentLessonIndex = 0;
+            displayLesson(currentLessonIndex, 'Kthimi në faqen kryesore (index.html)');
+            currentLessonIndex++;
+            window.scrollTo(0, 0);
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const message = inputField.value.trim() || 'Vazhdo'; // Vlera e paracaktuar 'Vazhdo'
+            
+            inputField.value = '';
+
+            if (currentLessonIndex >= lessons.length) {
+                currentLessonIndex = 0; 
+            }
+            
+            displayLesson(currentLessonIndex, message);
+
+            currentLessonIndex++;
+        }
+
+        window.onload = function() {
+            displayLesson(currentLessonIndex); 
+            currentLessonIndex++;
+
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            
+            document.getElementById('user-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    sendMessage();
+                }
+            });
+
+            document.getElementById('home-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                resetCourse();
+            });
+        };
+    </script>
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --secondary-green: #28a745;
+            --dark-text: #1f2937;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        .navbar {
+            @apply flex justify-between items-center px-6 py-4 bg-white shadow-md sticky top-0 z-50;
+        }
+        .logo-text { @apply text-xl font-bold; }
+        .logo-text span:first-child { @apply text-gray-800; }
+        .logo-text span:last-child { color: var(--primary-blue); }
+
+        
+        .lesson-box pre {
+            
+            @apply p-4 my-4 bg-gray-50 text-gray-900 rounded-lg overflow-x-auto text-sm shadow-inner border border-gray-200;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap; 
+        }
+        .lesson-box code {
+            
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: transparent !important;
+            color: #1f2937 !important; 
+            padding: 0;
+        }
+        
+        
+        .lesson-box h2 {
+            @apply text-xl font-bold mt-4 mb-2 text-blue-700 border-b border-blue-200 pb-1;
+        }
+        .lesson-box h3 {
+             @apply text-lg font-bold mt-3 mb-2 text-gray-800;
+        }
+        .lesson-box p {
+            @apply mb-3 text-gray-700 leading-relaxed;
+        }
+        .lesson-box ul {
+            @apply list-disc list-inside mb-4 pl-4 space-y-1 text-gray-700;
+        }
+        
+        
+        .loading-dot { display: none; }
+    </style>
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <div class="logo">
+            
+            <a href="index.html" id="home-link" class="logo-text">Kodo<span style="color: var(--primary-blue);">Shqip</span></a>
+        </div>
+        <ul class="nav-links flex space-x-6 list-none">
+            <li><a href="#" class="text-gray-600 font-medium hover:text-blue-600 transition duration-300">Kurse</a></li>
+            <li><a href="#" class="text-gray-600 font-medium hover:text-blue-600 transition duration-300">Rreth Nesh</a></li>
+            <li><a href="#" class="text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg text-sm font-semibold shadow-md transition duration-200">Kyçu</a></li>
+        </ul>
+    </nav>
+
+    
+    <header class="bg-white shadow-lg p-8 mb-6">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">Kursi Statik i Thelluar: HTML Thelbi</h1>
+            <p class="text-lg text-gray-600">Moduli Bazë (15 Mësime) është përfunduar! Tani mund të ndërtoni çdo faqe statike bazë.</p>
+            <div class="mt-4 p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg">
+                <p class="font-semibold">Tema Aktuale:</p>
+                <p id="current-topic-display" class="font-mono text-xl">Duke u ngarkuar...</p>
+            </div>
+        </div>
+    </header>
+
+    
+    <main class="max-w-4xl mx-auto px-4 pb-20">
+        
+        
+        <div id="lesson-output" class="bg-white p-6 rounded-xl shadow-2xl min-h-[400px] border border-gray-200 mb-6">
+            
+        </div>
+
+        
+        <div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-200 shadow-3xl">
+            <div class="max-w-4xl mx-auto flex gap-3">
+                <input 
+                    type="text" 
+                    id="user-input" 
+                    placeholder="Shtypni 'Vazhdo' ose Enter për të kaluar tek mësimi tjetër..."
+                    class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                >
+                <button 
+                    id="send-button"
+                    class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+                >
+                    Dërgo
+                </button>
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>

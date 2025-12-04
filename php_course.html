@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazat e PHP: Shikuesi i Mësimeve me JS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="progress.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; 
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-4xl bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+            <header class="p-6 border-b border-gray-700">
+                <h1 class="text-2xl font-bold text-indigo-400">Bazat e PHP: Kursi Themelor (50 Mësime)</h1>
+                <p class="text-sm text-gray-400 mt-1">Mëso gjuhën server-side (në anën e serverit) që fuqizon miliona faqe interneti.</p>
+                
+                <div class="mt-4">
+                    <p id="lesson-counter" class="text-right text-sm font-medium text-gray-300 mb-1">1 / 50</p>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 2%;"></div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <h2 id="lesson-title" class="text-3xl font-extrabold text-white mb-4">1. Hyrje në PHP dhe Ekzekutimi</h2>
+                <div id="lesson-content" class="text-lg text-gray-300 h-96 overflow-y-auto pr-2 space-y-4">
+                    </div>
+            </main>
+
+            <footer class="p-6 border-t border-gray-700 flex justify-between">
+                <button id="prev-btn" onclick="prevLesson()" disabled class="flex items-center px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500 disabled:opacity-50 transition duration-300">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Mësimi i Kaluar
+                </button>
+                <button id="next-btn" onclick="nextLesson()" class="flex items-center px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition duration-300">
+                    Mësimi Tjetër
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const lessonTitle = document.getElementById('lesson-title');
+        const lessonContent = document.getElementById('lesson-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const lessonCounter = document.getElementById('lesson-counter');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentLessonIndex = 0;
+
+        const lessons = [
+            { title: "1. Hyrje në PHP dhe Ekzekutimi", content: "<p>PHP (Hypertext Preprocessor) është një gjuhë programimi me skriptim në anën e serverit (server-side scripting language) e krijuar për zhvillimin e ueb-it.</p><p>Kodi PHP vendoset brenda etiketave <code><?php ... ?></code> dhe përpunohet në server.</p>" },
+            { title: "2. Kërkesat e Mjedisit (XAMPP/WAMP)", content: "<p>Për të ekzekutuar PHP lokalisht, ju duhet një server ueb (si Apache) dhe MySQL. Përdorni paketa si **XAMPP, WAMP** (Windows), ose **MAMP** (Mac) për konfigurim të lehtë.</p>" },
+            { title: "3. Sintaksa bazë dhe Etiketat", content: "<p>Çdo rresht kodi PHP përfundon me një pikëpresje (<code>;</code>). Etiketat bazë janë <code><?php</code> dhe <code>?></code>.</p><p>Shembull: <code><?php echo 'Përshëndetje Bota!'; ?></code>.</p>" },
+            { title: "4. Variablat dhe Rregullat", content: "<p>Të gjitha variablat në PHP duhet të fillojnë me shenjën e dollarit (<code>$</code>). Ato janë të ndjeshme ndaj shkronjave të mëdha/të vogla (case-sensitive).</p><p>Shembull: <code>$emri = 'Filan';</code>.</p>" },
+            { title: "5. Llojet e të Dhënave (Data Types)", content: "<p>PHP mbështet 8 lloje primitive: String, Integer, Float, Boolean, Array, Object, Resource dhe NULL.</p>" },
+            
+            { title: "6. Output-i me `echo` dhe `print`", content: "<p><code>echo</code> përdoret më shpesh për të shfaqur output. Ai nuk kthen asnjë vlerë. <code>print</code> kthen vlerën 1 dhe është pak më i ngadalshëm.</p>" },
+            { title: "7. String-at: Thonjëzat e Vetme kundër të Dyfishta", content: "<p>Thonjëzat e dyfishta (<code>\" \"</code>) interpretojnë variablat (p.sh., <code>\"Përshëndetje, $emri\"</code>). Thonjëzat e vetme (<code>' '</code>) e trajtojnë gjithçka si tekst të thjeshtë.</p>" },
+            { title: "8. Bashkimi i String-ave (Concatenation)", content: "<p>Përdorni operatorin e pikës (<code>.</code>) për të bashkuar dy string-a. Shembull: <code>$output = $str1 . ' ' . $str2;</code>.</p>" },
+            { title: "9. Funksionet e String-ave (strlen, strpos, etj.)", content: "<p>Funksionet e zakonshme përfshijnë: <code>strlen()</code> (gjatësia), <code>str_word_count()</code>, <code>strrev()</code> (përmbysja) dhe <code>str_replace()</code>.</p>" },
+            { title: "10. Konstanta (Constants)", content: "<p>Për vlera që nuk ndryshojnë, përdorni funksionin <code>define('EMRI', 'vlera');</code>. Emrat e konstantave zakonisht shkruhen me shkronja të mëdha.</p>" },
+
+            { title: "11. Operatorët Aritmetikë", content: "<p>Përdorni operatorët bazë: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> (modulo) dhe <code>**</code> (fuqia).</p>" },
+            { title: "12. Operatorët e Krahasimit", content: "<p>Përdorni <code>==</code> (barazi vlera), <code>===</code> (barazi vlera dhe tipi), <code>!=</code>, <code>!==</code>, <code>></code>, <code><</code>, etj.</p>" },
+            { title: "13. Strukturat e Kontrollit: `if`, `else`, `elseif`", content: "<p>Përdorni strukturat kushtore për të ekzekutuar blloqe kodi në varësi të një kushti. Shembull: <code>if ($kushti) { ... } else { ... }</code>.</p>" },
+            { title: "14. Operatorët Logjikë", content: "<p>Përdorni <code>&&</code> (AND), <code>||</code> (OR), dhe <code>!</code> (NOT) për të kombinuar kushtet.</p>" },
+            { title: "15. Strukturat e Kontrollit: `switch`", content: "<p>Struktura <code>switch</code> përdoret për të ekzekutuar blloqe kodi bazuar në vlera të ndryshme të të njëjtës shprehje. Mos harroni <code>break</code>.</p>" },
+
+            { title: "16. Cikli `while`", content: "<p>Cikli <code>while</code> ekzekuton një bllok kodi për sa kohë që kushti i specifikuar mbetet i vërtetë.</p>" },
+            { title: "17. Cikli `do...while`", content: "<p>Cikli <code>do...while</code> ekzekuton bllokun e kodit të paktën një herë, pastaj kontrollon kushtin.</p>" },
+            { title: "18. Cikli `for`", content: "<p>Cikli <code>for</code> përdoret për të përsëritur një bllok kodi një numër të caktuar herësh. (inicializimi; kushti; rritja/zvogëlimi).</p>" },
+            { title: "19. Cikli `foreach`", content: "<p>Cikli <code>foreach</code> përdoret posaçërisht për të kaluar nëpër elementet e një vargu (Array). Shembull: <code>foreach ($array as $value)</code>.</p>" },
+            { title: "20. `break` dhe `continue`", content: "<p>Përdorni <code>break</code> për të dalë menjëherë nga një cikël. Përdorni <code>continue</code> për të ndaluar përsëritjen aktuale dhe për të filluar përsëritjen tjetër.</p>" },
+
+            { title: "21. Arrays të Indeksuara (Indexed Arrays)", content: "<p>Vargjet e indeksuara ruajnë elementet me një indeks numerik që fillon nga 0. Shembull: <code>$fruta = ['Mollë', 'Dardhë', 'Banane'];</code>.</p>" },
+            { title: "22. Arrays Asociative (Associative Arrays)", content: "<p>Vargjet asociative përdorin çelësa me emra në vend të indekseve numerike. Shembull: <code>$mosha = ['Petrit' => 35, 'Lira' => 28];</code>.</p>" },
+            { title: "23. Arrays Shumëdimensionale (Multidimensional Arrays)", content: "<p>Këto janë vargje që përmbajnë vargje të tjera, të dobishme për të ruajtur të dhëna tabelare (p.sh., matrica).</p>" },
+            { title: "24. Funksionet e Vargjeve (count, sort, etj.)", content: "<p>Funksionet thelbësore: <code>count()</code> (madhësia), <code>sort()</code> (renditja numerike), <code>asort()</code> (renditja sipas vlerës asociative) dhe <code>ksort()</code> (renditja sipas çelësit asociativ).</p>" },
+            { title: "25. Përdorimi i <code>print_r()</code> dhe <code>var_dump()</code>", content: "<p>Këto funksione ndihmojnë në diagnostikimin (debugging) duke shfaqur strukturën e plotë të një vargu ose objekti.</p>" },
+
+
+            { title: "26. Krijimi i një Funksioni", content: "<p>Funksionet shpallen me fjalën kyçe <code>function</code>. Përdorimi i tyre ndihmon në ripërdorimin e kodit. Shembull: <code>function shuma($a, $b) { ... }</code>.</p>" },
+            { title: "27. Argumentet dhe Argumentet Parazgjedhje", content: "<p>Funksionet mund të pranojnë argumente. Argumentet parazgjedhje (default) përcaktohen drejtpërdrejt në deklarimin e funksionit: <code>function f(a, b=0)</code>.</p>" },
+            { title: "28. Kthimi i Vlerave (Return Values)", content: "<p>Përdorni fjalën kyçe <code>return</code> për të kthyer një vlerë nga funksioni. <code>return</code> ndalon ekzekutimin e funksionit.</p>" },
+            { title: "29. Fusha e Variablave (Scope)", content: "<p>Variablat e shpallura brenda funksionit janë lokale. Përdorni fjalën kyçe <code>global</code> për të hyrë në variablat e shpallura jashtë funksionit.</p>" },
+            { title: "30. Variablat Statike (Static Variables)", content: "<p>Një variabël statike ruhet edhe pas përfundimit të ekzekutimit të funksionit, duke ruajtur vlerën e saj në thirrjen tjetër.</p>" },
+
+            { title: "31. Hyrje në Formularet PHP", content: "<p>PHP përdoret për të mbledhur dhe përpunuar të dhënat e dërguara nga format HTML.</p><p>Kjo realizohet me metodat HTTP: **GET** dhe **POST**.</p>" },
+            { title: "32. Metoda HTTP: GET", content: "<p>Dërgon të dhënat e formës si parametra në URL. E përshtatshme për kërkime (search) ose të dhëna që mund të ndahen. **E pasigurt për fjalëkalimet**.</p>" },
+            { title: "33. Metoda HTTP: POST", content: "<p>Dërgon të dhënat e formës brenda trupit (body) të kërkesës HTTP. Më e sigurt për të dhënat ndjesore si fjalëkalimet.</p>" },
+            { title: "34. Përdorimi i Superglobales `$_GET`", content: "<p><code>$_GET</code> është një varg asociativ që përmban të dhënat e dërguara nga forma me metodën GET. P.sh., <code>$_GET['emri']</code>.</p>" },
+            { title: "35. Përdorimi i Superglobales `$_POST`", content: "<p><code>$_POST</code> është vargu asociativ që përmban të dhënat e dërguara nga forma me metodën POST. Përdoret kryesisht për dërgimin e formularëve.</p>" },
+
+            { title: "36. Superglobalja `$_REQUEST`", content: "<p><code>$_REQUEST</code> përmban përmbajtjen e <code>$_GET</code>, <code>$_POST</code>, dhe <code>$_COOKIE</code>. Nuk preferohet për shkak të sigurisë, përdorni POST ose GET veçmas.</p>" },
+            { title: "37. Fusha Superglobale Kryesore", content: "<p>Fusha të tjera: <code>$_SERVER</code> (informacion mbi serverin dhe mjedisin), <code>$_FILES</code> (skedarët e ngarkuar), dhe <code>$_SESSION</code>.</p>" },
+            { title: "38. Cookies", content: "<p>Cookies janë skedarë të vegjël të ruajtur në anën e klientit (browser). Përdoren për të mbajtur mend informacione për përdoruesin. Përdorni <code>setcookie()</code> dhe <code>$_COOKIE</code>.</p>" },
+            { title: "39. Sesionet (Sessions) - Pjesa 1", content: "<p>Sesionet përdoren për të ruajtur informacionin e përdoruesit në anën e serverit për t'u përdorur në shumë faqe. Filloni me <code>session_start()</code>.</p>" },
+            { title: "40. Sesionet (Sessions) - Pjesa 2", content: "<p>Të dhënat e sesionit ruhen në vargun superglobal <code>$_SESSION</code>. Shembull: <code>$_SESSION['user'] = 'Alban';</code>.</p>" },
+
+            { title: "41. Hyrje në MySQLi", content: "<p>MySQLi (MySQL Improved) është shtesa (extension) më e rekomanduar për bashkëveprim me bazat e të dhënave MySQL. Krijoni lidhjen me <code>new mysqli()</code>.</p>" },
+            { title: "42. Lidhja me DB", content: "<p>Krijoni lidhjen me 4 parametra: Serveri, Përdoruesi, Fjalëkalimi, dhe Emri i Bazës së të Dhënave. Kontrolloni gabimet e lidhjes.</p>" },
+            { title: "43. Ekzekutimi i Queries: `query()`", content: "<p>Përdorni funksionin <code>$conn->query($sql)</code> për të ekzekutuar komanda SQL si SELECT, INSERT, UPDATE, dhe DELETE.</p>" },
+            { title: "44. Fetching (Marrja) e të Dhënave", content: "<p>Për kërkesat SELECT, përdorni funksionin <code>fetch_assoc()</code> në rezultatin e kërkesës për të marrë rreshtat si vargje asociative (rresht pas rreshti).</p>" },
+            { title: "45. Deklaratat e Përgatitura (Prepared Statements)", content: "<p>Mënyra më e sigurt për të komunikuar me DB. Ato mbrojnë kundër sulmeve **SQL Injection** duke ndarë SQL-in nga të dhënat.</p>" },
+
+            { title: "46. Krijimi i një Klase (Class)", content: "<p>PHP mbështet OOP. Shpallni klasat me fjalën kyçe <code>class</code>. Klasa është plani për krijimin e objekteve.</p>" },
+            { title: "47. Krijimi i Objekteve (Objects)", content: "<p>Krijoni një instancë të klasës me operatorin <code>new</code>. Shembull: <code>$automjeti = new Makina();</code>.</p>" },
+            { title: "48. Konstruktorët dhe Destruktorët", content: "<p>Metoda <code>__construct()</code> thirret automatikisht kur krijohet objekti. <code>__destruct()</code> thirret kur nuk ka më referenca ndaj objektit.</p>" },
+            { title: "49. Qasja/Pamja (Visibility): Public, Protected, Private", content: "<p>Këto përcaktojnë se ku mund të aksesohen vetitë/metodat: nga kudo (**public**), vetëm brenda klasës dhe nënkllasave (**protected**), apo vetëm brenda klasës (**private**).</p>" },
+            { title: "50. Trashëgimia (Inheritance)", content: "<p>Përdorni fjalën kyçe <code>extends</code>. Një klasë mund të trashëgojë vetitë dhe metodat e një klase prindërore, duke ndihmuar në ripërdorimin e kodit.</p>" },
+        ];
+
+
+        
+        function showLesson(index) {
+            if (index < 0 || index >= lessons.length) {
+                return;
+            }
+
+            currentLessonIndex = index;
+            const lesson = lessons[index];
+
+            lessonTitle.textContent = lesson.title.substring(lesson.title.indexOf('.') + 1).trim(); 
+            let lessonHTML = lesson.content;
+            
+            if (index === lessons.length - 1) {
+                lessonHTML += `
+                    <div class="mt-8 p-4 bg-green-900 border border-green-500 rounded-lg">
+                        <p class="text-green-200 mb-4 font-semibold">🎉 Urime! Ju keni arritur në fund të kursit!</p>
+                        <button id="complete-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+                            ✅ Shënoni Kursin si të Përfunduar
+                        </button>
+                    </div>
+                `;
+            }
+            
+            lessonContent.innerHTML = lessonHTML;
+
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === lessons.length - 1;
+
+            lessonCounter.textContent = `${index + 1} / ${lessons.length}`;
+            
+            const progress = ((index + 1) / lessons.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            if (index === lessons.length - 1) {
+                setTimeout(() => {
+                    const completeBtn = document.getElementById('complete-btn');
+                    if (completeBtn) {
+                        completeBtn.addEventListener('click', async () => {
+                            completeBtn.disabled = true;
+                            completeBtn.textContent = '⏳ Po ruhet...';
+                            
+                            if (typeof courseProgress !== 'undefined' && courseProgress) {
+                                try {
+                                    await courseProgress.saveCourseProgress('PHP', lessons.length, lessons.length, lessons.length * 10);
+                                    completeBtn.textContent = '✅ Kursi u ruajt me sukses!';
+                                    completeBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                                    completeBtn.classList.add('bg-green-700');
+                                    console.log('✅ PHP course marked as completed!');
+                                } catch (err) {
+                                    console.error('Error saving progress:', err);
+                                    completeBtn.textContent = '❌ Gabim në ruajtje';
+                                    completeBtn.disabled = false;
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            }
+
+            lessonContent.scrollTop = 0;
+        }
+
+        
+        function nextLesson() {
+            if (currentLessonIndex < lessons.length - 1) {
+                showLesson(currentLessonIndex + 1);
+            }
+        }
+
+        
+        function prevLesson() {
+            if (currentLessonIndex > 0) {
+                showLesson(currentLessonIndex - 1);
+            }
+        }
+
+        window.onload = () => {
+            window.nextLesson = nextLesson;
+            window.prevLesson = prevLesson;
+
+            showLesson(currentLessonIndex);
+        }
+    </script>
+</body>
+</html>

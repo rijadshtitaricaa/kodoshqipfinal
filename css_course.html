@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kursi i Zgjeruar | CSS Thelbi</title>
+    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.11/purify.min.js'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="progress.js"></script>>
+    
+    <script>
+        let currentLessonIndex = 0;
+        
+        const lessons = [
+            { 
+                title: "MËSIMI 1: Hyrje, Sintaksa & Selektorët Bazë", 
+                content: `
+                    <p><strong>CSS</strong> (Cascading Style Sheets) i jep pamje elementeve HTML. Është 'kostumi' i faqes tuaj.</p>
+                    <p>Sintaksa bazë: një **selektor** (kush), një **pronë** (çfarë) dhe një **vlerë** (si).</p>
+                    <pre><code>h1 { 
+  color: blue; 
+  font-size: 24px;
+}</code></pre>
+                    <p>Selektorët kryesorë: <code>h1</code> (etiketë), <code>.klasa</code> (klasa), <code>#id</code> (ID).</p>
+                `
+            },
+            { 
+                title: "MËSIMI 2: The Box Model (Margin, Border, Padding)", 
+                content: `
+                    <p>Çdo element HTML është një **kuti** me 4 pjesë thelbësore (Box Model):</p>
+                    <ol class="list-decimal list-inside pl-4 mt-2 space-y-2">
+                        <li><strong>Content:</strong> Përmbajtja (teksti, imazhi).</li>
+                        <li><strong>Padding:</strong> Hapësira mes përmbajtjes dhe kufirit (border).</li>
+                        <li><strong>Border:</strong> Linja rreth elementit.</li>
+                        <li><strong>Margin:</strong> Hapësira jashtë kufirit, që e ndan nga elementet e tjera.</li>
+                    </ol>
+                    <pre><code>div {
+  padding: 10px; 
+  border: 1px solid black; 
+  margin: 20px;
+  box-sizing: border-box; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 3: Ngjyrat dhe Tipografia", 
+                content: `
+                    <p>Ngjyrat mund të caktohen me emra (<code>blue</code>), kodet **HEX** (<code>#007bff</code>), **RGB** (<code>rgb(0, 123, 255)</code>) ose **HSL** (<code>hsl(200, 100%, 50%)</code>).</p>
+                    <p>Prona kryesore e tipografisë:</p>
+                    <ul class="list-disc list-inside pl-4 mt-2">
+                        <li><code>font-family</code>, <code>font-size</code>, <code>font-weight</code></li>
+                        <li><code>text-align</code>, <code>text-transform</code></li>
+                    </ul>
+                    <pre><code>body {
+  background-color: #f0f0f0;
+  color: #333;
+}
+p {
+  font-size: 16px;
+  line-height: 1.5;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 4: Selektorët e Avancuar & Pseudo-Klasat", 
+                content: `
+                    <p>Zgjerimi i aftësive të selektorëve:</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Kombinatorët:** <code>&gt;</code> (fëmijë i drejtpërdrejtë), <code>+</code> (vëlla/motër i menjëhershëm), <code>~</code> (vëlla/motër i përgjithshëm).</li>
+                        <li>**Pseudo-Klasat:** Përdoren për të zgjedhur elemente në bazë të gjendjes së tyre (p.sh., <code>:hover</code>, <code>:focus</code>, <code>:nth-child()</code>).</li>
+                    </ul>
+                    <pre><code>a:hover { 
+  color: red; 
+}
+p:first-child { 
+  margin-top: 0;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 5: Rregullat e Specificitetit dhe Trashëgimia", 
+                content: `
+                    <p><strong>Specificiteti:</strong> I tregon shfletuesit cilin stil duhet të zbatojë nëse ka konflikte. ID-të (&gt; Klasat &gt; Etiketat).</p>
+                    <p><strong>Trashëgimia (Inheritance):</strong> Disa prona (si <code>color</code> dhe <code>font-family</code>) trashëgohen nga prindi tek fëmijët. Të tjerat (si <code>margin</code>, <code>border</code>) jo.</p>
+                    <pre><code>
+#header-title { 
+  color: green;
+}
+.main-title { 
+  color: blue;
+}
+h1 { 
+  color: red;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 6: Njësitë dhe Vlerat (px, em, rem, vh, vw)", 
+                content: `
+                    <p>Zgjedhja e njësive të matjes është thelbësore për dizajnin reagues (responsive).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Absolute:** <code>px</code> (Pixel) - Madhësi fikse.</li>
+                        <li>**Relative:** <code>em</code> (relativ me madhësinë e shkronjave të elementit prind), <code>rem</code> (relativ me madhësinë e shkronjave të elementit rrënjësor - <code>html</code>).</li>
+                        <li>**Viewport:** <code>vh</code> (Viewport Height) dhe <code>vw</code> (Viewport Width) - Relativ me ekranin e përdoruesit.</li>
+                    </ul>
+                    <pre><code>.titulli {
+  font-size: 2rem; 
+  height: 100vh; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 7: The Display Property (Block, Inline, Inline-Block)", 
+                content: `
+                    <p>Pronësia <code>display</code> përcakton se si shfaqet një element.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Block:** Zë gjithë gjerësinë (<code>div</code>, <code>h1</code>, <code>p</code>). Pranon <code>width</code> dhe <code>height</code>.</li>
+                        <li>**Inline:** Zë vetëm hapësirën e nevojshme (<code>span</code>, <code>a</code>). Nuk pranon <code>width</code> dhe <code>height</code>.</li>
+                        <li>**Inline-Block:** Kombinon të dyja: rreshtohet si inline, por pranon <code>width</code>, <code>height</code> dhe <code>margin</code> vertikale.</li>
+                    </ul>
+                    <pre><code>.ikonat {
+  display: inline-block; 
+  width: 50px;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 8: Pozicionimi (Static, Relative, Absolute)", 
+                content: `
+                    <p>Pronësia <code>position</code> kontrollon vendndodhjen e elementit.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Static:** (Parazgjedhja) Ndiqet rrjedha normale e dokumentit.</li>
+                        <li>**Relative:** Pozicionohet në lidhje me pozicionin e tij normal. Hapësira origjinale ruhet.</li>
+                        <li>**Absolute:** Pozicionohet në lidhje me prindin e parë *të pozicionuar* (jo static). Hiqet nga rrjedha normale.</li>
+                        <li>**Fixed:** Pozicionohet në lidhje me dritaren e shfletuesit (viewport).</li>
+                    </ul>
+                    <pre><code>.prindi { position: relative; } 
+.femija {
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 9: Z-Index & Konteksti i Stacking-ut", 
+                content: `
+                    <p>Kur elementet mbivendosen (p.sh., me <code>position: absolute</code>), <code>z-index</code> përcakton se cili është sipër dhe cili poshtë.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>z-index</code> funksionon vetëm në elemente *të pozicionuara* (Relative, Absolute, Fixed, Sticky).</li>
+                        <li>Vlerat më të larta shfaqen sipër vlerave më të ulëta.</li>
+                        <li>Konteksti i Stacking-ut: Krijohet nga pronësia e pozicionit ose pronë të tjera (p.sh. <code>opacity</code> &lt; 1).</li>
+                    </ul>
+                    <pre><code>.pop-up {
+  position: fixed;
+  z-index: 1000; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 10: Flexbox Deep Dive (Justify, Align, Gap)", 
+                content: `
+                    <p>Përdorimi i Flexbox për rregullimin e hapësirave dhe qendërzimin e përmbajtjes.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>justify-content</code>: Rregullon hapësirën përgjatë boshtit kryesor (horizontalisht në parazgjedhje). P.sh. <code>space-between</code>, <code>center</code>.</li>
+                        <li><code>align-items</code>: Rregullon hapësirën përgjatë boshtit kryesor dytësor (vertikalisht në parazgjedhje).</li>
+                        <li><code>flex-grow</code> / <code>flex-shrink</code>: Përcakton se si artikujt zgjerohen ose tkurren.</li>
+                    </ul>
+                    <pre><code>.navbar {
+  display: flex;
+  justify-content: space-between; 
+  gap: 20px; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 11: CSS Grid - Strukturat 2D (Rows, Columns, Areas)", 
+                content: `
+                    <p>CSS Grid është një sistem 2-dimensional (rreshta dhe kolona) për ndërtimin e layouts komplekse.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Aktivizimi: <code>display: grid;</code></li>
+                        <li>Përcaktimi i kolonave: <code>grid-template-columns: 1fr 1fr 1fr;</code> (3 kolona me madhësi të barabartë).</li>
+                        <li>Njësia <code>fr</code> (fractional unit) përdoret për të ndarë hapësirën e mbetur.</li>
+                    </ul>
+                    <pre><code>.kontejneri {
+  display: grid;
+  grid-template-columns: 200px 1fr; 
+  gap: 10px;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 12: Funksionet CSS (Calc, Var)", 
+                content: `
+                    <p>Funksionet ju lejojnë të bëni llogaritje dhe të përdorni variabla në CSS.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><strong><code>calc()</code>:</strong> Për llogaritje matematike. Mund të kombinoni njësi të ndryshme (p.sh., <code>%</code> dhe <code>px</code>).</li>
+                        <li><strong><code>var()</code>:</strong> Përdorimi i variablave (custom properties) të definuara me <code>--emri</code>.</li>
+                    </ul>
+                    <pre><code>:root {
+  --ngjyra-kryesore: #007bff;
+}
+
+.kutia {
+  width: calc(100% - 40px); 
+  background-color: var(--ngjyra-kryesore); 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 13: Tranzicionet dhe Animacionet (Transition, Keyframes)", 
+                content: `
+                    <p>Shtoni lëvizje të butë (smooth) në elementet tuaja.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Tranzicionet (Transitions):** Ndryshimi gradual nga një gjendje në tjetrën (p.sh. në <code>:hover</code>).</li>
+                        <li>**Animacionet (@keyframes):** Për lëvizje më komplekse dhe të përsëritura.</li>
+                    </ul>
+                    <pre><code>.butoni {
+  background-color: blue;
+  transition: background-color 0.3s ease-in-out; 
+}
+.butoni:hover {
+  background-color: red;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 14: Media Queries dhe Responsive Design i Avancuar", 
+                content: `
+                    <p>Zgjerimi i <code>@media</code> për pajisje specifike dhe printim.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Min/Max-width:** Përcaktimi i intervaleve (p.sh., nga 600px deri në 1024px).</li>
+                        <li>**Media Type:** Përdorimi i <code>screen</code>, <code>print</code>, <code>speech</code>.</li>
+                        <li>**Mobile-First:** Filloni me stilin e pajisjeve celulare (<code>min-width</code>) dhe më pas rriteni për desktop.</li>
+                    </ul>
+                    <pre><code>@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .kolona-anësore { 
+    display: none; 
+  }
+}</code></pre>
+                `
+            },
+
+            { 
+                title: "MËSIMI 15: Transformimet 2D (Translate, Rotate, Scale)", 
+                content: `
+                    <p>Pronësia <code>transform</code> ju lejon të modifikoni formën, pozicionin dhe orientimin e elementeve pa ndikuar në rrjedhën e dokumentit.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>translate(x, y)</code>: Zhvendos elementin.</li>
+                        <li><code>rotate(deg)</code>: Rrotullon elementin.</li>
+                        <li><code>scale(x, y)</code>: Zmadhon ose zvogëlon elementin.</li>
+                    </ul>
+                    <pre><code>.hover-efekt {
+  transition: transform 0.5s;
+}
+.hover-efekt:hover {
+  transform: scale(1.1) rotate(5deg);
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 16: Transformimet 3D (Perspective, RotateX/Y/Z)", 
+                content: `
+                    <p>Shtoni dimensionin e tretë duke përdorur <code>perspective</code> tek prindi dhe <code>rotateX/Y/Z</code> tek fëmija.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>perspective</code>: Krijon thellësinë (distancën nga shikuesi).</li>
+                        <li><code>transform-style: preserve-3d;</code>: Siguron që fëmijët të vendosen në hapësirën 3D të prindit.</li>
+                    </ul>
+                    <pre><code>.kontejneri-3d {
+  perspective: 1000px;
+}
+.karta {
+  transform: rotateY(180deg); 
+  transition: transform 1s;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 17: Pseudo-Elementet (::before, ::after)", 
+                content: `
+                    <p>Pseudo-elementet lejojnë të stilizosh pjesë të elementit që nuk janë pjesë e DOM. Ato përdoren shpesh për ikona, dekorime dhe efekte vizuale.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>::before</code>: Shton përmbajtje *para* përmbajtjes aktuale të elementit.</li>
+                        <li><code>::after</code>: Shton përmbajtje *pas* përmbajtjes aktuale të elementit.</li>
+                        <li>Ato kërkojnë pronën <code>content: ""</code> për të funksionuar.</li>
+                    </ul>
+                    <pre><code>.titulli::after {
+  content: ' 🔥';
+  color: orange;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 18: Custom Properties (Variablat CSS) dhe Scope", 
+                content: `
+                    <p>Variablat CSS, të definuara me <code>--emri</code>, përdoren për të ruajtur vlera që mund të ripërdoren në të gjithë stylesheet-in.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Definohen shpesh në <code>:root</code> për scope global.</li>
+                        <li>Mund të definohen brenda selektorëve për scope lokal.</li>
+                        <li>Lexohen me funksionin <code>var(--emri)</code>.</li>
+                    </ul>
+                    <pre><code>:root {
+  --ngjyra-primare: #00bcd4;
+}
+.butoni {
+  background-color: var(--ngjyra-primare);
+  color: white;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 19: Layout-i Sticky (Position: Sticky)", 
+                content: `
+                    <p><code>position: sticky;</code> është një hibrid i <code>relative</code> dhe <code>fixed</code>. Elementi qëndron në rrjedhën normale derisa të arrijë një pozicion të caktuar në viewport, ku bëhet 'i ngjitur'.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Kërkon një vlerë për <code>top</code>, <code>bottom</code>, <code>left</code>, ose <code>right</code> për të funksionuar.</li>
+                        <li>Mund të përdoret për header-a që qëndrojnë në krye gjatë scroll-it.</li>
+                    </ul>
+                    <pre><code>.header-sticky {
+  position: sticky;
+  top: 0; 
+  z-index: 99;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 20: Përmbajtja e Gjeneruar (Content Property)", 
+                content: `
+                    <p>Pronësia <code>content</code> përdoret kryesisht me <code>::before</code> dhe <code>::after</code>. Mund të përmbajë tekst, URL (për ikona), ose funksione (p.sh., <code>attr()</code>).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Përdorimi i <code>attr()</code> për të shfaqur vlerën e një atributi HTML.</li>
+                        <li>Mund të shfaqë simbole me kode Unicode (p.sh., <code>content: '\\2022'</code> për një pikë liste).</li>
+                    </ul>
+                    <pre><code>a[href]::after {
+  content: " [" attr(href) "]"; 
+  font-size: 0.8em;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 21: Overflows dhe Scrolling (Auto, Hidden, Scroll)", 
+                content: `
+                    <p><code>overflow</code> kontrollon se çfarë ndodh me përmbajtjen që tejkalon kufijtë e një elementi.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>visible</code>: (Parazgjedhja) Përmbajtja del jashtë.</li>
+                        <li><code>hidden</code>: Përmbajtja që tejkalon fshihet.</li>
+                        <li><code>scroll</code>: Shton scrollbars horizontalisht dhe vertikalisht, edhe nëse nuk janë të nevojshëm.</li>
+                        <li><code>auto</code>: Shton scrollbars vetëm kur është e nevojshme.</li>
+                    </ul>
+                    <pre><code>.scroll-area {
+  width: 300px;
+  height: 200px;
+  overflow-y: auto; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 22: Maska dhe Clip-Path", 
+                content: `
+                    <p>Këto prona ju lejojnë të krijoni forma komplekse dhe efekte 'maskimi' të elementeve.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>clip-path</code>: Përcakton një zonë për t'u shfaqur (p.sh., një rreth, poligon, etj.). Gjithçka jashtë kësaj zone fshihet.</li>
+                        <li><code>mask</code>: Përdor imazhe ose SVG si maska për transparencë komplekse.</li>
+                    </ul>
+                    <pre><code>.rrethore {
+  clip-path: circle(50% at 50% 50%); 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 23: Performanca (Will-Change & Hardware Acceleration)", 
+                content: `
+                    <p>Për animacione të buta, mund të sinjalizoni shfletuesin se cilat prona do të ndryshojnë së shpejti, duke e lejuar atë të optimizojë renderimin (p.sh., përdorimi i GPU).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>will-change</code>: Përdoret me kujdes, vetëm pak para ndryshimit të animacionit.</li>
+                        <li>Përdorni <code>transform: translateZ(0);</code> ose <code>translate3d(0, 0, 0)</code> për të detyruar akselerimin e hardware-it.</li>
+                    </ul>
+                    <pre><code>.kutia:hover {
+  will-change: transform, opacity; 
+  transition: transform 0.5s;
+  transform: scale(1.1);
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 24: Optimizimi i Font-ave (Font-Display, Font Loading)", 
+                content: `
+                    <p>Kontrolloni se si shfaqen font-at ndërsa ngarkohen, për të përmirësuar performancën e faqeve.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>font-display: swap;</code>: Përdor një font rezervë derisa font-i kryesor të jetë i gatshëm.</li>
+                        <li><code>font-display: block;</code>: Bllokon shfaqjen derisa font-i të ngarkohet plotësisht.</li>
+                    </ul>
+                    <pre><code>@font-face {
+  font-family: 'ShkronjaIme';
+  src: url('shkronja.woff2') format('woff2');
+  font-display: swap; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 25: Filters dhe Blends (Filter, Mix-Blend-Mode)", 
+                content: `
+                    <p>Krijoni efekte vizuale të ngjashme me Photoshop direkt në CSS.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>filter</code>: Zbaton efekte si <code>blur()</code>, <code>sepia()</code>, <code>grayscale()</code>, <code>drop-shadow()</code>.</li>
+                        <li><code>mix-blend-mode</code>: Përcakton se si përmbajtja e një elementi duhet të përzihet me përmbajtjen e pasme (p.sh., <code>multiply</code>, <code>screen</code>).</li>
+                    </ul>
+                    <pre><code>img.fotografi-zeze {
+  filter: grayscale(100%);
+}
+.teksti-mbivendosës {
+  mix-blend-mode: overlay; 
+  color: white;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 26: Selectors Level 4 (:is(), :where(), :not())", 
+                content: `
+                    <p>Selektorët modernë për shkrim më të pastër dhe më të lehtë për t'u mirëmbajtur.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>:is()</code>: Përdoret për të grupuar selektorët. Zvogëlon përsëritjen.</li>
+                        <li><code>:where()</code>: I ngjashëm me <code>:is()</code>, por me specificitet **ZERO** (shumë i dobishëm për libraritë/frameworks).</li>
+                        <li><code>:not()</code>: Zgjedh të gjithë elementet që NUK përputhen me argumentin.</li>
+                    </ul>
+                    <pre><code>
+header :is(h1, h2, h3) {
+  margin-top: 0;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 27: Stilizimi i Formulave të Avancuara", 
+                content: `
+                    <p>Si të stilizoni input-et duke përdorur pseudo-klasa të gjendjes dhe elemente. P.sh., për validim.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>:valid</code>, <code>:invalid</code>: Përdoren bazuar në atributet HTML (p.sh., <code>required</code>, <code>pattern</code>).</li>
+                        <li><code>:checked</code>: Për radio buttons dhe checkboxes.</li>
+                        <li><code>:placeholder-shown</code>: Për input-et kur placeholder-i shfaqet.</li>
+                    </ul>
+                    <pre><code>input:invalid {
+  border-color: red;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 28: Layout i Qendërzimit Vertikal dhe Horizontal", 
+                content: `
+                    <p>Mënyra më e shpejtë dhe më moderne për të qendërzuar një element plotësisht brenda prindit të tij, si horizontalisht ashtu edhe vertikalisht.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Mënyra e Flexbox-it: <code>display: flex; justify-content: center; align-items: center;</code></li>
+                        <li>Mënyra e Grid-it: <code>display: grid; place-items: center;</code> (më e shkurtër!).</li>
+                    </ul>
+                    <pre><code>.kontejneri {
+  display: grid;
+  place-items: center; 
+  height: 500px;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 29: Accessibility (A11y) dhe Focus Management", 
+                content: `
+                    <p>CSS luan një rol kyç në A11y, veçanërisht në lidhje me fokusin (navigimi me tastierë).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>:focus</code>: Stilizimi i elementeve kur marrin fokus (kritike për përdoruesit e tastierës).</li>
+                        <li><code>:focus-visible</code>: Një pseudo-klasë e re që shfaq fokusin vetëm kur është i nevojshëm (p.sh., me tastierë, por jo me klikim të mausit).</li>
+                        <li>Mos e fshihni kurrë <code>outline</code> me <code>outline: none;</code>.</li>
+                    </ul>
+                    <pre><code>button:focus-visible {
+  outline: 3px solid blue;
+  outline-offset: 2px;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 30: Vizualizimi i të Dhënave me CSS", 
+                content: `
+                    <p>Krijimi i shufrave (bar charts) ose elementeve të progresit vetëm me CSS duke përdorur variablat dhe flexbox/grid.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Përdorni variabla CSS për të kontrolluar gjerësinë (<code>width: var(--progress);</code>).</li>
+                        <li>Përdorni <code>::after</code> për të shfaqur etiketën e përqindjes.</li>
+                    </ul>
+                    <pre><code>.shufra {
+  --progresi: 75%;
+  width: var(--progresi);
+  background-color: green;
+  
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 31: CSS Preprocessors (SASS/SCSS Hyrje)", 
+                content: `
+                    <p>SASS/SCSS janë gjuhë që zgjerojnë CSS duke shtuar fuqi programore. Këto gjuhë kompilohen në CSS të rregullt.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Përfitimet:** Variablat, nesting, mixins, funksionet.</li>
+                        <li>**Sintaksa:** SCSS (e ngjashme me CSS) dhe SASS (bazuar në indentacion, më e vjetër).</li>
+                    </ul>
+                    <pre><code>
+$primary-color: #333;
+
+.header {
+  color: $primary-color;
+  .logo { 
+    font-size: 2em;
+  }
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 32: SASS - Variablat, Nesting dhe Partials", 
+                content: `
+                    <p>Si të organizoni kodin tuaj SCSS duke përdorur veçoritë themelore.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Variablat:** Përdorin simbolin <code>$</code> (p.sh., <code>$font-stack: Helvetica, sans-serif;</code>).</li>
+                        <li>**Nesting:** Folezimi i selektorëve për të pasqyruar strukturën HTML (shih shembullin më poshtë).</li>
+                        <li>**Partials:** Fiqierë të vegjël CSS me <code>_emri.scss</code> (përdoren me <code>@import</code> ose <code>@use</code>).</li>
+                    </ul>
+                    <pre><code>
+.butoni {
+  color: white;
+  background: blue;
+  &:hover { 
+    background: darken(blue, 10%); 
+  }
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 33: SASS - Mixins dhe Functions", 
+                content: `
+                    <p>Përsëritja e shpejtë e blloqeve të kodit dhe llogaritjet dinamike.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Mixins (@mixin):** Grupe pronash CSS që mund të ripërdoren (përdoren me <code>@include</code>).</li>
+                        <li>**Functions (@function):** Për llogaritje që kthejnë një vlerë (si <code>darken()</code> ose <code>calc-em()</code>).</li>
+                    </ul>
+                    <pre><code>@mixin shfaq-flex($dir: row) {
+  display: flex;
+  flex-direction: $dir;
+}
+.kontejner {
+  @include shfaq-flex(column); 
+  justify-content: center;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 34: BEM Methodology (Block, Element, Modifier)", 
+                content: `
+                    <p>BEM është një metodologji emërtimi klasash që e bën CSS-në tuaj më të kuptueshme, fleksibile dhe të mirëmbajtshme.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**B (Block):** Njësi e pavarur (p.sh., <code>.karta</code>).</li>
+                        <li>**E (Element):** Pjesë e Bllokut (p.sh., <code>.karta__titulli</code>).</li>
+                        <li>**M (Modifier):** Variant i Bllokut ose Elementit (p.sh., <code>.karta--e-madhe</code>).</li>
+                    </ul>
+                    <pre><code>.menu { ... }            
+.menu__link { ... }      
+.menu__link--aktiv { ... } </code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 35: Utility-First CSS (Filozofia Tailwind)", 
+                content: `
+                    <p>Në vend që të shkruani stilime të reja për çdo element, ju përdorni klasa ekzistuese të shkurtra (utilities).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Qëllimi:** Dizajn i shpejtë dhe i lehtë për t'u përshtatur pa lënë HTML-në.</li>
+                        <li>**Shembull:** Në vend të <code>.butoni-blu-i-madh</code>, përdorni <code>class="bg-blue-500 p-4 rounded-lg"</code>.</li>
+                    </ul>
+                    <pre><code>&lt;button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"&gt;
+  Dërgo
+&lt;/button&gt;</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 36: CSS in JS dhe Modulet CSS", 
+                content: `
+                    <p>Metoda për të shkruar CSS brenda JavaScript/komponentëve, shpesh në React ose Vue.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Përfitimet:** Stilizimi i izoluar, pa konflikte klasash (CSS Scoping).</li>
+                        <li>**CSS Modules:** Fiqierë CSS që eksportojnë klasa të unike për çdo komponent (p.sh. <code>import styles from './Butoni.module.css';</code>).</li>
+                    </ul>
+                    <pre><code>
+const butoniStil = {
+  backgroundColor: 'blue',
+  padding: '10px 20px',
+};
+// &lt;button style={butoniStil}&gt;Klikoni&lt;/button&gt;</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 37: Design Tokens", 
+                content: `
+                    <p>Variabla të stilimit (ngjyra, hapësira, madhësia e font-it) që ruhen në një format të centralizuar (p.sh., JSON).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Qëllimi:** Të sigurojë konsistencë në të gjitha platformat (Web, Android, iOS).</li>
+                        <li>Në CSS, ato shpesh përkthehen në Variabla CSS (Custom Properties).</li>
+                    </ul>
+                    <pre><code>
+:root {
+  --ngjyra-e-faqës: var(--color-blue-500);
+  --hapesira-medium: 16px; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 38: Stilizimi i Img me Object-Fit dhe Object-Position", 
+                content: `
+                    <p>Kontrolli i mënyrës se si një imazh ose video përshtatet brenda kutisë së vet (si <code>background-size</code>, por për <code>&lt;img&gt;</code>).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>object-fit: cover;</code>: Mbush kutinë, duke prerë atë që është e nevojshme (ruan raportin e aspektit).</li>
+                        <li><code>object-fit: contain;</code>: Përfshihet brenda kutisë (ruan raportin e aspektit).</li>
+                        <li><code>object-position</code>: Përcakton se cila pjesë e imazhit është e dukshme.</li>
+                    </ul>
+                    <pre><code>img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  object-position: center top;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 39: Gradientet e Avancuara (Conic, Repeating)", 
+                content: `
+                    <p>Zgjerimi i <code>linear-gradient</code> dhe <code>radial-gradient</code> me lloje të reja.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>conic-gradient()</code>: Krijon një gradient rrotullues si një byrek (pie chart).</li>
+                        <li><code>repeating-linear-gradient()</code>: Përsërit një gradient linear në një model me shirita.</li>
+                    </ul>
+                    <pre><code>.rreth {
+  background: conic-gradient(red, yellow, green, blue, red);
+  border-radius: 50%;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 40: Dark Mode me `prefers-color-scheme`", 
+                content: `
+                    <p>Si të ndërtoni një temë të errët që aktivizohet automatikisht bazuar në preferencën e sistemit të përdoruesit.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Përdorimi i Media Query <code>@media (prefers-color-scheme: dark)</code>.</li>
+                        <li>Variablat CSS janë thelbësore për ndërrim të lehtë.</li>
+                    </ul>
+                    <pre><code>:root {
+  --bg: white;
+  --text: black;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --text: #ffffff;
+  }
+}
+body { background: var(--bg); color: var(--text); }</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 41: Preferenca të Lëvizjes me `prefers-reduced-motion`", 
+                content: `
+                    <p>Përdoruesit me ndjeshmëri ndaj lëvizjeve të shpejta mund të vendosin një preferencë në sistemet e tyre. Ju duhet ta respektoni këtë.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Përdorimi i Media Query <code>@media (prefers-reduced-motion: reduce)</code>.</li>
+                        <li>Në këtë rast, duhet të hiqni animacionet e panevojshme ose të përdorni tranzicione më të shkurtra.</li>
+                    </ul>
+                    <pre><code>@media (prefers-reduced-motion: reduce) {
+  .animuar {
+    transition-duration: 0.001s; 
+    animation: none;
+  }
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 42: Logical Properties (P.sh. Margin-Inline-Start)", 
+                content: `
+                    <p>Pronat logjike zëvendësojnë pronat fizike (top, left, right) duke u bazuar në drejtimin e shkrimit të dokumentit (LTR, RTL).</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>margin-inline-start</code>: Zëvendëson <code>margin-left</code> (për LTR) ose <code>margin-right</code> (për RTL).</li>
+                        <li><code>padding-block-end</code>: Zëvendëson <code>padding-bottom</code>.</li>
+                        <li>Kritike për Internationalization (i18n).</li>
+                    </ul>
+                    <pre><code>.nav-link {
+  margin-inline-end: 1rem; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 43: CSS Container Queries (Hyrje)", 
+                content: `
+                    <p>Një veçori e re revolucionare që lejon stilizimin e elementeve bazuar në madhësinë e *kontejnerit* prind, jo të gjithë viewport-it.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Hapi 1: Defino Kontejnerin me <code>container-type: size;</code>.</li>
+                        <li>Hapi 2: Përdor Query-n <code>@container (min-width: 400px)</code>.</li>
+                    </ul>
+                    <pre><code>.kartela {
+  container-type: inline-size;
+}
+@container (max-width: 300px) {
+  .kartela img {
+    display: none; 
+  }
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 44: Subgrid në CSS Grid", 
+                content: `
+                    <p>Një veçori e Grid që i lejon elementet fëmijë të përdorin rrjetin e prindit të tyre. E shkëlqyer për të ruajtur rreshtimin vertikal.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Kërkon <code>display: grid;</code> tek prindi.</li>
+                        <li>Aktivizimi tek fëmija: <code>grid-template-columns: subgrid;</code>.</li>
+                    </ul>
+                    <pre><code>.prindi-grid {
+  grid-template-columns: 1fr 200px 1fr;
+}
+.femija {
+  display: grid;
+  grid-column: 1 / 4; 
+  grid-template-columns: subgrid; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 45: Përdorimi i Grid Area Names", 
+                content: `
+                    <p>Në vend të numrave të vijave, mund të emërtoni zonat e rrjetit për një layout më të lexueshëm.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Defino zonat: <code>grid-template-areas: "header header" "menu content";</code>.</li>
+                        <li>Asigno elementin: <code>grid-area: header;</code>.</li>
+                    </ul>
+                    <pre><code>.layout {
+  display: grid;
+  grid-template-areas: "nav head" "nav main" "foot foot";
+  grid-template-columns: 150px 1fr;
+}
+.navigimi {
+  grid-area: nav;
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 46: Font/Text Shadow Dhe Text-Stroke", 
+                content: `
+                    <p>Shtoni efekte të thella dhe vizuale tek teksti.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>text-shadow</code>: Shton hije tek teksti (horizontal, vertical, blur, color).</li>
+                        <li><code>-webkit-text-stroke</code>: Për të krijuar një kontur (outline) rreth shkronjave (shpesh kërkon prefiks).</li>
+                    </ul>
+                    <pre><code>h1 {
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+  -webkit-text-stroke: 1px red; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 47: Përdorimi i Viewport Units të Reja (svh, lvh, dvh)", 
+                content: `
+                    <p>Njësitë standarde <code>vh</code> (Viewport Height) mund të jenë të paqëndrueshme në celularë për shkak të shiritave të navigimit. Njësitë e reja ofrojnë zgjidhje.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>lvh</code> (Large Viewport Height): Lartësia maksimale e Viewport-it.</li>
+                        <li><code>svh</code> (Small Viewport Height): Lartësia minimale e Viewport-it.</li>
+                        <li><code>dvh</code> (Dynamic Viewport Height): Lartësia aktuale, dinamike.</li>
+                    </ul>
+                    <pre><code>.seksioni-i-plote {
+  height: 100dvh; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 48: CSS Multi-Column Layout", 
+                content: `
+                    <p>Përdorni CSS për të rregulluar tekstin në kolona si një gazetë, pa pasur nevojë për Flexbox ose Grid.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li><code>column-count</code>: Përcakton numrin e kolonave.</li>
+                        <li><code>column-width</code>: Përcakton gjerësinë minimale të kolonave (shfletuesi llogarit numrin).</li>
+                        <li><code>column-gap</code>: Hapësira mes kolonave.</li>
+                    </ul>
+                    <pre><code>.tekst-gazete {
+  column-count: 3;
+  column-gap: 40px;
+  column-rule: 1px solid #ccc; 
+}</code></pre>
+                `
+            },
+            { 
+                title: "MËSIMI 49: Krijimi i Sistemeve Modular CSS", 
+                content: `
+                    <p>Përmbledhje e ideve për ndërtimin e një arkitekture të fortë CSS duke përdorur parime si BEM, Atomic Design, dhe Variablat.</p>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>**Separacioni i Shqetësimeve:** Ndani stilimet (p.sh., layouts, components, utilities, variables).</li>
+                        <li>**Modulariteti:** Çdo komponent duhet të jetë i pavarur dhe i ripërdorshëm.</li>
+                        <li>**Shkalla:** Siguroni që stili të jetë i lehtë për t'u shkallëzuar me rritjen e projektit.</li>
+                    </ul>
+                    <pre><code>
+/styles
+|-- _settings.scss (Variablat/Tokens)
+|-- /base (Reset, Tipografia Bazë)
+|-- /components (Butonat, Navigimi, Kartelat)
+|-- /layouts (Grid, Flexbox, Header)</code></pre>
+                `
+            },
+            // MËSIMI 50 (SFIDA FINALE) - Vlerë e re e titullit dhe indeksit
+            { 
+                title: "MËSIMI 50: SFIDA FINALE: Ndërtoni një Landing Page Komplete", 
+                content: `
+                    <h2 class="text-xl font-bold mb-3 text-red-600">Përgëzime! Ju përfunduat të gjitha 50 mësimet.</h2>
+                    <p>Tani është koha të praktikoni gjithçka që mësuat. Ju sfidoj të krijoni një **Landing Page** KOMPLETE, duke përfshirë sa më shumë koncepte të avancuara të mundshme.</p>
+                    <h3 class="text-lg font-semibold mt-4">Kërkesat e Përditësuara:</h3>
+                    <ul class="list-disc list-inside pl-4 mt-2 space-y-1">
+                        <li>Përdorni **CSS Grid Area Names** për layout-in kryesor.</li>
+                        <li>Përdorni **Custom Properties** (Variabla) dhe **Dark Mode** me <code>prefers-color-scheme</code>.</li>
+                        <li>Përdorni **Transformimet 3D** (p.sh., rotate) në një element kur kaloni me miun (hover).</li>
+                        <li>Bëjeni faqen plotësisht **Responsive** duke përdorur <code>@media</code> queries, duke përfshirë ndryshimin e <code>column-count</code> për tekstin në pajisjet celulare.</li>
+                        <li>Përdorni **Pseudo-Elementet** (::before / ::after) për dekorim ose ikona.</li>
+                    </ul>
+                    <p class="mt-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
+                        Pasi të ndërtoni faqen, mund të pyesni "Më tregoni zgjidhjen" për të parë një shembull, ose "Rinis kursin" për të filluar nga Mësimi 1.
+                    </p>
+                `
+            }
+        ];
+
+        // --- FUNKSIONET KRYESORE ---
+
+        function displayLesson(lessonIndex, previousPrompt = null) {
+            const outputDiv = document.getElementById('lesson-output');
+            const topicDisplay = document.getElementById('current-topic-display');
+            
+            const totalLessons = lessons.length;
+            const isFinished = lessonIndex >= totalLessons;
+
+            if (isFinished) {
+                lessonIndex = totalLessons - 1; 
+                document.getElementById('send-button').textContent = "Rinis Kursin";
+                document.getElementById('send-button').classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                document.getElementById('send-button').classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                document.getElementById('send-button').textContent = "Vazhdo";
+                document.getElementById('send-button').classList.remove('bg-green-600', 'hover:bg-green-700');
+                document.getElementById('send-button').classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+
+            const lesson = lessons[lessonIndex];
+
+            let conversationHtml = '';
+            // Mos shfaq "Vazhdo" si përgjigje nëse përdoruesi thjesht shtypi Enter
+            if (previousPrompt && previousPrompt !== 'Vazhdo') { 
+                conversationHtml += `<div class="p-3 my-2 rounded-lg bg-blue-100 text-blue-900 border border-blue-200 shadow-sm">
+                    <strong>Përgjigja Juaj:</strong> ${previousPrompt}
+                </div>`;
+            }
+
+            const lessonContent = `
+                ${conversationHtml}
+                <div class="lesson-box p-6 mt-4 border border-blue-300 rounded-xl shadow-lg bg-white">
+                    <h1 class="text-2xl font-bold text-blue-800">${lesson.title} (${lessonIndex + 1} / ${totalLessons})</h1>
+                    <div class="mt-4 text-gray-700">
+                        ${lesson.content}
+                    </div>
+                    ${isFinished ? `
+                        <div class="mt-6 p-4 bg-green-900 border border-green-500 rounded-lg">
+                            <p class="text-green-200 mb-4 font-semibold">🎉 Urime! Ju keni arritur në fund të kursit!</p>
+                            <button id="complete-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+                                ✅ Shënoni Kursin si të Përfunduar
+                            </button>
+                        </div>
+                    ` : `<p class="mt-6 p-3 bg-indigo-50 text-indigo-700 rounded-lg font-semibold">
+                        Sfidë: Shtypni "Vazhdo" ose Enter për të kaluar tek mësimi tjetër.
+                    </p>`}
+                </div>
+            `;
+            
+            outputDiv.innerHTML = DOMPurify.sanitize(lessonContent);
+            topicDisplay.textContent = lesson.title;
+            
+            // Add completion button handler
+            if (isFinished) {
+                setTimeout(() => {
+                    const completeBtn = document.getElementById('complete-btn');
+                    if (completeBtn) {
+                        completeBtn.addEventListener('click', async () => {
+                            completeBtn.disabled = true;
+                            completeBtn.textContent = '⏳ Po ruhet...';
+                            
+                            if (typeof courseProgress !== 'undefined' && courseProgress) {
+                                try {
+                                    await courseProgress.saveCourseProgress('CSS', lessons.length, lessons.length, lessons.length * 10);
+                                    completeBtn.textContent = '✅ Kursi u ruajt me sukses!';
+                                    completeBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                                    completeBtn.classList.add('bg-green-700');
+                                    console.log('✅ CSS course marked as completed!');
+                                } catch (err) {
+                                    console.error('Error saving progress:', err);
+                                    completeBtn.textContent = '❌ Gabim në ruajtje';
+                                    completeBtn.disabled = false;
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            }
+            
+            // Scroll në krye të përmbajtjes së mësimit të ri
+            outputDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const message = inputField.value.trim() || 'Vazhdo'; 
+            inputField.value = '';
+
+            let nextIndex = currentLessonIndex;
+
+            if (nextIndex >= lessons.length) {
+                // Save progress to database
+                if (typeof courseProgress !== 'undefined' && courseProgress) {
+                    courseProgress.saveCourseProgress('CSS', lessons.length, lessons.length, lessons.length * 10)
+                        .then(() => {
+                            console.log('✅ CSS course progress saved!');
+                        })
+                        .catch(err => console.error('Error saving progress:', err));
+                }
+                nextIndex = 0; // Rinis kursin në mësimin 1 (index 0)
+                currentLessonIndex = 1; // Për mësimin pasardhës
+            } else {
+                currentLessonIndex++;
+            }
+            
+            displayLesson(nextIndex, message);
+        }
+
+        window.onload = function() {
+            // Shfaq statusin bazë
+            document.getElementById('user-status').textContent = `Progresi ruhet vetëm për këtë seancë`;
+            
+            // Fshehim butonin e daljes/kontejnerin e auth
+            const authButtonContainer = document.getElementById('auth-button-container');
+            if (authButtonContainer) authButtonContainer.innerHTML = '';
+
+            document.getElementById('main-content').classList.remove('hidden');
+
+            // Shfaq mësimin e parë
+            displayLesson(currentLessonIndex); 
+            currentLessonIndex++; 
+
+            // Lidhjet e Eventeve të Kursit
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('user-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    sendMessage();
+                }
+            });
+        };
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .navbar { @apply flex justify-between items-center px-6 py-4 bg-white shadow-md sticky top-0 z-50; }
+        .logo-text { @apply text-xl font-bold; }
+        .text-blue-main { color: #007bff; }
+        
+        .lesson-box pre { 
+            @apply p-4 my-4 bg-gray-50 text-gray-900 rounded-lg overflow-x-auto text-sm shadow-inner border border-gray-200;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap; 
+        }
+        .lesson-box code {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .lesson-box h1 {
+            @apply text-2xl font-bold text-blue-800 mb-4;
+        }
+        .lesson-box ol, .lesson-box ul {
+            @apply pl-6 my-3;
+        }
+    </style>
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <div class="logo">
+            <a href="#" class="logo-text">Kodo<span class="text-blue-main">Shqip</span></a>
+        </div>
+        <ul class="nav-links flex space-x-6 list-none items-center">
+            <li><span id="user-status" class="text-sm text-gray-600 font-medium">Progresi ruhet vetëm për këtë seancë</span></li>
+            <li id="auth-button-container">
+                
+            </li>
+        </ul>
+    </nav>
+
+    
+    <div id="main-content" class="hidden"> 
+        <header class="bg-white shadow-lg p-8 mb-6">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">Kursi i Zgjeruar: CSS Thelbi (50 Mësime)</h1>
+                <p class="text-lg text-gray-600">Progresi juaj ruhet vetëm për këtë seancë. Rifreskimi i faqes e rinis kursin.</p>
+                <div class="mt-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+                    <p class="font-semibold">Tema Aktuale:</p>
+                    <p id="current-topic-display" class="font-mono text-xl">Duke u ngarkuar...</p>
+                </div>
+            </div>
+        </header>
+
+        
+        <main class="max-w-4xl mx-auto px-4 pb-20">
+            
+            <div id="lesson-output" class="bg-white p-6 rounded-xl shadow-2xl min-h-[400px] border border-gray-200 mb-6 flex items-center justify-center">
+                <p class="text-gray-500 text-xl animate-pulse">Duke ngarkuar mësimin...</p>
+            </div>
+
+            
+            <div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-200 shadow-3xl">
+                <div class="max-w-4xl mx-auto flex gap-3">
+                    <input 
+                        type="text" 
+                        id="user-input" 
+                        placeholder="Shtypni 'Vazhdo' ose Enter për të kaluar tek mësimi tjetër..."
+                        class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                    >
+                    <button 
+                        id="send-button"
+                        class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+                    >
+                        Vazhdo
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+</body>
+</html>

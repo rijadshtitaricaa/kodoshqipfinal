@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>KodoShqip - Kyçu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary-blue: #007bff;
+            --secondary-green: #00c47a;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --gradient: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        .login-image {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .login-image h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .login-image p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .login-form-section {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .login-form-section h2 {
+            font-size: 2rem;
+            color: var(--dark-text);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .login-form-section p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        #loginForm {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        input {
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            background: white;
+        }
+        input::placeholder {
+            color: #999;
+        }
+        .login-btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--gradient);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 10px;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        #error {
+            color: #e74c3c;
+            font-weight: 600;
+            padding: 12px;
+            background: #fadbd8;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+        #error:not(:empty) {
+            display: block;
+        }
+        .login-links {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #666;
+        }
+        .login-links a {
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .login-links a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+        }
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+            .login-image {
+                padding: 30px 20px;
+                min-height: 250px;
+            }
+            .login-image h1 {
+                font-size: 1.8rem;
+            }
+            .login-form-section {
+                padding: 30px 20px;
+            }
+            .login-form-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-image">
+            <div>
+                <h1>🎓 KodoShqip</h1>
+                <p>Mirësevini në platformën tuaj të mësimit të kodimit në shqip. Kyçuni dhe zgjatoni njohuritë tuaja!</p>
+            </div>
+        </div>
+        <div class="login-form-section">
+            <h2>Mirësevini Sërish! 👋</h2>
+            <p>Kyçu në llogarinë tënde për të vazhduar mësimin.</p>
+
+            <form id="loginForm">
+                <input id="email" type="email" placeholder="📧 Email Adresa" required />
+                <input id="password" type="password" placeholder="🔐 Fjalëkalimi" required />
+                <button class="login-btn" type="submit">Kyçu Tani</button>
+                <div id="error"></div>
+            </form>
+
+            <div class="login-links">
+                <p>Nuk ke llogari? <a href="register.html">Regjistrohu këtu →</a></p>
+                <div class="divider">ose</div>
+                <p><a href="index.html">← Kthehu në faqen kryesore</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorEl = document.getElementById('error');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.textContent = '';
+
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('http://localhost:5000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                let data;
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    const text = await res.text();
+                    errorEl.textContent = text || 'Gabim i serverit. Provoni përsëri.';
+                    return;
+                }
+
+                if (res.ok && data.message === 'LOGIN_SUCCESS') {
+                    localStorage.setItem('loggedInUser', JSON.stringify(data.user));
+                    location.href = 'index.html';
+                } else {
+                    errorEl.textContent = data.message || 'Gabim i serverit';
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                errorEl.textContent = 'Gabim i lidhjes me serverin. Sigurohuni që serveri është i hapur.';
+            }
+        });
+    </script>
+</body>
+</html>

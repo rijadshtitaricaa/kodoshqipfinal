@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KodoShqip - Mësoni Kodim në Shqip</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.jpg" type="image/x-icon">
+</head>
+<body>
+
+ <nav class="navbar">
+  <div class="logo">
+    <span class="logo-text">Kodo<span style="color: var(--primary-blue);">Shqip</span></span>
+  </div>
+
+  <button class="menu-toggle" aria-label="Hap menunë" aria-expanded="false">☰</button>
+
+  <ul class="nav-links">
+    <li><a href="#te-gjitha-kurset">Kurset</a></li>
+    <li><a href="#misioni">Rreth Nesh</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+    <li><a href="developers.html">Ekipa</a></li>
+    <li id="adminNavItem" style="display: none;"><a href="admin.html">Admin</a></li>
+    <li id="loginNavItem"><a href="login.html" class="login-nav-btn">🔐 Kyçu</a></li>
+    <li id="profileNavItem" class="profile-nav-item" style="display: none;">
+      <div class="profile-dropdown">
+        <button class="profile-trigger" id="profileTrigger">
+          <img id="profileNavImage" src="" alt="Profile" class="profile-nav-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span id="profileNavInitial" class="profile-nav-initial" style="display: none;"></span>
+          <span id="profileNavName" class="profile-nav-name"></span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="profile-dropdown-menu" id="profileDropdown">
+          <a href="dashboard.html" class="dropdown-item">📊 Paneli im</a>
+          <a href="#" class="dropdown-item" id="editProfileBtn">✏️ Përditëso Profilin</a>
+          <a href="#" class="dropdown-item" id="logoutBtn">🚪 Dil</a>
+        </div>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<div id="profileModal" class="profile-modal">
+  <div class="profile-modal-content">
+    <span class="profile-modal-close" id="closeProfileModal">&times;</span>
+    <h2>Përditëso Profilin</h2>
+    <form id="profileForm">
+      <div class="profile-image-section">
+        <div class="profile-image-preview">
+          <img id="profileImagePreview" src="" alt="Profile Preview" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div id="profileImagePlaceholder" class="profile-image-placeholder" style="display: none;">
+            <span id="profileInitialPreview"></span>
+          </div>
+        </div>
+        <label for="profileImageInput" class="profile-image-upload-btn">
+          📷 Zgjidh Foto Profili
+        </label>
+        <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+      </div>
+      <div class="profile-form-group">
+        <label for="profileNameInput">Emri</label>
+        <input type="text" id="profileNameInput" placeholder="Shkruani emrin tuaj" required>
+      </div>
+      <div class="profile-form-group">
+        <label for="profileEmailInput">Email</label>
+        <input type="email" id="profileEmailInput" disabled>
+      </div>
+      <div id="profileMessage" class="profile-message"></div>
+      <div class="profile-form-actions">
+        <button type="submit" class="profile-save-btn">💾 Ruaj Ndryshimet</button>
+        <button type="button" class="profile-cancel-btn" id="cancelProfileBtn">Anulo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <div class="container">
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Mëso Kodim në Gjuhën Shqipe.</h1>
+            <p class="hero-tagline">Filloni udhëtimin tuaj në botën e zhvillimit web me kurse të qarta dhe të thjeshta, të gjitha në shqip.</p>
+            <a href="#te-gjitha-kurset" class="hero-cta">
+                Filloni Udhëtimin Tani
+            </a>
+        </div>
+        <div class="hero-image">
+            <img 
+                src="manprogram.jpeg" 
+                alt="Një ilustrim i kodimit në kompjuter"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x300/e3f2fd/17a2b8?text=Vendos+Imazhin+Ketu';"
+            >
+        </div>
+    </header>
+
+    
+
+    <section class="mission-section hidden" id="misioni">
+        <div class="mission-content">
+            <div class="mission-text">
+                <h2 class="hidden" style="transition-delay: 0.1s;">Misioni Ynë</h2>
+                <p class="hidden" style="transition-delay: 0.2s;">KodoShqip është themeluar me besimin se programimi duhet të jetë i aksesueshëm për të gjithë, pavarësisht barrierave gjuhësore. Ne ofrojmë kurse të kualitetit të lartë, të mësuara nga ekspertë lokalë, duke siguruar që çdo koncept të kuptohet thellësisht.</p>
+                <p class="hidden" style="transition-delay: 0.3s;">Synimi ynë është të ndërtojmë komunitetin më të madh të zhvilluesve të talentuar në hapësirën shqipfolëse.</p>
+            </div>
+            <div class="mission-image hidden" style="transition-delay: 0.4s;">
+                 <img 
+                    src="thelogowithbg.png" 
+                    alt="Përmbushja e misionit tonë"
+                    onerror="this.onerror=null; this.src='https://placehold.co/600x300/f8f9fa/28a745?text=Imazh+Misioni+KodoShqip';"
+                >
+            </div>
+        </div>
+    </section>
+
+    <section class="courses-section hidden" id="kurset-shkurt">
+        <h2 class="hidden" style="transition-delay: 0.1s;">Kurset Tona Më Popullore</h2>
+        <p class="hidden" style="transition-delay: 0.2s;">Zgjidhni një shteg për të filluar menjëherë.</p>
+        <div class="course-grid">
+            
+            <div class="course-card hidden" style="transition-delay: 0.3s;">
+                <div class="card-image" style="background-color: #fce4ec;"><span role="img" aria-label="HTML Icon">🔖</span></div>
+                <div class="card-content">
+                    <h3>HTML Bazë & Themelore</h3>
+                    <p>Mësoni strukturën e uebit, bazën e çdo faqeje, me etiketa të qarta dhe standarde.</p>
+                    <a href="html_course.html" class="start-btn">Filloni me HTML & CSS</a>
+                </div>
+            </div>
+
+            <div class="course-card hidden" style="transition-delay: 0.4s;">
+                <div class="card-image" style="background-color: #e3f2fd;"><span role="img" aria-label="CSS Icon">🎨</span></div>
+                <div class="card-content">
+                    <h3>CSS Styling & Layout</h3>
+                    <p>Krijoni dizajne tërheqëse dhe ndërtoni layout-e komplekse me Flexbox & Grid.</p>
+                    <a href="css_course.html" class="start-btn">Filloni me CSS</a>
+                </div>
+            </div>
+
+            <div class="course-card hidden" style="transition-delay: 0.5s;">
+                <div class="card-image" style="background-color: #fffde7;"><span role="img" aria-label="JavaScript Icon">💡</span></div>
+                <div class="card-content">
+                    <h3>JavaScript (JS) Interaktiv</h3>
+                    <p>Zotëroni logjikën dhe interaktivitetin. Mësoni të menaxhoni të dhënat dhe ngjarjet në ueb.</p>
+                    <a href="js_course.html" class="start-btn">Filloni me JavaScript</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+      <div class="codeArenaX9">
+    <div class="textBlockZ7">
+     <h1>Provo Kodin Tënd</h1>
+<p>Shkruaj, testo dhe eksploro idetë e tua direkt në shfletuesin tënd. Gati të krijosh diçka fantastike?</p>
+      <a class="actionBtnK5" href="live_editor.html" target="_blank">Fillo Tani!</a>
+    </div>
+    <div class="imageBoxQ2">
+      <img src="home2.jpg" alt="Code Example">
+    </div>
+  </div>
+
+    <section class="full-courses-section hidden" id="te-gjitha-kurset">
+        <h2 class="hidden" style="transition-delay: 0.1s;">Eksploroni Të Gjitha Kurset e Programimit</h2>
+        
+        <div class="course-listing-grid">
+            
+            <a href="html_course.html" class="course-card-full hidden" style="transition-delay: 0.2s;">
+                <div class="card-img" style="background-color: #fce4ec;">🔖</div>
+                <div class="card-details">
+                    <span class="level">Fillestar</span>
+                    <h3>HTML dhe CSS: Nga Baza në Site Funksional</h3>
+                    <p>Mësoni si të ndërtoni strukturën dhe stilin e çdo faqeje interneti me projekte reale.</p>
+                    <div class="info-row">
+                        <span>Instruktor: Emri I</span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="js_course.html" class="course-card-full hidden" style="transition-delay: 0.3s;">
+                <div class="card-img" style="background-color: #fffde7;">💡</div>
+                <div class="card-details">
+                    <span class="level" style="background-color: #ff9800;">Mesatar</span>
+                    <h3>JavaScript Modern: Dinamika dhe Interaktiviteti i Uebit</h3>
+                    <p>Zotëroni logjikën dhe interaktivitetin. Mësoni të menaxhoni të dhënat dhe ngjarjet në ueb.</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="css_course.html" class="course-card-full hidden" style="transition-delay: 0.4s;">
+                <div class="card-img" style="background-color: #e3f2fd;">🎨</div>
+                <div class="card-details">
+                    <span class="level">Fillestar</span>
+                    <h3>CSS Styling & Layout</h3>
+                    <p>Krijoni dizajne tërheqëse dhe ndërtoni layout-e komplekse me Flexbox & Grid.</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="python_basics.html" class="course-card-full hidden" style="transition-delay: 0.5s;">
+                <div class="card-img" style="background-color: #ffecb3;">🐍</div>
+                <div class="card-details">
+                    <span class="level" style="background-color: #00bcd4;">Ekspert</span>
+                    <h3>Bazat e Python për Data Science & Programim</h3>
+                    <p>Mësoni gjuhën e Python, thelbësore për analizën e të dhënave dhe backend-in.</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+
+
+              <a href="java_course.html" class="course-card-full hidden" style="transition-delay: 0.5s;">
+                <div class="card-img" style="background-color: #d37f11;">🍵</div>
+                <div class="card-details">
+                    <span class="level" style="background-color: #00bcd4;">Ekspert</span>
+                    <h3>Kursi Java </h3>
+                    <p>Mësoni gjuhën e Java, backend-in.</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+                   <a href="django_course.html" class="course-card-full hidden" style="transition-delay: 0.5s;">
+                <div class="card-img" style="background-color: #2e892f;">🍏</div>
+                <div class="card-details">
+                    <span class="level" style="background-color: #00bcd4;">Ekspert</span>
+                    <h3>Kursi Django </h3>
+                    <p>Mësoni Django the web frame work</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+
+
+                      </a>
+                   <a href="php_course.html" class="course-card-full hidden" style="transition-delay: 0.5s;">
+                <div class="card-img" style="background-color: #237ed3;">📘</div>
+                <div class="card-details">
+                    <span class="level" style="background-color: #00bcd4;">Ekspert</span>
+                    <h3>Kursi PHP </h3>
+                    <p>Bazat e PHP: Shikuesi i Mësimeve me JS</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+
+                      </a>
+                   <a href="react_course.html" class="course-card-full hidden" style="transition-delay: 0.5s;">
+                <div class="card-img" style="background-color: #232cd3;">🔷</div>
+                <div class="card-details">
+                    <span class="level" style="background-color: #00bcd4;">Mesatar</span>
+                    <h3>Kursi React</h3>
+                    <p>Bazat e React</p>
+                    <div class="info-row">
+                        <span></span>
+                        <span>Çmimi: Falas</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+   
+
+
+    <section class="contact-section hidden" id="kontakt">
+    
+        <div class="contact-form-container hidden" style="transition-delay: 0.2s;">
+            <h2>Na Kontaktoni Drejtpërdrejt</h2>
+            <form class="contact-form" action="#" method="POST">
+                <div>
+                    <label for="name">Emri dhe Mbiemri</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email Adresa</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="subject">Subjekti</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div>
+                    <label for="message">Mesazhi Juaj</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Dërgo Mesazhin</button>
+            </form>
+        </div>
+        
+        <div class="contact-info hidden" style="transition-delay: 0.4s;">
+            <h2>Informacion i Përgjithshëm</h2>
+            <p style="margin-bottom: 2rem; color: #555;">
+                Për çdo pyetje në lidhje me kurset, bashkëpunimin, ose mbështetjen teknike, ju lutemi përdorni formularin ose na kontaktoni në detajet më poshtë.
+            </p>
+
+            <div class="contact-info-item"><strong>📧</strong> <div><p style="font-weight: 600; color: var(--dark-text);">Email</p><a href="mailto:kodoshqip@gmail.com">kodoshqip@gmail.com</a></div></div>
+            <div class="contact-info-item"><strong>📞</strong> <div><p style="font-weight: 600; color: var(--dark-text);">Numri i Telefonit</p><a href="tel:+38345713215">+383 (45) 713 215</a></div></div>
+            <div class="contact-info-item"><strong>📍</strong> <div><p style="font-weight: 600; color: var(--dark-text);">Adresa Kryesore</p><span>Rruga e Kodimit, 10000 Prishtinë, Kosovë</span></div></div>
+        </div>
+
+    </section>
+
+    </div>
+    <footer class="footer">
+        <p>&copy; 2025 KodoShqip. Të gjitha të drejtat të rezervuara.</p>
+    </footer>
+
+<script src="main.js"></script>
+<script src="progress.js"></script>
+</body>
+</html>

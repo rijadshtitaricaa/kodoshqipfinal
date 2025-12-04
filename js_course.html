@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Kursi i JavaScript: Leksioni 1 (Variablat)</title>
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="progress.js"></script>
+    <style>
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e; 
+            color: #e0e0e0; 
+            min-height: 100vh;
+        }
+        
+        .container-card {
+            background-color: #2a2a4a; 
+            border: 1px solid #4a4a6e;
+        }
+
+        h1, h2, h3 {
+            color: #8c8cff; 
+        }
+
+        code {
+            background-color: #3a3a5a; 
+            color: #c0c0ff; 
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        pre {
+            background-color: #1f1f3a; 
+            border: 1px solid #4a4a6e;
+            color: #d0d0d0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        #code-editor {
+            font-family: monospace;
+            line-height: 1.5;
+            background-color: #1f1f3a; 
+            color: #e0e0e0;
+            border: 1px solid #4a4a6e;
+        }
+        #code-editor:focus {
+            border-color: #8c8cff;
+            box-shadow: 0 0 0 3px rgba(140, 140, 255, 0.5);
+        }
+
+        #run-button {
+            background-color: #8c8cff;
+            color: white;
+            transition: all 0.15s ease-in-out;
+        }
+        #run-button:hover {
+            background-color: #7a7aff;
+            box-shadow: 0 4px 10px rgba(140, 140, 255, 0.3);
+        }
+        #run-button:active {
+            background-color: #6a6aff;
+            transform: translateY(1px);
+        }
+
+        #output {
+            background-color: #1f1f3a;
+            border: 1px solid #4a4a6e;
+            color: #e0e0e0;
+        }
+        #output.error {
+            color: #ff6a6a; 
+        }
+
+        .nav-button {
+            background-color: #8c8cff;
+            color: white;
+            transition: all 0.15s ease-in-out;
+        }
+        .nav-button:hover:not(:disabled) {
+            background-color: #7a7aff;
+            box-shadow: 0 4px 10px rgba(140, 140, 255, 0.3);
+        }
+        .nav-button:disabled {
+            background-color: #4a4a6e;
+            color: #a0a0b0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .progress-bar-container {
+            background-color: #4a4a6e;
+            border-radius: 9999px; 
+            height: 8px; 
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #8c8cff;
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex items-start justify-center">
+
+    <div class="max-w-3xl w-full container-card rounded-xl shadow-2xl p-6 md:p-10 mb-12">
+        
+        
+        <header class="mb-8 pb-4 border-b border-gray-600">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-2">
+                JavaScript Themeloret
+            </h1>
+            <h2 id="lesson-title-display" class="text-xl md:text-2xl font-bold text-center">
+                
+            </h2>
+        </header>
+
+        
+        <div id="lesson-content" class="space-y-6 text-gray-200 leading-relaxed text-base md:text-lg">
+            
+        </div>
+
+        
+        <section class="mt-12 pt-8 border-t border-gray-600">
+            <h3 class="text-2xl font-bold text-center mb-4">
+                Provoje vetë!
+            </h3>
+            <p class="text-gray-300 mb-4 text-center" id="editor-instructions">
+                
+            </p>
+
+            
+            <textarea 
+                id="code-editor" 
+                rows="10" 
+                class="w-full p-4 rounded-lg text-base shadow-inner resize-y"
+            ></textarea>
+
+            
+            <button 
+                id="run-button" 
+                onclick="runCode()" 
+                class="mt-4 w-full md:w-auto px-6 py-3 font-semibold rounded-lg shadow-md hover:scale-105 active:scale-95 transform transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-8c8cff focus:ring-opacity-75"
+            >
+                ▶ Ekzekuto Kodin
+            </button>
+
+            
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-2">
+                    Rezultati në Konsolë
+                </h3>
+                <pre 
+                    id="output" 
+                    class="w-full p-4 rounded-lg overflow-x-auto text-sm whitespace-pre-wrap min-h-[100px]"
+                >Kliko 'Ekzekuto Kodin' për të parë rezultatin e skriptit tuaj këtu.</pre>
+            </div>
+        </section>
+
+        
+        <footer class="mt-12 pt-6 border-t border-gray-600 flex justify-between items-center text-sm md:text-base">
+            
+            
+            <button 
+                id="prev-lesson-btn" 
+                onclick="loadLesson(window.currentLesson - 1)" 
+                class="nav-button flex items-center space-x-2 px-4 py-2 rounded-lg"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                <span>Kthehu Prapa</span>
+            </button>
+
+            
+            <div class="flex flex-col items-center flex-grow mx-4">
+                <span id="progress-text" class="text-gray-400 mb-2"></span>
+                <div class="progress-bar-container w-full max-w-xs">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+
+            
+            <button 
+                id="next-lesson-btn" 
+                onclick="loadLesson(window.currentLesson + 1)" 
+                class="nav-button flex items-center space-x-2 px-4 py-2 rounded-lg"
+            >
+                <span>Shko tek Mësimi i Rradhës</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </button>
+        </footer>
+
+    </div>
+
+    
+    <script>
+        // Ruaj numrin aktual të leksionit në nivel global
+        window.currentLesson = 1; 
+
+        // ----------------------------------------------------
+        // Baza e të Dhënave e 50 Leksioneve të JavaScript
+        // ----------------------------------------------------
+        const LESSONS = [
+            // Leksioni 1: Variablat (const, let)
+            {
+                title: "1. Variablat (const, let)",
+                explanation: `
+                    <p>Në JavaScript, <code class="font-mono">variablat</code> janë thjesht emra që i caktojmë hapësirave të kujtesës për të ruajtur të dhëna. Mendoni sikur janë "kutia" me etiketa ku vendosni informacione. Këto informacione mund të ndryshojnë (variojnë) gjatë ekzekutimit të programit tuaj.</p>
+                    <h3 class="text-xl font-semibold mb-2">Përdorimi i const dhe let</h3>
+                    <div class="p-4 rounded-lg border border-purple-500 bg-purple-900 bg-opacity-20">
+                        <h4 class="text-lg font-bold text-purple-300 mb-2"><code class="font-bold text-xl">let</code> (Variabël e Ndryshueshme)</h4>
+                        <p>Përdoret kur vlera pritet të ndryshojë.</p>
+                    </div>
+                    <div class="p-4 rounded-lg border border-teal-500 bg-teal-900 bg-opacity-20">
+                        <h4 class="text-lg font-bold text-teal-300 mb-2"><code class="font-bold text-xl">const</code> (Konstante)</h4>
+                        <p>Përdoret kur vlera nuk do të ndryshojë kurrë (p.sh., vlera e PI-së ose një emër qyteti).</p>
+                    </div>
+                `,
+                code: `// Deklaroni një variabël 'emri' me let dhe ndryshojeni.
+let emri = "Agnesa";
+console.log("Emri fillestar:", emri);
+
+emri = "Arbëri";
+console.log("Emri i ndryshuar:", emri);
+
+// Deklaroni një konstante 'ditelindja' me const.
+const ditelindja = "01/01/2000";
+console.log("Ditëlindja:", ditelindja);
+
+// Provoni të ndryshoni ditelindja nëse dëshironi të shihni gabimin:
+// ditelindja = "02/02/2000"; 
+// console.log("Ditëlindja e ndryshuar:", ditelindja);
+`,
+                instructions: "Deklaroni variabla duke përdorur <code class=\"font-mono\">let</code> dhe <code class=\"font-mono\">const</code> dhe shih rezultatin në konsolë."
+            },
+
+            // Leksioni 2: Llojet e të Dhënave Primitivë
+            {
+                title: "2. Llojet e të Dhënave Primitivë",
+                explanation: `
+                    <p>Llojet e të dhënave primitive janë blloqet themelore të informacionit. JavaScript ka disa tipe kryesore:</p>
+                    <ul class="list-disc ml-6 space-y-3">
+                        <li><code class="font-mono">String</code>: Për të ruajtur tekst. Përdor thonjëzat.</li>
+                        <li><code class="font-mono">Number</code>: Për numra të plotë dhe me presje.</li>
+                        <li><code class="font-mono">Boolean</code>: Vetëm <code class="font-mono">true</code> ose <code class="font-mono">false</code>.</li>
+                        <li><code class="font-mono">Undefined</code>: Kur një variabël deklarohet pa vlerë.</li>
+                        <li><code class="font-mono">Null</code>: Vlerë e caktuar me qëllim që do të thotë "pa vlerë".</li>
+                    </ul>
+                    <p class="pt-4 border-t border-gray-600 text-sm italic">Përdorni operatorin <code class="font-mono">typeof</code> për të kontrolluar llojin.</p>
+                `,
+                code: `// 1. String
+const qyteti = "Tiranë";
+console.log("Qyteti:", typeof qyteti);
+
+// 2. Number
+const temperatura = 30.5;
+console.log("Temperatura:", typeof temperatura);
+
+// 3. Boolean
+let eshteEvertete = true;
+console.log("Boolean:", typeof eshteEvertete);
+
+// 4. Undefined
+let kodiPostal;
+console.log("Kodi Postal (i padeklaruar):", typeof kodiPostal);
+`,
+                instructions: "Përdorni <code class=\"font-mono\">console.log()</code> dhe <code class=\"font-mono\">typeof</code> për të zbuluar llojet e variablave."
+            },
+
+            // Leksioni 3: Operatorët
+            {
+                title: "3. Operatorët",
+                explanation: `
+                    <p>Operatorët janë simbole që përdoren për të kryer operacione mbi vlera dhe variabla. Këtu janë disa lloje themelore:</p>
+                    <ul class="list-disc ml-6 space-y-3">
+                        <li><code class="font-mono">+ - * /</code>: Operatorë Aritmetikë.</li>
+                        <li><code class="font-mono">== === != !==</code>: Operatorë Krahasues.</li>
+                        <li><code class="font-mono">&& || !</code>: Operatorë Logjikë.</li>
+                    </ul>
+                    <p class="pt-4 border-t border-gray-600 text-sm italic">Kujdes: <code class="font-mono">==</code> krahason vlerën, ndërsa <code class="font-mono">===</code> krahason vlerën DHE llojin.</p>
+                `,
+                code: `let a = 10;
+let b = 5;
+
+// Aritmetikë
+console.log("Shuma:", a + b); // 15
+console.log("Mbetja:", a % b); // 0
+
+// Krahasim
+console.log("A është a më e madhe se b?", a > b); // true
+
+// Krahasim me tipe
+console.log("10 == '10':", 10 == '10'); // true
+console.log("10 === '10':", 10 === '10'); // false (tipi ndryshon)
+`,
+                instructions: "Eksperimentoni me operatorët <code class=\"font-mono\">+</code>, <code class=\"font-mono\">-</code>, <code class=\"font-mono\">*</code>, <code class=\"font-mono\">/</code> dhe <code class=\"font-mono\">%</code>."
+            },
+
+            // Leksioni 4: Struktura e Kontrollit: if/else
+            {
+                title: "4. Struktura e Kontrollit: if/else",
+                explanation: `
+                    <p>Kjo strukturë i lejon kodit tuaj të marrë vendime, duke ekzekutuar blloqe të ndryshme kodi bazuar në një kusht (boolean).</p>
+                    <p>Sintaksa bazë është: <code class="font-mono">if (kushti) { ... } else { ... }</code>.</p>
+                    <p>Mund të përdorni gjithashtu <code class="font-mono">else if</code> për të shtuar kushte shtesë.</p>
+                `,
+                code: `let nota = 75;
+
+if (nota >= 90) {
+  console.log("Ekselent!");
+} else if (nota >= 70) {
+  console.log("Shumë mirë.");
+} else if (nota >= 50) {
+  console.log("Mjaftueshëm.");
+} else {
+  console.log("Nuk kaloi klasën.");
+}
+`,
+                instructions: "Ndryshoni vlerën e variablës <code class=\"font-mono\">nota</code> dhe shihni si ndryshon rezultati."
+            },
+
+            // Leksioni 5: Struktura e Kontrollit: switch
+            {
+                title: "5. Struktura e Kontrollit: switch",
+                explanation: `
+                    <p>Përdoret si një alternativë ndaj shumë <code class="font-mono">if...else if</code> kur po krahasoni një variabël të vetme me shumë vlera të mundshme (cases).</p>
+                    <p>Çdo <code class="font-mono">case</code> duhet të përfundojë me <code class="font-mono">break</code>. Nëse asnjë case nuk përputhet, ekzekutohet bloku <code class="font-mono">default</code>.</p>
+                `,
+                code: `let dita = "E Hënë";
+let mesazhi;
+
+switch (dita) {
+  case "E Hënë":
+    mesazhi = "Fillim i javës, punë të mbarë!";
+    break;
+  case "E Premte":
+    mesazhi = "Fundjava po vjen!";
+    break;
+  default:
+    mesazhi = "Një ditë normale e javës.";
+}
+
+console.log(mesazhi);
+`,
+                instructions: "Ndryshoni vlerën e variablës <code class=\"font-mono\">dita</code> (p.sh., 'E Premte') dhe testoni."
+            },
+
+            // Leksioni 6: for Loops (Ciklet)
+            {
+                title: "6. for Loops (Ciklet)",
+                explanation: `
+                    <p>Ciklet <code class="font-mono">for</code> përdoren për të përsëritur një bllok kodi një numër të caktuar herësh. Ato kanë tre pjesë kryesore:</p>
+                    <ol class="list-decimal ml-6 space-y-1">
+                        <li>Inicializimi: <code class="font-mono">let i = 0</code></li>
+                        <li>Kushti: <code class="font-mono">i < 5</code> (vazhdon deri sa të jetë e vërtetë)</li>
+                        <li>Përditësimi: <code class="font-mono">i++</code> (rritet i me 1)</li>
+                    </ol>
+                `,
+                code: `// Cikël që numëron nga 1 në 5
+for (let i = 1; i <= 5; i++) {
+  console.log("Numri:", i);
+}
+`,
+                instructions: "Krijoni një cikël <code class=\"font-mono\">for</code> që numëron nga 10 prapa deri në 1."
+            },
+            
+            // Leksioni 7: while dhe do...while Loops
+            {
+                title: "7. while dhe do...while Loops",
+                explanation: `
+                    <p>Cikli <code class="font-mono">while</code> ekzekutohet për sa kohë që kushti i caktuar mbetet i vërtetë. Kontrolli i kushtit bëhet *para* ekzekutimit të bllokut të kodit.</p>
+                    <p>Cikli <code class="font-mono">do...while</code> ekzekutohet *të paktën një herë*, sepse kushti kontrollohet *pas* ekzekutimit të bllokut të kodit.</p>
+                `,
+                code: `let numri = 0;
+
+// Cikli while
+while (numri < 3) {
+  console.log("While:", numri);
+  numri++;
+}
+
+let x = 5;
+// Cikli do...while (ekzekutohet një herë edhe pse x nuk është < 5)
+do {
+  console.log("Do...While:", x);
+  x++;
+} while (x < 5);
+`,
+                instructions: "Krijoni një cikël <code class=\"font-mono\">while</code> që ndalon kur një variabël arrin vlerën 7."
+            },
+            
+            // Leksioni 8: Funksionet (Deklarimi)
+            {
+                title: "8. Funksionet (Deklarimi)",
+                explanation: `
+                    <p>Funksionet janë blloqe kodi të ripërdorshëm që kryejnë një detyrë të caktuar. Deklarohen duke përdorur fjalën kyçe <code class="font-mono">function</code>.</p>
+                    <p>Përdorimi i funksioneve ndihmon në organizimin e kodit dhe shmang përsëritjen.</p>
+                `,
+                code: `// Deklarimi i funksionit
+function pershendetje() {
+  console.log("Përshëndetje nga funksioni!");
+}
+
+// Thirrja (ekzekutimi) i funksionit
+pershendetje();
+pershendetje();
+`,
+                instructions: "Krijoni funksionin tuaj <code class=\"font-mono\">sqaro()</code> dhe thirreni dy herë."
+            },
+            
+            // Leksioni 9: Funksionet (Parametrat dhe Return)
+            {
+                title: "9. Funksionet (Parametrat dhe Return)",
+                explanation: `
+                    <p>Funksionet mund të pranojnë të dhëna hyrëse përmes **Parametrave** dhe mund të kthejnë një vlerë dalëse duke përdorur fjalën kyçe <code class="font-mono">return</code>.</p>
+                    <p>Parametrat janë variabla të deklaruara brenda kllapave <code class="font-mono">()</code>.</p>
+                `,
+                code: `function shuma(a, b) {
+  // Funksioni kthen rezultatin e mbledhjes
+  return a + b;
+}
+
+// Thirrja e funksionit me argumentet 5 dhe 3
+let rezultati = shuma(5, 3);
+console.log("Rezultati i shumës:", rezultati); // 8
+`,
+                instructions: "Krijoni një funksion që merr dy numra, i shumëzon dhe e kthen rezultatin."
+            },
+            
+            // Leksioni 10: Sferat (Scope) e Variablave
+            {
+                title: "10. Sferat (Scope) e Variablave",
+                explanation: `
+                    <p>Scope (Sfera) përcakton se ku janë të aksesueshme variablat në kodin tuaj. Kemi dy lloje kryesore:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>**Global Scope:** Variablat e deklaruara jashtë funksioneve/blloqeve.</li>
+                        <li>**Block Scope:** Variablat e deklaruara me <code class="font-mono">let</code> ose <code class="font-mono">const</code> brenda blloqeve <code class="font-mono">{}</code> (p.sh., if, for).</li>
+                    </ul>
+                    <p class="pt-4 border-t border-gray-600 text-sm italic">Variablat brenda një funksioni nuk mund të aksesohen jashtë tij.</p>
+                `,
+                code: `const globalVar = "Unë jam global";
+
+function shfaqScope() {
+  const localVal = "Unë jam lokal";
+  console.log(globalVar); // Mund të aksesohet
+}
+
+shfaqScope();
+// console.log(localVal); // Gabim! Nuk mund të aksesohet jashtë funksionit
+`,
+                instructions: "Krijoni një bllok <code class=\"font-mono\">if</code> dhe shihni cilat variabla mund të aksesohen brenda tij."
+            },
+            
+            // Leksioni 11: Array (Vektorët)
+            {
+                title: "11. Array (Vektorët)",
+                explanation: `
+                    <p>Një Array (Vektor) është një strukturë e renditur e të dhënave që mund të mbajë vlera të shumëfishta në një variabël të vetme. Vlerat (elementet) aksesohen duke përdorur një indeks numerik, duke filluar nga 0.</p>
+                `,
+                code: `const fruta = ["Molla", "Banana", "Portokalli"];
+
+// Aksesimi i elementit të parë (indeksi 0)
+console.log("Elementi i parë:", fruta[0]);
+
+// Aksesimi i elementit të fundit
+console.log("Elementi i fundit:", fruta[fruta.length - 1]);
+
+// Ndryshimi i një elementi
+fruta[1] = "Dredhëza";
+console.log("Pas ndryshimit:", fruta);
+`,
+                instructions: "Krijoni një Array me tre numra dhe aksesoni elementin e dytë."
+            },
+            
+            // Leksioni 12: Metodat Kryesore të Array-t
+            {
+                title: "12. Metodat Kryesore të Array-t",
+                explanation: `
+                    <p>Array-të vijnë me funksione të ndërtuara (metoda) për manipulim të lehtë:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">push()</code>: Shton një element në fund.</li>
+                        <li><code class="font-mono">pop()</code>: Heq elementin e fundit.</li>
+                        <li><code class="font-mono">shift()</code>: Heq elementin e parë.</li>
+                        <li><code class="font-mono">unshift()</code>: Shton një element në fillim.</li>
+                        <li><code class="font-mono">length</code>: Pronë që tregon numrin e elementeve.</li>
+                    </ul>
+                `,
+                code: `const lista = ["a", "b", "c"];
+
+lista.push("d"); // Shton 'd' në fund
+console.log("Pas push():", lista);
+
+let fundi = lista.pop(); // Heq 'd'
+console.log("U hoq:", fundi);
+console.log("Pas pop():", lista);
+`,
+                instructions: "Përdorni <code class=\"font-mono\">unshift()</code> për të shtuar '0' në fillim të listës."
+            },
+            
+            // Leksioni 13: Objektet (Bazat)
+            {
+                title: "13. Objektet (Bazat)",
+                explanation: `
+                    <p>Objektet janë thelbi i JavaScript-it. Ato janë koleksione të **çifteve çelës-vlerë (key-value pairs)**. Çelësat (keys) janë stringa (ose simbole) dhe vlerat (values) mund të jenë çdo lloj të dhëne.</p>
+                    <p>Përdoren për të modeluar entitete të botës reale si njerëz, makina, ose vende.</p>
+                `,
+                code: `const personi = {
+  emri: "Filan",
+  mbiemri: "Fisteku",
+  mosha: 30,
+  eshteStudent: false
+};
+
+console.log(personi);
+`,
+                instructions: "Krijoni një objekt me pronat <code class=\"font-mono\">modeli</code>, <code class=\"font-mono\">viti</code> dhe <code class=\"font-mono\">ngjyra</code> për një makinë."
+            },
+            
+            // Leksioni 14: Qasja në Pronat e Objektit
+            {
+                title: "14. Qasja në Pronat e Objektit",
+                explanation: `
+                    <p>Ka dy mënyra kryesore për të aksesuar vlerat brenda një objekti:</p>
+                    <ol class="list-decimal ml-6 space-y-1">
+                        <li>**Dot Notation (me Pikë):** <code class="font-mono">objekti.çelësi</code>. Më e zakonshme.</li>
+                        <li>**Bracket Notation (me Kllapa):** <code class="font-mono">objekti['çelësi']</code>. Përdoret kur emri i çelësit është ruajtur në një variabël ose kur çelësi ka hapësira.</li>
+                    </ol>
+                `,
+                code: `const libri = {
+  titulli: "Kështjella",
+  autori: "Kadare"
+};
+
+// Dot Notation
+console.log("Titulli:", libri.titulli);
+
+// Bracket Notation
+let celesi = "autori";
+console.log("Autori:", libri[celesi]);
+
+// Vendosja e një vlere të re
+libri.botuesi = "Botimet";
+console.log(libri);
+`,
+                instructions: "Aksesoni pronën <code class=\"font-mono\">mosha</code> nga objekti dhe ndryshojeni në 25."
+            },
+
+            // Leksioni 15: Metodat e Objekteve
+            {
+                title: "15. Metodat e Objekteve",
+                explanation: `
+                    <p>Një Metodë është thjesht një funksion që ruhet si një pronë e një objekti. Metodat i japin objekteve aftësinë për të kryer veprime.</p>
+                    <p>Brenda një metode, mund të përdorni fjalën kyçe <code class="font-mono">this</code> për t'iu referuar vetë objektit.</p>
+                `,
+                code: `const llogaritesi = {
+  numri1: 10,
+  numri2: 5,
+  shuma: function() {
+    return this.numri1 + this.numri2;
+  },
+  zbritja() { // Sintaksë e shkurtër
+    return this.numri1 - this.numri2;
+  }
+};
+
+console.log("Shuma:", llogaritesi.shuma());
+console.log("Zbritja:", llogaritesi.zbritja());
+`,
+                instructions: "Shtoni një metodë <code class=\"font-mono\">pershendet</code> te objekti juaj që thotë 'Përshëndetje!'."
+            },
+            
+            // Leksioni 16: Iterimi i Objekteve
+            {
+                title: "16. Iterimi i Objekteve",
+                explanation: `
+                    <p>Iterimi do të thotë të kalosh nëpër të gjitha pronat e një objekti. Mënyra më e zakonshme është me ciklin <code class="font-mono">for...in</code>.</p>
+                    <p>Për të marrë vetëm çelësat ose vetëm vlerat, përdorni metodat statike të <code class="font-mono">Object</code> si <code class="font-mono">Object.keys()</code>, <code class="font-mono">Object.values()</code>, ose <code class="font-mono">Object.entries()</code>.</p>
+                `,
+                code: `const pija = {
+  emri: "Kafe",
+  shija: "E fortë",
+  cmimi: 1.5
+};
+
+// Iterimi me for...in
+for (let celesi in pija) {
+  console.log(\`\${celesi}: \${pija[celesi]}\`);
+}
+
+// Merr vetëm çelësat
+const celesat = Object.keys(pija);
+console.log("Çelësat:", celesat);
+`,
+                instructions: "Përdorni <code class=\"font-mono\">Object.values()</code> për të printuar të gjitha vlerat e objektit në konsolë."
+            },
+            
+            // Leksioni 17: this Keyword
+            {
+                title: "17. this Keyword",
+                explanation: `
+                    <p>Fjala kyçe <code class="font-mono">this</code> i referohet objektit të cilit i përket funksioni (metoda).</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>Në një metodë objekti, <code class="font-mono">this</code> i referohet vetë objektit.</li>
+                        <li>Në kontekstin global, <code class="font-mono">this</code> i referohet objektit <code class="font-mono">window</code> (në shfletues).</li>
+                        <li>Në një funksion të zakonshëm (jo brenda një objekti), <code class="font-mono">this</code> i referohet gjithashtu objektit global (ose <code class="font-mono">undefined</code> në modalitetin strict).</li>
+                    </ul>
+                `,
+                code: `const klienti = {
+  emri: "Liridon",
+  urim: function() {
+    console.log("Gëzuar ditëlindjen, " + this.emri + "!");
+  }
+};
+
+klienti.urim();
+
+// Në kontekstin global (jashtë funksionit)
+console.log("Global 'this' tip:", typeof this);
+`,
+                instructions: "Provoni të përdorni <code class=\"font-mono\">this.emri</code> brenda një metode tjetër të klientit."
+            },
+            
+            // Leksioni 18: Arrow Funksionet
+            {
+                title: "18. Arrow Funksionet",
+                explanation: `
+                    <p>Arrow Funksionet (<code class="font-mono">=></code>) janë një sintaksë e shkurtër për shkrimin e funksioneve. Ata nuk kanë kontekstin e tyre <code class="font-mono">this</code>, por e trashëgojnë atë nga ambienti prind. Kjo i bën ata idealë për shumë raste.</p>
+                    <p>Sintaksa: <code class="font-mono">const funksioni = (parametrat) => { ... kodi ... }</code></p>
+                `,
+                code: `// Funksioni tradicional
+const sasiaTradicionale = function(a, b) {
+  return a + b;
+};
+
+// Arrow Funksioni (sintaksa e shkurtër)
+const sasiaArrow = (a, b) => a + b; // Return i nënkuptuar
+
+console.log("Tradicionale:", sasiaTradicionale(2, 3));
+console.log("Arrow:", sasiaArrow(2, 3));
+`,
+                instructions: "Krijoni një Arrow Funksion që kthen dyfishin e një numri të dhënë."
+            },
+            
+            // Leksioni 19: Destructuring (Shkatërrimi)
+            {
+                title: "19. Destructuring (Shkatërrimi)",
+                explanation: `
+                    <p>Destructuring është një mënyrë e përshtatshme për të nxjerrë vlera nga Array-të ose pronat nga Objektet në variabla të veçanta.</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>**Objekt Destructuring:** Përdor <code class="font-mono">{}</code></li>
+                        <li>**Array Destructuring:** Përdor <code class="font-mono">[]</code></li>
+                    </ul>
+                `,
+                code: `const user = { username: "beni", email: "beni@email.com", age: 35 };
+const [first, second] = ["Molla", "Banana"];
+
+// Objekt Destructuring
+const { username, age } = user;
+console.log(\`Përdoruesi: \${username}, Mosha: \${age}\`);
+
+// Array Destructuring
+console.log(\`Fruti 1: \${first}, Fruti 2: \${second}\`);
+`,
+                instructions: "Nëse keni një objekt <code class=\"font-mono\">profili</code>, nxirrni pronat <code class=\"font-mono\">qyteti</code> dhe <code class=\"font-mono\">kodi</code>."
+            },
+            
+            // Leksioni 20: Operatorët Spread dhe Rest
+            {
+                title: "20. Operatorët Spread dhe Rest",
+                explanation: `
+                    <p>Të dy përdorin sintaksën me tre pika (<code class="font-mono">...</code>), por kryejnë funksione të ndryshme bazuar në kontekst:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>**Spread (<code class="font-mono">...</code>):** "Përhap" elementet e një Array-i ose pronat e një objekti në një tjetër.</li>
+                        <li>**Rest (<code class="font-mono">...</code>):** Mbledh të gjithë elementet e mbetura në një Array. Përdoret zakonisht në parametrat e funksionit.</li>
+                    </ul>
+                `,
+                code: `// Spread: bashkimi i Array-ve
+const list1 = [1, 2];
+const list2 = [3, 4];
+const combine = [...list1, ...list2, 5];
+console.log("Spread:", combine); // [1, 2, 3, 4, 5]
+
+// Rest: në parametrat e funksionit
+function total(x, ...restNums) {
+  console.log("Të tjerat:", restNums); // Array i elementeve të mbetura
+}
+total(1, 2, 3, 4);
+`,
+                instructions: "Përdorni operatorin Spread për të kopjuar një objekt në një objekt të ri."
+            },
+            
+            // Leksioni 21: Klasat (Classes)
+            {
+                title: "21. Klasat (Classes)",
+                explanation: `
+                    <p>Klasat janë shabllonë për të krijuar objekte. Ato ofrojnë një mënyrë më të pastër dhe më të lehtë (sintaksë) për të punuar me trashëgiminë prototipale (e cila është mekanizmi i vërtetë prapa skenave në JS).</p>
+                    <p>Çdo klasë duhet të ketë një metodë <code class="font-mono">constructor()</code> që thirret kur krijohet një instancë e re me <code class="font-mono">new</code>.</p>
+                `,
+                code: `class Person {
+  constructor(emri, mosha) {
+    this.emri = emri;
+    this.mosha = mosha;
+  }
+  shfaqInfo() {
+    console.log(\`Emri: \${this.emri}, Mosha: \${this.mosha}\`);
+  }
+}
+
+const erion = new Person("Erion", 28);
+erion.shfaqInfo();
+`,
+                instructions: "Krijoni një klasë <code class=\"font-mono\">Automjeti</code> me pronën <code class=\"font-mono\">modeli</code>."
+            },
+            
+            // Leksioni 22: Trashëgimia (Inheritance)
+            {
+                title: "22. Trashëgimia (Inheritance)",
+                explanation: `
+                    <p>Trashëgimia lejon një klasë (klasa fëmijë/derivuese) të trashëgojë pronat dhe metodat e një klase tjetër (klasa prind/bazë).</p>
+                    <p>Përdor fjalën kyçe <code class="font-mono">extends</code>. Metoda <code class="font-mono">super()</code> duhet të thirret në konstruktorin e klasës fëmijë për të thirrur konstruktorin e prindit.</p>
+                `,
+                code: `class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  speak() {
+    console.log(\`\${this.name} bën një zë.\`);
+  }
+}
+
+class Dog extends Animal {
+  speak() { // Mbivendosja e metodës
+    console.log(\`\${this.name} leh: Bau! Bau!\`);
+  }
+}
+
+const fido = new Dog("Fido");
+fido.speak();
+`,
+                instructions: "Nga klasa <code class=\"font-mono\">Automjeti</code> (Leksioni 21), krijoni klasën <code class=\"font-mono\">Makina</code> që e trashëgon atë."
+            },
+            
+            // Leksioni 23: try...catch (Menaxhimi i Gabimeve)
+            {
+                title: "23. try...catch (Menaxhimi i Gabimeve)",
+                explanation: `
+                    <p>Struktura <code class="font-mono">try...catch</code> përdoret për të menaxhuar gabimet në mënyrë elegante, duke parandaluar ndërprerjen e papritur të programit.</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>Kodi që mund të shkaktojë gabime vendoset brenda bllokut <code class="font-mono">try</code>.</li>
+                        <li>Nëse ndodh një gabim, ekzekutimi kalon në bllokun <code class="font-mono">catch (error)</code>.</li>
+                        <li><code class="font-mono">finally</code> ekzekutohet gjithmonë, pavarësisht nëse ka gabim apo jo.</li>
+                    </ul>
+                `,
+                code: `function ndarje(a, b) {
+  try {
+    if (b === 0) {
+      throw new Error("Pjesëtimi me zero nuk lejohet!");
+    }
+    return a / b;
+  } catch (error) {
+    console.error("Gabim i Kapur:", error.message);
+    return null;
+  } finally {
+    console.log("Funksioni u përfundua.");
+  }
+}
+
+console.log("Rezultati:", ndarje(10, 0));
+`,
+                instructions: "Krijoni një gabim të ri (<code class=\"font-mono\">throw new Error</code>) brenda një blloku <code class=\"font-mono\">try</code>."
+            },
+            
+            // Leksioni 24: Metodat setTimeout & setInterval
+            {
+                title: "24. Metodat setTimeout & setInterval",
+                explanation: `
+                    <p>Këto funksione janë thelbësore për ekzekutimin e kodit në mënyrë asinkrone (pas një kohe të caktuar ose në mënyrë të përsëritur):</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">setTimeout(funksion, kohë)</code>: Ekzekuton një funksion **një herë** pas numrit të dhënë të milisekondave.</li>
+                        <li><code class="font-mono">setInterval(funksion, kohë)</code>: Ekzekuton një funksion në mënyrë **të përsëritur** pas çdo intervali të caktuar.</li>
+                    </ul>
+                `,
+                code: `// Ekzekutohet pas 2 sekondash (2000ms)
+console.log("Fillimi...");
+setTimeout(() => {
+  console.log("U ekzekutua pas 2 sekondash!");
+}, 2000);
+
+// setInterval: (Për shkak të kufizimeve të konsolës, e simulojmë kështu)
+// let counter = 0;
+// const intervalId = setInterval(() => {
+//   console.log("Interval:", counter++);
+//   if (counter === 3) clearInterval(intervalId);
+// }, 1000);
+`,
+                instructions: "Krijoni një <code class=\"font-mono\">setTimeout</code> që printon një mesazh pas 500ms."
+            },
+            
+            // Leksioni 25: Promises (Premtimet)
+            {
+                title: "25. Promises (Premtimet)",
+                explanation: `
+                    <p>Promises janë një objekt që përfaqëson përfundimin (ose dështimin) eventual të një operacioni asinkron. Ato përdoren për të menaxhuar kodin asinkron në mënyrë më të rregullt (duke shmangur "callback hell").</p>
+                    <p>Një Promise mund të jetë në një nga tri gjendjet: <code class="font-mono">pending</code>, <code class="font-mono">fulfilled</code> (zgjidhur), ose <code class="font-mono">rejected</code> (refuzuar).</p>
+                    <p>Përdor <code class="font-mono">.then()</code> për sukses dhe <code class="font-mono">.catch()</code> për gabim.</p>
+                `,
+                code: `const myPromise = new Promise((resolve, reject) => {
+  const suksesi = true; 
+  if (suksessi) {
+    setTimeout(() => resolve("Të dhënat u morën!"), 1000);
+  } else {
+    reject("Gabim në marrjen e të dhënave.");
+  }
+});
+
+myPromise
+  .then(result => {
+    console.log("Sukses:", result);
+  })
+  .catch(error => {
+    console.error("Dështim:", error);
+  });
+`,
+                instructions: "Ndryshoni <code class=\"font-mono\">suksessi</code> në <code class=\"font-mono\">false</code> dhe shihni rezultatin <code class=\"font-mono\">.catch()</code>."
+            },
+            
+            // Leksioni 26: async/await
+            {
+                title: "26. async/await",
+                explanation: `
+                    <p>Këto janë një shtesë e sintaksës që e bën punën me Promises më të lehtë dhe e bën kodin asinkron të duket si kod sinkron (më i lexueshëm).</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>Funksionet e deklaruara me <code class="font-mono">async</code> kthejnë gjithmonë një Promise.</li>
+                        <li>Fjala kyçe <code class="font-mono">await</code> mund të përdoret VETËM brenda funksioneve <code class="font-mono">async</code> dhe ndalon ekzekutimin deri sa Promise të zgjidhet.</li>
+                    </ul>
+                `,
+                code: `function prit(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function start() {
+  console.log("Fillimi asinkron...");
+  await prit(1500); // Prit 1.5 sekonda
+  console.log("Pritja mbaroi, vazhdoj.");
+}
+
+start();
+`,
+                instructions: "Krijoni një funksion <code class=\"font-mono\">async</code> që përdor <code class=\"font-mono\">await</code> për të pritur dy Promises me radhë."
+            },
+            
+            // Leksioni 27: Fetch API (Thirrjet HTTP)
+            {
+                title: "27. Fetch API (Thirrjet HTTP)",
+                explanation: `
+                    <p>Fetch API është mënyra standarde moderne për të bërë kërkesa rrjeti (HTTP) nga shfletuesi për të marrë burime (p.sh., JSON nga një API).</p>
+                    <p><code class="font-mono">fetch()</code> kthen një Promise që zgjidhet në objektin <code class="font-mono">Response</code>.</p>
+                `,
+                code: `// Kujdes: Kjo është vetëm për shembull. Nuk do të ekzekutohet plotësisht në këtë mjedis.
+
+console.log("Fetch API demonstron parimin e kodit asinkron.");
+console.log("Kërkon ekzekutim në shfletues real.");
+`,
+                instructions: "Shpjegoni me shkrim pse nevojitet <code class=\"font-mono\">await response.json()</code> pas <code class=\"font-mono\">fetch</code>."
+            },
+            
+            // Leksioni 28: JSON (JavaScript Object Notation)
+            {
+                title: "28. JSON (JavaScript Object Notation)",
+                explanation: `
+                    <p>JSON është një format i lehtë i shkëmbimit të të dhënave, i bazuar në sintaksën e objekteve të JavaScript-it. Përdoret si format standard për të dërguar të dhëna nga serveri në aplikacion (dhe anasjelltas).</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>**<code class="font-mono">JSON.stringify()</code>:** Konverton një objekt JS në string JSON.</li>
+                        <li>**<code class="font-mono">JSON.parse()</code>:** Konverton një string JSON në objekt JS.</li>
+                    </ul>
+                `,
+                code: `const obj = { emri: "Driton", vendi: "Tiranë" };
+
+// Konverto në string JSON
+const jsonString = JSON.stringify(obj);
+console.log("Si String:", jsonString);
+
+// Konverto Stringun JSON prapa në objekt
+const backToObject = JSON.parse(jsonString);
+console.log("Si Objekt:", backToObject.emri);
+`,
+                instructions: "Krijoni një Array JS, konvertojeni në JSON dhe printoni String-un."
+            },
+            
+            // Leksioni 29: Storage Lokale (localStorage)
+            {
+                title: "29. Storage Lokale (localStorage)",
+                explanation: `
+                    <p>LocalStorage i lejon aplikacionet të ruajnë të dhëna në shfletuesin e përdoruesit pa afat skadence (ndryshe nga cookies).</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">localStorage.setItem(key, value)</code>: Vendos një vlerë.</li>
+                        <li><code class="font-mono">localStorage.getItem(key)</code>: Merr një vlerë.</li>
+                        <li>Vini re: localStorage ruan vetëm **stringa**. Duhet të përdorni <code class="font-mono">JSON.stringify</code> dhe <code class="font-mono">JSON.parse</code> për objekte.</li>
+                    </ul>
+                `,
+                code: `// Vendos një string
+localStorage.setItem('emriKlientit', 'Ardit');
+console.log("Emri u ruajt.");
+
+// Merr vlerën (Ky do të ekzekutohet vetëm në mjedisin e shfletuesit)
+// const emri = localStorage.getItem('emriKlientit');
+// console.log("Emri i marrë:", emri);
+
+// localStorage.removeItem('emriKlientit'); // Fshirja
+console.log("Kërkon shfletues real për të testuar plotësisht localStorage.");
+`,
+                instructions: "Shkruani kodin për të ruajtur një numër të quajtur <code class=\"font-mono\">ID</code> në localStorage."
+            },
+
+            // Leksioni 30: DOM Manipulation (Hyrje)
+            {
+                title: "30. DOM Manipulation (Hyrje)",
+                explanation: `
+                    <p>DOM (Document Object Model) është ndërfaqja programore për dokumentet HTML. DOM-i i paraqet dokumentet si një strukturë pemësh, ku çdo nyje (node) është një pjesë e dokumentit (element, tekst, atribut).</p>
+                    <p>**Manipulimi i DOM** do të thotë përdorimi i JavaScript-it për të ndryshuar, shtuar ose fshirë elemente, atribute dhe stilime në një faqe interneti.</p>
+                `,
+                code: `// Kujdes: Ky kod do të ndryshonte titullin e kësaj faqeje në një shfletues real.
+const titulliFaqes = document.getElementById('page-title');
+titulliFaqes.textContent = 'DOM Manipulation Funksionon!';
+
+console.log("Titulli i Faqes u ndryshua me sukses.");
+`,
+                instructions: "Përdorni <code class=\"font-mono\">document.body.style.backgroundColor</code> për të ndryshuar ngjyrën e sfondit."
+            },
+            
+            // Leksioni 31: Zgjedhja e Elementeve të DOM
+            {
+                title: "31. Zgjedhja e Elementeve të DOM",
+                explanation: `
+                    <p>Për të manipuluar elementet, së pari duhet t'i zgjedhim ato. Këto janë metodat më të zakonshme:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">document.getElementById('id')</code>: Zgjedh elementin me ID-në e dhënë (më e shpejta).</li>
+                        <li><code class="font-mono">document.querySelector('.class')</code>: Zgjedh elementin e parë që përputhet me selektorin CSS.</li>
+                        <li><code class="font-mono">document.querySelectorAll('.class')</code>: Zgjedh të gjitha elementet që përputhen.</li>
+                    </ul>
+                `,
+                code: `// Zgjedh titullin kryesor (h1)
+const titulliKryesor = document.querySelector('h1');
+titulliKryesor.style.color = 'yellow';
+
+console.log("Ngjyra e Titullit kryesor u ndryshua në të verdhë.");
+`,
+                instructions: "Zgjedhni butonin <code class=\"font-mono\">run-button</code> me <code class=\"font-mono\">getElementById</code> dhe printojeni në konsolë."
+            },
+            
+            // Leksioni 32: Ndryshimi i Përmbajtjes
+            {
+                title: "32. Ndryshimi i Përmbajtjes",
+                explanation: `
+                    <p>Për të ndryshuar përmbajtjen vizuale të elementeve:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">element.textContent</code>: Ndryshon përmbajtjen tekstuale (i sigurt, injoron HTML).</li>
+                        <li><code class="font-mono">element.innerHTML</code>: Ndryshon përmbajtjen dhe lejon përdorimin e etiketave HTML.</li>
+                    </ul>
+                `,
+                code: `const contentDiv = document.getElementById('lesson-content');
+
+// Krijojmë një paragraf të ri për demonstrim
+const demoP = document.createElement('p');
+demoP.id = 'demo-paragraph';
+contentDiv.appendChild(demoP);
+
+const p = document.getElementById('demo-paragraph');
+p.innerHTML = 'Kjo është <b>përmbajtje e re</b> me HTML.';
+
+console.log("Përmbajtja e HTML u shtua poshtë.");
+`,
+                instructions: "Ndryshoni tekstin e butonit <code class=\"font-mono\">run-button</code> në 'Kliko Këtu'."
+            },
+            
+            // Leksioni 33: Ngjarjet (Events) e DOM
+            {
+                title: "33. Ngjarjet (Events) e DOM",
+                explanation: `
+                    <p>Ngjarjet (Events) janë veprimet që ndodhin në një faqe interneti (p.sh., klikimi i një miu, shtypja e një tasti, ngarkimi i një faqeje).</p>
+                    <p>Përdorim <code class="font-mono">element.addEventListener('ngjarja', funksioni)</code> për të bashkangjitur reagime (funksione) kur ndodh një ngjarje.</p>
+                `,
+                code: `const runBtn = document.getElementById('run-button');
+
+// Shtojmë një 'listener' të ri, veç funksionit 'runCode'
+runBtn.addEventListener('click', function() {
+  console.log('Butoni u klikua!');
+});
+
+console.log("Tani butoni do të printojë dy mesazhe kur klikohet.");
+`,
+                instructions: "Shtoni një ngjarje <code class=\"font-mono\">mouseover</code> te butoni <code class=\"font-mono\">prev-lesson-btn</code> që printon 'Po kalon mbi mua!'."
+            },
+            
+            // Leksioni 34: Event Delegation
+            {
+                title: "34. Event Delegation",
+                explanation: `
+                    <p>Event Delegation është një teknikë ku ju vendosni një <code class="font-mono">listener</code> të vetëm të ngjarjes te një element prind, në vend që të vendosni listener-a tek çdo element fëmijë.</p>
+                    <p>Kjo është më efikase, veçanërisht kur punoni me lista të mëdha ose elemente që shtohen dinamikisht në DOM.</p>
+                `,
+                code: `// Të supozojmë se 'lesson-content' është prindi
+const parent = document.getElementById('lesson-content');
+
+parent.addEventListener('click', function(e) {
+  // Kontrollon nëse element klikuar është një paragraf
+  if (e.target.tagName === 'P') {
+    console.log('U klikua paragrafi:', e.target.textContent.substring(0, 15) + '...');
+  }
+});
+
+console.log("Kliko në çdo paragraf të shpjegimit për të parë rezultatin në konsolë.");
+`,
+                instructions: "Shpjegoni me fjalët tuaja pse <code class=\"font-mono\">e.target</code> është i rëndësishëm në Event Delegation."
+            },
+            
+            // Leksioni 35: Manipulimi i Klasave CSS
+            {
+                title: "35. Manipulimi i Klasave CSS",
+                explanation: `
+                    <p>Mënyra më e mirë për të ndryshuar stilimin e një elementi është duke manipuluar klasat e tij CSS duke përdorur <code class="font-mono">element.classList</code>.</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">add('class')</code>: Shton një klasë.</li>
+                        <li><code class="font-mono">remove('class')</code>: Heq një klasë.</li>
+                        <li><code class="font-mono">toggle('class')</code>: Shton/heq klasën nëse ekziston/nuk ekziston.</li>
+                    </ul>
+                `,
+                code: `const runBtn = document.getElementById('run-button');
+
+// Shton një klasë të re stili (p.sh., për efekte hover)
+runBtn.classList.add('shadow-xl');
+
+// Heq klasën 'shadow-md'
+runBtn.classList.remove('shadow-md');
+
+console.log("Butoni 'Ekzekuto Kodin' ka një hije më të thellë.");
+`,
+                instructions: "Përdorni <code class=\"font-mono\">toggle</code> për të ndryshuar butonin <code class=\"font-mono\">prev-lesson-btn</code> nëse është i çaktivizuar apo jo."
+            },
+            
+            // Leksioni 36: Web Forms dhe Input Data
+            {
+                title: "36. Web Forms dhe Input Data",
+                explanation: `
+                    <p>JavaScript përdoret thelbësisht për të menaxhuar inputin e përdoruesit në formularë (forms) dhe për të bërë validime në anën e klientit.</p>
+                    <p>Për të marrë vlerën e një fushë inputi, përdorni <code class="font-mono">inputElement.value</code>.</p>
+                    <p>Për të parandaluar dërgimin e formularit që shkakton rifreskim faqeje, përdorni <code class="font-mono">event.preventDefault()</code>.</p>
+                `,
+                code: `// Simulo një fushë input
+const inputSimuluar = { value: "Filani.Fisteku", id: "username-input" };
+
+const username = inputSimuluar.value;
+
+if (username.length < 5) {
+  console.log("Gabim: Emri i përdoruesit duhet të jetë të paktën 5 karaktere.");
+} else {
+  console.log("Emri i përdoruesit është valid.");
+}
+`,
+                instructions: "Shkruani një kusht <code class=\"font-mono\">if</code> që kontrollon nëse vlera e inputit është e zbrazët."
+            },
+            
+            // Leksioni 37: Modulet (ES6 Modules)
+            {
+                title: "37. Modulet (ES6 Modules)",
+                explanation: `
+                    <p>Modulet na lejojnë të ndajmë kodin tonë në skedarë të vegjël, të ripërdorshëm dhe të izoluar (si në këtë strukturë, por zakonisht në skedarë të ndryshëm).</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">export</code>: Përdoret për të nxjerrë funksione, variabla ose klasa nga një skedar.</li>
+                        <li><code class="font-mono">import</code>: Përdoret për të futur ato elemente në një skedar tjetër.</li>
+                    </ul>
+                `,
+                code: `// Kujdes: Kjo sintaksë kërkon skedarë të ndarë.
+
+console.log("Modulet janë thelbësore për menaxhimin e kodeve të mëdha nëpërmjet import/export.");
+`,
+                instructions: "Shkruani si do të bëni <code class=\"font-mono\">export default</code> një funksion të vetëm."
+            },
+            
+            // Leksioni 38: Set dhe Map
+            {
+                title: "38. Set dhe Map",
+                explanation: `
+                    <p>Këto janë struktura të reja të të dhënave, të prezantuara në ES6:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>**Set:** Një koleksion i vlerave unike. Nuk mund të ketë dy vlera identike. Përdor <code class="font-mono">.add()</code> dhe <code class="font-mono">.has()</code>.</li>
+                        <li>**Map:** Një koleksion i çifteve çelës-vlerë, ku çelësat mund të jenë çdo lloj të dhëne (jo vetëm stringa, si te objektet). Përdor <code class="font-mono">.set()</code> dhe <code class="font-mono">.get()</code>.</li>
+                    </ul>
+                `,
+                code: `// Set Demo
+const unik = new Set([1, 2, 2, 3]);
+console.log("Set (vlera unike):", unik.size); // 3
+
+// Map Demo
+const konfigurimi = new Map();
+konfigurimi.set('emri', 'Admin');
+konfigurimi.set(1, 'ID Numerike');
+console.log("Map: Marrja e ID:", konfigurimi.get(1));
+`,
+                instructions: "Shtoni një vlerë <code class=\"font-mono\">boolean</code> si çelës në një objekt <code class=\"font-mono\">Map</code>."
+            },
+            
+            // Leksioni 39: Data dhe Ora
+            {
+                title: "39. Data dhe Ora",
+                explanation: `
+                    <p>Objekti <code class="font-mono">Date</code> përdoret për të punuar me data dhe kohë. Ai bazohet në milisekonda që nga 1 janari 1970 UTC (Unix Epoch).</p>
+                    <p>Ka shumë metoda për formatim dhe manipulim, si <code class="font-mono">getFullYear()</code>, <code class="font-mono">getMonth()</code>, dhe <code class="font-mono">getTime()</code>.</p>
+                `,
+                code: `const dataSot = new Date();
+console.log("Data Aktuale:", dataSot);
+
+// Merr vitin aktual
+const viti = dataSot.getFullYear();
+console.log("Viti Aktual:", viti);
+
+// Merr muajin (0=Janar, 11=Dhjetor)
+const muaji = dataSot.getMonth() + 1; 
+console.log("Muaji (1-12):", muaji);
+`,
+                instructions: "Krijoni një objekt <code class=\"font-mono\">Date</code> për ditëlindjen tuaj dhe printojeni atë."
+            },
+            
+            // Leksioni 40: Regular Expressions (Regex)
+            {
+                title: "40. Regular Expressions (Regex)",
+                explanation: `
+                    <p>Regex janë modele që përdoren për të kërkuar, gjetur, dhe zëvendësuar shkronja brenda stringave. Përdoren shpesh për validimin e formatit (p.sh., email-ave).</p>
+                    <p>Deklarohen me thonjëza <code class="font-mono">/modeli/flags</code>.</p>
+                `,
+                code: `const teksti = "Java është e ndryshme nga JavaScript.";
+const modeli = /Java/g; // kërkon 'Java' globalisht
+
+// Teston nëse përputhet
+const aPerputhet = modeli.test(teksti);
+console.log("A ka 'Java'?", aPerputhet);
+
+// Zëvendëson
+const eZevendesuar = teksti.replace(/Java/g, "Python");
+console.log("Zëvendësuar:", eZevendesuar);
+`,
+                instructions: "Krijoni një Regex që kontrollon nëse një string përmban të paktën një shifër (<code class=\"font-mono\">/\d/</code>)."
+            },
+            
+            // Leksioni 41: call, apply, dhe bind
+            {
+                title: "41. call, apply, dhe bind",
+                explanation: `
+                    <p>Këto metoda përdoren për të menaxhuar në mënyrë eksplicite vlerën <code class="font-mono">this</code> brenda një funksioni, pavarësisht se ku thirret funksioni.</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">call(thisArg, arg1, arg2...)</code>: Thërret funksionin me argumente të listuara individualisht.</li>
+                        <li><code class="font-mono">apply(thisArg, [argsArray])</code>: Thërret funksionin me argumente si një Array.</li>
+                        <li><code class="font-mono">bind(thisArg)</code>: Kthen një funksion të ri me vlerën e caktuar <code class="font-mono">this</code>.</li>
+                    </ul>
+                `,
+                code: `const personi = { emri: "Besa" };
+function pershendet(mbiemri) {
+  console.log(\`Përshëndetje, \${this.emri} \${mbiemri}\`);
+}
+
+pershendet.call(personi, "Krasniqi"); // Besa Krasniqi
+
+// Përdor bind për të krijuar një funksion të ri
+const pershendetBesa = pershendet.bind(personi);
+pershendetBesa("Gashi"); // Besa Gashi
+`,
+                instructions: "Përdorni metodën <code class=\"font-mono\">apply</code> për të thirrur funksionin <code class=\"font-mono\">pershendet</code>."
+            },
+            
+            // Leksioni 42: Closures
+            {
+                title: "42. Closures",
+                explanation: `
+                    <p>Një Closure është një funksion që, së bashku me referencat e tij në mjedisin e tij rrethues (lexical environment), 'mbyll' variablat që janë jashtë scope-it të tij. Kjo do të thotë se funksioni mund të aksidojë variablat prind, edhe pasi funksioni prind ka përfunduar ekzekutimin.</p>
+                `,
+                code: `function krijuesi(x) {
+  let baza = x;
+  return function(y) {
+    return baza + y;
+  };
+}
+
+const shto5 = krijuesi(5); // shto5 mban referencën te 'baza=5'
+console.log(shto5(3)); // 8
+console.log(shto5(10)); // 15
+`,
+                instructions: "Krijoni një Closure që numëron dhe kthen vlerën aktuale sa herë që thirret."
+            },
+            
+            // Leksioni 43: map, filter, dhe reduce
+            {
+                title: "43. map, filter, dhe reduce",
+                explanation: `
+                    <p>Këto janë tre metoda thelbësore të Array-t për manipulimin e të dhënave, duke shmangur ciklet e zakonshme (loops) dhe duke e bërë kodin më funksional:</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li><code class="font-mono">map()</code>: Kthen një Array të ri duke transformuar çdo element.</li>
+                        <li><code class="font-mono">filter()</code>: Kthen një Array të ri me elementet që plotësojnë një kusht.</li>
+                        <li><code class="font-mono">reduce()</code>: Kthen një vlerë të vetme (shumë, mesatare, etj.) duke kombinuar elementet.</li>
+                    </ul>
+                `,
+                code: `const numrat = [1, 2, 3, 4];
+
+// Map: Dyfishon çdo numër
+const dyfishi = numrat.map(n => n * 2); 
+console.log("Map (Dyfishi):", dyfishi); // [2, 4, 6, 8]
+
+// Filter: Merr vetëm numrat çift
+const ciftet = numrat.filter(n => n % 2 === 0);
+console.log("Filter (Çiftet):", ciftet); // [2, 4]
+
+// Reduce: Gjen shumën totale
+const shuma = numrat.reduce((acc, curr) => acc + curr, 0);
+console.log("Reduce (Shuma):", shuma); // 10
+`,
+                instructions: "Përdorni <code class=\"font-mono\">filter()</code> për të larguar të gjithë numrat më të vegjël se 10 nga një Array."
+            },
+            
+            // Leksioni 44: Generatorët
+            {
+                title: "44. Generatorët",
+                explanation: `
+                    <p>Funksionet Generatorë janë funksione të veçanta që mund të ndalojnë dhe rifillojnë ekzekutimin e tyre. Shënohen me një yll <code class="font-mono">function*</code>.</p>
+                    <p>Përdorin fjalën kyçe <code class="font-mono">yield</code> për të kthyer një vlerë dhe për të ndalur funksionin. Kur thirret sërish, funksioni vazhdon nga pika ku u ndal.</p>
+                `,
+                code: `function* idGenerator() {
+  let id = 1;
+  while (true) {
+    yield id++; // Ndalon këtu dhe kthen 'id'
+  }
+}
+
+const generatori = idGenerator();
+console.log("ID 1:", generatori.next().value); // 1
+console.log("ID 2:", generatori.next().value); // 2
+`,
+                instructions: "Krijoni një generator që kthen tre stringa me radhë: 'E Hënë', 'E Martë', 'E Mërkurë'."
+            },
+            
+            // Leksioni 45: Iterators
+            {
+                title: "45. Iterators",
+                explanation: `
+                    <p>Një Iterator është një objekt që di të aksesojë elementet e një koleksioni, një nga një, duke ruajtur pozicionin e tij brenda sekuencës. Array-të, stringat dhe Map-et janë të gjitha struktura të ripërsëritshme (Iterable).</p>
+                    <p>Një iterator ka një metodë <code class="font-mono">next()</code> që kthen një objekt me dy prona: <code class="font-mono">value</code> (vlera tjetër) dhe <code class="font-mono">done</code> (boolean).</p>
+                `,
+                code: `const emri = "BESA";
+const iterator = emri[Symbol.iterator]();
+
+console.log("Iterator 1:", iterator.next()); 
+console.log("Iterator 2:", iterator.next()); 
+// next() kthen: { value: 'B', done: false }
+`,
+                instructions: "Shpjegoni ndryshimin midis një strukture të ripërsëritshme (Iterable) dhe një Iterator-i."
+            },
+            
+            // Leksioni 46: WeakMap dhe WeakSet
+            {
+                title: "46. WeakMap dhe WeakSet",
+                explanation: `
+                    <p>WeakMap dhe WeakSet janë variante të Map dhe Set, por me një dallim thelbësor në menaxhimin e kujtesës (Memory Management):</p>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>Ato mbajnë referenca të dobëta (weak references) ndaj objekteve.</li>
+                        <li>Kjo do të thotë që nëse nuk ka referenca të tjera aktive te një objekt, ai mund të fshihet nga Garbage Collector-i, duke parandaluar rrjedhjen e kujtesës (memory leaks).</li>
+                        <li>Për shkak të natyrës së dobët, ato nuk janë të ripërsëritshme dhe nuk kanë metodën <code class="font-mono">.size</code>.</li>
+                    </ul>
+                `,
+                code: `let obj1 = { id: 1 };
+const weakMap = new WeakMap();
+weakMap.set(obj1, "Të dhëna");
+
+console.log("WeakMap mund të përdoret për të ruajtur meta-të dhëna private të objekteve.");
+
+// Pas kësaj linje, nëse 'obj1 = null' vendoset, 
+// WeakMap mund ta fshijë vetë referencën.
+`,
+                instructions: "Shkruani pse WeakMap është më i mirë se Map për ruajtjen e të dhënave cache (të fshehura)."
+            },
+            
+            // Leksioni 47: Proxy
+            {
+                title: "47. Proxy",
+                explanation: `
+                    <p>Objekti <code class="font-mono">Proxy</code> përdoret për të krijuar një zëvendësues (Proxy) për një objekt tjetër. Proxy lejon të kapni dhe ndërhyni në operacione thelbësore si marrja e pronave, vendosja e pronave, thirrja e funksioneve etj.</p>
+                    <p>Kjo është thelbësore për menaxhimin e gjendjes, validimin, ose log-imin e ndryshimeve.</p>
+                `,
+                code: `const person = { emri: "Era", mosha: 25 };
+const handler = {
+  get: function(target, prop) {
+    if (prop === 'mosha') {
+      return target.mosha + 5; // Kthen moshën e rritur
+    }
+    return target[prop];
+  }
+};
+
+const proxyPerson = new Proxy(person, handler);
+
+console.log("Mosha origjinale (25), Proxy (e rritur):", proxyPerson.mosha); // 30
+`,
+                instructions: "Krijoni një <code class=\"font-mono\">Proxy</code> që printon një mesazh sa herë që vendoset një pronë e re (<code class=\"font-mono\">set</code>)."
+            },
+            
+            // Leksioni 48: Reflect
+            {
+                title: "48. Reflect",
+                explanation: `
+                    <p>Objekti <code class="font-mono">Reflect</code> është një objekt global që ofron metoda për të kapur operacionet e JavaScript (si ato që përdoren nga Proxy). Qëllimi i tij kryesor është të standardizojë dhe të centralizojë funksionalitetin që historikisht është shpërndarë në <code class="font-mono">Object</code> dhe operatorë.</p>
+                    <p><code class="font-mono">Reflect</code> është i dobishëm kur kombinohet me Proxy.</p>
+                `,
+                code: `const obj = { x: 1, y: 2 };
+
+// Marrja e vlerës së pronës (e barabartë me obj.x)
+const xValue = Reflect.get(obj, 'x');
+console.log("Reflect.get(x):", xValue);
+
+// Kontrollon nëse një pronë ekziston (e barabartë me 'x' in obj)
+const kaX = Reflect.has(obj, 'x');
+console.log("Reflect.has(x):", kaX);
+`,
+                instructions: "Përdorni <code class=\"font-mono\">Reflect.set()</code> për të ndryshuar vlerën e pronës <code class=\"font-mono\">y</code> në 5."
+            },
+            
+            // Leksioni 49: Web Workers
+            {
+                title: "49. Web Workers",
+                explanation: `
+                    <p>Web Workers i lejojnë skriptet JavaScript të ekzekutohen në thread-e të sfondit. Kjo është thelbësore për të kryer operacione komplekse kompjuterike pa bllokuar ndërfaqen kryesore të përdoruesit (UI), duke mbajtur faqen të ndjeshme.</p>
+                    <p>Punojnë duke përdorur mesazhe (<code class="font-mono">postMessage()</code> dhe <code class="font-mono">onmessage</code>) për komunikim ndërmjet thread-it kryesor dhe Worker-it.</p>
+                `,
+                code: `// Kujdes: Kërkon një skedar Worker.js dhe shfletues real
+
+console.log("Web Workers përdoren për të shmangur ngrirjen e UI gjatë detyrave intensive.");
+`,
+                instructions: "Shkruani si do të bëni <code class=\"font-mono\">terminate()</code> një Worker pasi ka përfunduar punën."
+            },
+            
+            // Leksioni 50: Përmbledhje dhe Projekt Final
+            {
+                title: "50. Përmbledhje dhe Projekt Final",
+                explanation: `
+                    <p>Urime! Keni përfunduar 49 leksione të themeloreve të JavaScript. Tani jeni të pajisur me bazat e forta për të filluar ndërtimin e aplikacioneve komplekse.</p>
+                    <p>Ky leksion i fundit shërben si një sfidë për të kombinuar gjithçka që keni mësuar: Variabla, Kontroll, Funksione, Array, Objekte, Asinkronicitet dhe Manipulim i DOM.</p>
+                    <h3 class="text-xl font-semibold mb-2">Sfida: Aplikacioni i Listës së Detyrave</h3>
+                    <p>Krijoni një aplikacion të thjeshtë të Listës së Detyrave (To-Do List) duke përdorur DOM Manipulation dhe Event Listeners. Ruani detyrat duke përdorur Local Storage.</p>
+                `,
+                code: `// Përdorni këtë hapësirë për të filluar projektin tuaj To-Do List!
+// Për shembull:
+
+
+`,
+                instructions: "Filloni të planifikoni si do ta ndërtoni strukturën e HTML-së dhe si do ta ruani Array-n e detyrave në Local Storage."
+            }
+        ];
+               
+
+        // Pjesa e Rijadit 
+     
+        
+        function loadLesson(lessonNum) {
+            if (lessonNum < 1 || lessonNum > LESSONS.length) {
+                return; 
+            }
+
+            window.currentLesson = lessonNum; 
+            const lessonIndex = lessonNum - 1;
+            const lessonData = LESSONS[lessonIndex];
+
+            document.getElementById('page-title').textContent = `Kursi i JavaScript: ${lessonData.title}`;
+            document.getElementById('lesson-title-display').innerHTML = lessonData.title;
+
+            document.getElementById('lesson-content').innerHTML = lessonData.explanation;
+
+            document.getElementById('code-editor').value = lessonData.code.trim();
+            document.getElementById('editor-instructions').innerHTML = lessonData.instructions;
+            document.getElementById('output').textContent = "Kliko 'Ekzekuto Kodin' për të parë rezultatin e skriptit tuaj këtu.";
+            document.getElementById('output').classList.remove('error');
+
+            updateNavigationButtons(lessonNum);
+        }
+
+        
+        function updateNavigationButtons(current) {
+            const totalLessons = LESSONS.length;
+            const prevBtn = document.getElementById('prev-lesson-btn');
+            const nextBtn = document.getElementById('next-lesson-btn');
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
+            
+            prevBtn.disabled = (current === 1);
+            nextBtn.disabled = (current === totalLessons);
+
+            progressText.textContent = `${current} / ${totalLessons}`;
+
+            const progressPercentage = (current / totalLessons) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const outputElement = document.getElementById('output');
+            
+            outputElement.textContent = 'Duke ekzekutuar...';
+            outputElement.classList.remove('error');
+            
+            let capturedOutput = '';
+            
+            const customConsole = {
+                log: (...args) => {
+                    const message = args.map(a => 
+                        typeof a === 'object' && a !== null ? JSON.stringify(a, null, 2) : String(a)
+                    ).join(' ');
+                    capturedOutput += message + '\n';
+                },
+                error: (...args) => {
+                    const message = args.map(a => 
+                        typeof a === 'object' && a !== null ? JSON.stringify(a, null, 2) : String(a)
+                    ).join(' ');
+                    capturedOutput += `[ERROR] ${message}\n`;
+                }
+            };
+
+            try {
+                const executableFunction = new Function('console', 'localStorage', code);
+                executableFunction(customConsole, window.localStorage);
+                
+                if (capturedOutput.trim() === '') {
+                    outputElement.textContent = 'Kodi u ekzekutua me sukses. Asnjë rezultat i dukshëm duke përdorur console.log().';
+                } else {
+                    outputElement.textContent = capturedOutput.trim();
+                }
+
+            } catch (e) {
+                outputElement.textContent = `🚨 Gabim Gjatë Ekzekutimit:\n\n${e.message}\n\n--- Rezultati para gabimit ---\n${capturedOutput}`;
+                outputElement.classList.add('error');
+            }
+        }
+
+        window.onload = function() {
+            loadLesson(window.currentLesson);
+        };
+    </script>
+</body>
+</html>
