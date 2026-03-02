@@ -24,6 +24,13 @@ app.use('/uploads', express.static(uploadsDir));
 app.use(express.static(path.join(__dirname)));
 
 // 👇 Pool me environment variables për MySQL
+console.log('🔍 Checking environment variables:');
+console.log('MYSQLHOST:', process.env.MYSQLHOST ? '✓ Set' : '✗ Missing');
+console.log('MYSQLUSER:', process.env.MYSQLUSER ? '✓ Set' : '✗ Missing');
+console.log('MYSQLPASSWORD:', process.env.MYSQLPASSWORD ? '✓ Set' : '✗ Missing');
+console.log('MYSQLDATABASE:', process.env.MYSQLDATABASE ? '✓ Set' : '✗ Missing');
+console.log('MYSQLPORT:', process.env.MYSQLPORT || '3306');
+
 const pool = mysql.createPool({
     host: process.env.MYSQLHOST,
     user: process.env.MYSQLUSER,
