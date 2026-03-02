@@ -2,7 +2,7 @@
 class CourseProgress {
     constructor() {
         this.user = this.getCurrentUser();
-        this.serverUrl = 'http://localhost:3000';
+        this.serverUrl = window.BACKEND_URL || 'http://localhost:3000';
     }
 
     getCurrentUser() {

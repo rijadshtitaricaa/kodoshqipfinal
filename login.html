@@ -195,6 +195,7 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script>
         const loginForm = document.getElementById('loginForm');
         const errorEl = document.getElementById('error');
@@ -207,7 +208,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const res = await fetch('http://localhost:3000/login', {
+                const res = await fetch(`${window.BACKEND_URL || 'http://localhost:3000'}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })

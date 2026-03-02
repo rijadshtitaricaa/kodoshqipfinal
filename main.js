@@ -106,7 +106,7 @@ function addUser() {
 
 
 
-    fetch("/addUser", {
+    fetch(`${window.BACKEND_URL || ''}/addUser`, {
 
         method: "POST",
 
@@ -238,7 +238,7 @@ function addUser() {
 
             if (img) {
 
-                img.src = `/uploads/${user.profile_image}`;
+                img.src = `${window.BACKEND_URL || ''}/uploads/${user.profile_image}`;
 
                 img.style.display = 'block';
 
@@ -292,7 +292,7 @@ function addUser() {
 
         try {
 
-            const res = await fetch(`/profile/${encodeURIComponent(user.email)}`);
+            const res = await fetch(`${window.BACKEND_URL || ''}/profile/${encodeURIComponent(user.email)}`);
 
             if (res.ok) {
 
@@ -346,7 +346,7 @@ function addUser() {
 
         try {
 
-            const res = await fetch('/update-profile', {
+            const res = await fetch(`${window.BACKEND_URL || ''}/update-profile`, {
 
                 method: 'POST',
 
