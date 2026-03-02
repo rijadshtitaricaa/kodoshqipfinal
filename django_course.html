@@ -33,7 +33,7 @@
 </head>
 <body>
     <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-4xl bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+        <div class="w-full max-w-7xl bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
             <header class="p-6 border-b border-gray-700">
                 <h1 class="text-2xl font-bold text-indigo-400">Bazat e Django: Kursi Themelor (50 Mësime)</h1>
                 <p class="text-sm text-gray-400 mt-1">Mëso si të ndërtosh aplikacione web me këtë framework të fuqishëm Python.</p>
@@ -47,10 +47,78 @@
             </header>
 
             <main class="p-6">
-                <h2 id="lesson-title" class="text-3xl font-extrabold text-white mb-4">1. Hyrje në Django dhe MVC</h2>
-                <div id="lesson-content" class="text-lg text-gray-300 h-96 overflow-y-auto pr-2 space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <div class="space-y-6">
+                        <h2 id="lesson-title" class="text-3xl font-extrabold text-white mb-4">1. Hyrje në Django dhe MVC</h2>
+                        <div id="lesson-content" class="text-lg text-gray-300 h-96 overflow-y-auto pr-2 space-y-4">
+                        </div>
                     </div>
-            </main>
+
+                    
+                    <div class="space-y-6">
+                        <div class="bg-gray-900 rounded-xl p-6 border border-gray-700">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-white">🦄 Django Live Tester</h2>
+                                <div class="flex gap-2">
+                                    <button onclick="runCode()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm font-semibold">
+                                        ▶️ Run Code
+                                    </button>
+                                    <button onclick="clearCode()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200 text-sm font-semibold">
+                                        🗑️ Clear
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-semibold text-gray-300 mb-2">Django/Python Kodi:</label>
+                                <textarea 
+                                    id="django-code" 
+                                    class="w-full h-64 p-3 border border-gray-600 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
+                                    placeholder="Shkruani Django/Python këtu..."># Django Views Example
+from django.http import HttpResponse
+from django.shortcuts import render
+
+def home(request):
+    # Shembull i thjeshtë
+    context = {
+        'emri': 'KodoShqip',
+        'kurs': 'Django',
+        'numri_studenteve': 42
+    }
+    
+    return render(request, 'home.html', context)
+
+def about(request):
+    # Përgjigje JSON
+    data = {
+        'mesazhi': 'Ky është një API endpoint',
+        'status': 'sukses'
+    }
+    return HttpResponse(data, content_type='application/json')
+
+# Django Models Example
+from django.db import models
+
+class Student(models.Model):
+    emri = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    datalindja = models.DateField()
+    aktiv = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"{self.emri} ({self.email})"</textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-300 mb-2">📋 Rezultati (Output):</label>
+                                <div class="bg-gray-900 border border-gray-600 rounded-lg p-3">
+                                    <div id="django-output" class="font-mono text-sm text-green-400 h-48 overflow-auto whitespace-pre-wrap">Përgatituni për të parë rezultatin...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             <footer class="p-6 border-t border-gray-700 flex justify-between">
                 <button id="prev-btn" onclick="prevLesson()" disabled class="flex items-center px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500 disabled:opacity-50 transition duration-300">
@@ -223,6 +291,60 @@
             if (currentLessonIndex > 0) {
                 showLesson(currentLessonIndex - 1);
             }
+        }
+
+        function runCode() {
+            const code = document.getElementById('django-code').value;
+            const output = document.getElementById('django-output');
+            
+            output.innerHTML = '<span class="text-yellow-400">Duke ekzekutuar Django/Python...</span>';
+            
+            // Përdorim Pyodide për ekzekutim të Python-it në browser
+            try {
+                // Shtimi i Pyodide nëse nuk ekziston
+                if (typeof pyodide === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js';
+                    script.onload = function() {
+                        executeDjango(code, output);
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    executeDjango(code, output);
+                }
+            } catch (error) {
+                output.innerHTML = `<span class="text-red-400">Gabim: ${error.message}</span>`;
+            }
+        }
+        
+        function executeDjango(code, output) {
+            try {
+                // Pastro output
+                pyodide.runPythonAsync(code).then(results => {
+                    if (results.length > 0) {
+                        output.innerHTML = results[0].split('\n').map(line => 
+                            `<span class="text-green-400">${escapeHtml(line)}</span>`
+                        ).join('<br>');
+                    } else {
+                        output.innerHTML = '<span class="text-gray-400">Kodi u ekzekutua pa output</span>';
+                    }
+                }).catch(error => {
+                    output.innerHTML = `<span class="text-red-400">Gabim në ekzekutim: ${error.message}</span>`;
+                });
+            } catch (error) {
+                output.innerHTML = `<span class="text-red-400">Gabim: ${error.message}</span>`;
+            }
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function clearCode() {
+            document.getElementById('django-code').value = '';
+            document.getElementById('django-output').innerHTML = '<span class="text-gray-500">Përgatituni për të parë rezultatin...</span>';
         }
 
         window.onload = () => {

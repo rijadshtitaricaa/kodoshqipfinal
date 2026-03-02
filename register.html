@@ -207,30 +207,31 @@
 
     const email = document.getElementById('email').value.trim().toLowerCase();
     const password = document.getElementById('password').value;
-    const name = email.split('@')[0]; // optional default name from email
+    const name = email.split('@')[0];
 
     try {
-      const res = await fetch('http://localhost:5000/register', {
+      const res = await fetch('/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name }) // send name too
+        body: JSON.stringify({ email, password, name })
       });
 
       const data = await res.json();
 
       if (res.ok && data.message === 'REGISTER_SUCCESS') {
         msg.className = 'success';
-        msg.textContent = 'Llogara u krijua me sukses! Po ridrejtoheni...';
+        msg.textContent = 'Llogaria u krijua me sukses! Po ridrejtoheni...';
         localStorage.setItem('loggedInUser', JSON.stringify({ email, name }));
         setTimeout(() => location.href = 'index.html', 1200);
       } else {
         msg.className = 'error';
         msg.textContent = data.message || 'Gabim në regjistrim';
       }
+
     } catch (err) {
       console.error('Register error:', err);
       msg.className = 'error';
-      msg.textContent = 'Gabim i lidhjes me serverin. Sigurohuni që serveri është i hapur.';
+      msg.textContent = 'Gabim i lidhjes me serverin.';
     }
   });
 </script>

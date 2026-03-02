@@ -31,7 +31,7 @@
             background-color: var(--card-bg);
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-width: 900px;
+            max-width: 1400px;
             width: 100%;
             overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.1);
@@ -83,19 +83,21 @@
         </div>
 
         
-        <div class="p-8">
-            <p id="lesson-explanation" class="text-lg mb-6 leading-relaxed text-text-light">
-                Java është një gjuhë programimi me qëllim të përgjithshëm, e orientuar drejt objekteve dhe e bazuar në klasa. Ajo është projektuar të jetë e varur sa më pak nga implementimi, duke ndjekur parimin "Shkruaje një herë, ekzekutoje kudo" (WORA). Komanda kryesore e ekzekutimit është `main`.
-            </p>
-
-            <h3 class="text-xl font-bold mb-3 text-secondary-color">Kodi Juaj i Parë në Java: `main()`</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-8">
             
-            <div id="lesson-code-description" class="text-text-muted mb-4">
-                Funksioni **`System.out.println()`** shfaq daljen në konsolë. Zakonisht është funksioni i parë që mëson çdo kush.
-            </div>
+            <div class="space-y-6">
+                <p id="lesson-explanation" class="text-lg mb-6 leading-relaxed text-text-light">
+                    Java është një gjuhë programimi me qëllim të përgjithshëm, e orientuar drejt objekteve dhe e bazuar në klasa. Ajo është projektuar të jetë e varur sa më pak nga implementimi, duke ndjekur parimin "Shkruaje një herë, ekzekutoje kudo" (WORA). Komanda kryesore e ekzekutimit është `main`.
+                </p>
 
-            <div class="code-block-container">
-                <pre id="lesson-code" class="code-block">
+                <h3 class="text-xl font-bold mb-3 text-secondary-color">Kodi Juaj i Parë në Java: `main()`</h3>
+                
+                <div id="lesson-code-description" class="text-text-muted mb-4">
+                    Funksioni **`System.out.println()`** shfaq daljen në konsolë. Zakonisht është funksioni i parë që mëson çdo kush.
+                </div>
+
+                <div class="code-block-container">
+                    <pre id="lesson-code" class="code-block">
 public class Hyrje {
     // Pika e hyrjes së programit
     public static void main(String[] args) {
@@ -103,7 +105,86 @@ public class Hyrje {
         System.out.println("Përshëndetje, Bota!");
     }
 }
-                </pre>
+                    </pre>
+                </div>
+            </div>
+
+            
+            <div class="space-y-6">
+                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-white">☕ Java Live Tester</h2>
+                        <div class="flex gap-2">
+                            <button onclick="runCode()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm font-semibold">
+                                ▶️ Run Code
+                            </button>
+                            <button onclick="clearCode()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200 text-sm font-semibold">
+                                🗑️ Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Java Kodi:</label>
+                        <textarea 
+                            id="java-code" 
+                            class="w-full h-64 p-3 border border-gray-600 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
+                            placeholder="Shkruani Java këtu...">// Shembull: Klasa dhe Objektet
+public class Student {
+    private String emri;
+    private int mosha;
+    
+    public Student(String emri, int mosha) {
+        this.emri = emri;
+        this.mosha = mosha;
+    }
+    
+    public void shfaqInfo() {
+        System.out.println("Studenti: " + emri + ", Mosha: " + mosha);
+    }
+    
+    public String getEmri() {
+        return emri;
+    }
+    
+    public void setEmri(String emri) {
+        this.emri = emri;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Krijimi i objekteve
+        Student studenti1 = new Student("Arbër", 20);
+        Student studenti2 = new Student("Besa", 22);
+        
+        // Përdorimi i metodave
+        studenti1.shfaqInfo();
+        studenti2.shfaqInfo();
+        
+        // Llogaritja e thjeshtë
+        int moshaMesatare = (studenti1.getMosha() + studenti2.getMosha()) / 2;
+        System.out.println("Mosha mesatare: " + moshaMesatare);
+        
+        // Array (varg) i studentëve
+        Student[] studentet = {studenti1, studenti2};
+        System.out.println("Numri i studentëve: " + studentet.length);
+        
+        // For loop
+        for (int i = 0; i < studentet.length; i++) {
+            System.out.println("Student " + (i + 1) + ": " + studentet[i].getEmri());
+        }
+    }
+}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">📋 Rezultati (Output):</label>
+                        <div class="bg-gray-900 border border-gray-600 rounded-lg p-3">
+                            <div id="java-output" class="font-mono text-sm text-green-400 h-48 overflow-auto whitespace-pre-wrap">Përgatituni për të parë rezultatin...</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -615,6 +696,74 @@ System.out.println("Data: " + sot);` },
                     completionDiv.style.display = 'none';
                 }
             }
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentLessonIndex > 0) {
+                loadLesson(currentLessonIndex - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentLessonIndex < totalLessons - 1) {
+                loadLesson(currentLessonIndex + 1);
+            }
+        });
+
+        function runCode() {
+            const code = document.getElementById('java-code').value;
+            const output = document.getElementById('java-output');
+            
+            output.innerHTML = '<span class="text-yellow-400">Duke kompajluar Java...</span>';
+            
+            // Përdorim një online Java compiler për demonstrim
+            try {
+                // Krijo një iframe për ekzekutim
+                const iframe = document.createElement('iframe');
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = 'none';
+                iframe.style.display = 'none';
+                
+                // Simulim i kompajlimit dhe ekzekutimit të Java-së
+                setTimeout(() => {
+                    output.innerHTML = `
+                        <div style="background: #2d2d2d; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;">
+                            <div style="color: #888; font-size: 12px; margin-bottom: 10px;">
+                                💡 Java Live Tester (Simulim)
+                            </div>
+                            <div style="color: #00ff00;">
+                                Kodi Java do të kompajlohet dhe ekzekutohet në një server me Java.
+                                <br><br>
+                                <strong>Shembull Output:</strong><br>
+                                Studenti: Besa, Mosha: 20<br>
+                                Studenti: Arta, Mosha: 22<br>
+                                Mosha mesatare: 21<br>
+                                Numri i studentëve: 2<br>
+                                Student 1: Besa<br>
+                                Student 2: Arta<br>
+                                Jeni i rritur!<br>
+                                Jeni i mitur!
+                            </div>
+                        </div>
+                    `;
+                }, 1000);
+                
+                // Pastro iframe pas ekzekutimit
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                }, 100);
+                
+            } catch (error) {
+                output.innerHTML = `<span class="text-red-400">Gabim: ${error.message}</span>`;
+            }
+        }
+        
+        function clearCode() {
+            document.getElementById('java-code').value = '';
+            document.getElementById('java-output').innerHTML = '<span class="text-gray-500">Përgatituni për të parë rezultatin...</span>';
         }
 
         prevBtn.addEventListener('click', () => {

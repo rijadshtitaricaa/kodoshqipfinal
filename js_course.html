@@ -3,218 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Kursi i JavaScript: Leksioni 1 (Variablat)</title>
-    
-    
+    <title id="page-title">Kursi i JavaScript</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="progress.js"></script>
     <style>
-        
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a1a2e; 
-            color: #e0e0e0; 
+            background-color: #1a1a2e;
+            color: #e0e0e0;
             min-height: 100vh;
         }
-        
-        .container-card {
-            background-color: #2a2a4a; 
-            border: 1px solid #4a4a6e;
-        }
-
-        h1, h2, h3 {
-            color: #8c8cff; 
-        }
-
-        code {
-            background-color: #3a3a5a; 
-            color: #c0c0ff; 
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-
-        pre {
-            background-color: #1f1f3a; 
-            border: 1px solid #4a4a6e;
-            color: #d0d0d0;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-        }
-        
-        #code-editor {
-            font-family: monospace;
-            line-height: 1.5;
-            background-color: #1f1f3a; 
-            color: #e0e0e0;
-            border: 1px solid #4a4a6e;
-        }
-        #code-editor:focus {
-            border-color: #8c8cff;
-            box-shadow: 0 0 0 3px rgba(140, 140, 255, 0.5);
-        }
-
-        #run-button {
-            background-color: #8c8cff;
-            color: white;
-            transition: all 0.15s ease-in-out;
-        }
-        #run-button:hover {
-            background-color: #7a7aff;
-            box-shadow: 0 4px 10px rgba(140, 140, 255, 0.3);
-        }
-        #run-button:active {
-            background-color: #6a6aff;
-            transform: translateY(1px);
-        }
-
-        #output {
-            background-color: #1f1f3a;
-            border: 1px solid #4a4a6e;
-            color: #e0e0e0;
-        }
-        #output.error {
-            color: #ff6a6a; 
-        }
-
-        .nav-button {
-            background-color: #8c8cff;
-            color: white;
-            transition: all 0.15s ease-in-out;
-        }
-        .nav-button:hover:not(:disabled) {
-            background-color: #7a7aff;
-            box-shadow: 0 4px 10px rgba(140, 140, 255, 0.3);
-        }
-        .nav-button:disabled {
-            background-color: #4a4a6e;
-            color: #a0a0b0;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .progress-bar-container {
-            background-color: #4a4a6e;
-            border-radius: 9999px; 
-            height: 8px; 
-            overflow: hidden;
-        }
-        .progress-bar {
-            background-color: #8c8cff;
-            height: 100%;
-            border-radius: 9999px;
-            transition: width 0.3s ease-in-out;
-        }
+        .container-card { background-color: #2a2a4a; border: 1px solid #4a4a6e; }
+        .editor-bg { background-color: #1e1e3f; }
+        .output-bg { background-color: #16162e; }
     </style>
 </head>
-<body class="p-4 md:p-8 flex items-start justify-center">
-
-    <div class="max-w-3xl w-full container-card rounded-xl shadow-2xl p-6 md:p-10 mb-12">
-        
-        
-        <header class="mb-8 pb-4 border-b border-gray-600">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-2">
-                JavaScript Themeloret
-            </h1>
-            <h2 id="lesson-title-display" class="text-xl md:text-2xl font-bold text-center">
-                
-            </h2>
-        </header>
-
-        
-        <div id="lesson-content" class="space-y-6 text-gray-200 leading-relaxed text-base md:text-lg">
-            
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 id="lesson-title-display" class="text-3xl font-bold text-blue-400 font-bold text-blue-400">Duke u ngarkuar...</h1>
+                <p class="text-gray-400">Tema: <span id="current-topic-display">JavaScript Course</span></p>
+            </div>
+            <div class="w-full md:w-64 text-right">
+                <div class="flex justify-between mb-1 text-sm">
+                    <span>Progresi</span>
+                    <span id="progress-text">0/50</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
         </div>
 
-        
-        <section class="mt-12 pt-8 border-t border-gray-600">
-            <h3 class="text-2xl font-bold text-center mb-4">
-                Provoje vetë!
-            </h3>
-            <p class="text-gray-300 mb-4 text-center" id="editor-instructions">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="container-card p-6 rounded-xl shadow-lg overflow-y-auto max-h-[750px]">
+                <div id="lesson-content" class="space-y-4">
+                    </div>
                 
-            </p>
-
-            
-            <textarea 
-                id="code-editor" 
-                rows="10" 
-                class="w-full p-4 rounded-lg text-base shadow-inner resize-y"
-            ></textarea>
-
-            
-            <button 
-                id="run-button" 
-                onclick="runCode()" 
-                class="mt-4 w-full md:w-auto px-6 py-3 font-semibold rounded-lg shadow-md hover:scale-105 active:scale-95 transform transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-8c8cff focus:ring-opacity-75"
-            >
-                ▶ Ekzekuto Kodin
-            </button>
-
-            
-            <div class="mt-8">
-                <h3 class="text-xl font-semibold mb-2">
-                    Rezultati në Konsolë
-                </h3>
-                <pre 
-                    id="output" 
-                    class="w-full p-4 rounded-lg overflow-x-auto text-sm whitespace-pre-wrap min-h-[100px]"
-                >Kliko 'Ekzekuto Kodin' për të parë rezultatin e skriptit tuaj këtu.</pre>
-            </div>
-        </section>
-
-        
-        <footer class="mt-12 pt-6 border-t border-gray-600 flex justify-between items-center text-sm md:text-base">
-            
-            
-            <button 
-                id="prev-lesson-btn" 
-                onclick="loadLesson(window.currentLesson - 1)" 
-                class="nav-button flex items-center space-x-2 px-4 py-2 rounded-lg"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                </svg>
-                <span>Kthehu Prapa</span>
-            </button>
-
-            
-            <div class="flex flex-col items-center flex-grow mx-4">
-                <span id="progress-text" class="text-gray-400 mb-2"></span>
-                <div class="progress-bar-container w-full max-w-xs">
-                    <div id="progress-bar" class="progress-bar"></div>
+                <div class="flex justify-between mt-8 border-t border-gray-600 pt-6">
+                    <button id="prev-lesson-btn" onclick="changeLesson(-1)" class="px-6 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg font-bold disabled:opacity-30">Mbrapsht</button>
+                    <button id="next-lesson-btn" onclick="changeLesson(1)" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold disabled:opacity-30">Vazhdo</button>
                 </div>
             </div>
 
-            
-            <button 
-                id="next-lesson-btn" 
-                onclick="loadLesson(window.currentLesson + 1)" 
-                class="nav-button flex items-center space-x-2 px-4 py-2 rounded-lg"
-            >
-                <span>Shko tek Mësimi i Rradhës</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-            </button>
-        </footer>
+            <div class="space-y-6">
+                <div class="container-card p-4 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-semibold mb-3 text-green-400">Editori i Kodit</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1 font-mono uppercase">JavaScript</label>
+                            <textarea id="js-code" class="w-full h-64 p-3 editor-bg rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1 font-mono uppercase">HTML (Opsionale)</label>
+                            <textarea id="html-code" class="w-full h-24 p-3 editor-bg rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <button onclick="runCode()" class="flex-1 bg-green-600 hover:bg-green-500 py-3 rounded-lg font-bold transition uppercase tracking-wider">Ekzekuto Kodin</button>
+                        <button onclick="clearCode()" class="px-4 bg-red-600 hover:bg-red-500 py-3 rounded-lg font-bold transition">Fshi</button>
+                    </div>
+                </div>
 
+                <div class="container-card p-4 rounded-xl shadow-lg">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="output-bg p-3 rounded-lg border border-gray-700 min-h-[120px]">
+                            <p class="text-xs text-yellow-500 mb-2 font-bold uppercase">Console Output:</p>
+                            <div id="console-output" class="font-mono text-sm text-green-300 whitespace-pre-wrap"></div>
+                        </div>
+                        <div class="output-bg p-3 rounded-lg border border-gray-700 min-h-[100px]">
+                            <p class="text-xs text-blue-400 mb-2 font-bold uppercase">Visual (DOM):</p>
+                            <div id="dom-output"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    
     <script>
-        // Ruaj numrin aktual të leksionit në nivel global
-        window.currentLesson = 1; 
-
-        // ----------------------------------------------------
-        // Baza e të Dhënave e 50 Leksioneve të JavaScript
-        // ----------------------------------------------------
+        // LISTA E 50 LEKSIONEVE (Shto leksionet e tua këtu)
         const LESSONS = [
-            // Leksioni 1: Variablat (const, let)
             {
-                title: "1. Variablat (const, let)",
+            title: "1. Variablat (const, let)",
                 explanation: `
                     <p>Në JavaScript, <code class="font-mono">variablat</code> janë thjesht emra që i caktojmë hapësirave të kujtesës për të ruajtur të dhëna. Mendoni sikur janë "kutia" me etiketa ku vendosni informacione. Këto informacione mund të ndryshojnë (variojnë) gjatë ekzekutimit të programit tuaj.</p>
                     <h3 class="text-xl font-semibold mb-2">Përdorimi i const dhe let</h3>
@@ -1360,95 +1232,101 @@ console.log("Web Workers përdoren për të shmangur ngrirjen e UI gjatë detyra
 
 `,
                 instructions: "Filloni të planifikoni si do ta ndërtoni strukturën e HTML-së dhe si do ta ruani Array-n e detyrave në Local Storage."
+            // ... vazhdo me leksionet e tjera deri në 50
             }
         ];
-               
 
-        // Pjesa e Rijadit 
-     
-        
-        function loadLesson(lessonNum) {
-            if (lessonNum < 1 || lessonNum > LESSONS.length) {
-                return; 
-            }
+        // Variabla për të ndjekur leksionin aktual
+        window.currentLesson = 0;
 
-            window.currentLesson = lessonNum; 
-            const lessonIndex = lessonNum - 1;
-            const lessonData = LESSONS[lessonIndex];
-
-            document.getElementById('page-title').textContent = `Kursi i JavaScript: ${lessonData.title}`;
-            document.getElementById('lesson-title-display').innerHTML = lessonData.title;
-
-            document.getElementById('lesson-content').innerHTML = lessonData.explanation;
-
-            document.getElementById('code-editor').value = lessonData.code.trim();
-            document.getElementById('editor-instructions').innerHTML = lessonData.instructions;
-            document.getElementById('output').textContent = "Kliko 'Ekzekuto Kodin' për të parë rezultatin e skriptit tuaj këtu.";
-            document.getElementById('output').classList.remove('error');
-
-            updateNavigationButtons(lessonNum);
-        }
-
-        
-        function updateNavigationButtons(current) {
-            const totalLessons = LESSONS.length;
-            const prevBtn = document.getElementById('prev-lesson-btn');
-            const nextBtn = document.getElementById('next-lesson-btn');
-            const progressText = document.getElementById('progress-text');
-            const progressBar = document.getElementById('progress-bar');
+        // Funksioni që ngarkon leksionin
+        function loadLesson(index) {
+            if (index < 0 || index >= LESSONS.length) return;
             
-            prevBtn.disabled = (current === 1);
-            nextBtn.disabled = (current === totalLessons);
+            window.currentLesson = index;
+            const lesson = LESSONS[index];
 
-            progressText.textContent = `${current} / ${totalLessons}`;
+            // 1. Përditëso Titujt
+            document.getElementById('lesson-title-display').innerText = lesson.title;
+            document.getElementById('current-topic-display').innerText = lesson.title;
 
-            const progressPercentage = (current / totalLessons) * 100;
-            progressBar.style.width = `${progressPercentage}%`;
+            // 2. Përditëso Përmbajtjen (Shpjegim + Instruksione)
+            document.getElementById('lesson-content').innerHTML = `
+                <div class="prose prose-invert max-w-none">
+                    ${lesson.explanation}
+                </div>
+                <div class="mt-8 p-4 bg-blue-900/30 border-l-4 border-blue-400 rounded-r-lg">
+                    <p class="text-blue-300 font-bold mb-1 underline">Detyra:</p>
+                    <p class="text-gray-200 text-sm italic">${lesson.instructions}</p>
+                </div>
+            `;
+
+            // 3. Përditëso Editorët
+            document.getElementById('js-code').value = lesson.code;
+            document.getElementById('html-code').value = '';
+
+            // 4. Përditëso Progresin
+            const total = LESSONS.length;
+            const current = index + 1;
+            const percentage = (current / total) * 100;
+            
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').innerText = `${current}/${total} (${Math.round(percentage)}%)`;
+
+            // 5. Kontrollo Butonat Navigues
+            document.getElementById('prev-lesson-btn').disabled = (index === 0);
+            document.getElementById('next-lesson-btn').disabled = (index === total - 1);
+            
+            // Pastro outputin e vjetër
+            document.getElementById('console-output').innerText = '';
+            document.getElementById('dom-output').innerHTML = '';
         }
 
-        
+        // Funksioni për butonin Mbrapsht/Vazhdo
+        function changeLesson(step) {
+            const newIndex = window.currentLesson + step;
+            loadLesson(newIndex);
+        }
+
+        // Funksioni për të ekzekutuar kodin
         function runCode() {
-            const code = document.getElementById('code-editor').value;
-            const outputElement = document.getElementById('output');
+            const jsCode = document.getElementById('js-code').value;
+            const htmlCode = document.getElementById('html-code').value;
+            const consoleOutput = document.getElementById('console-output');
+            const domOutput = document.getElementById('dom-output');
             
-            outputElement.textContent = 'Duke ekzekutuar...';
-            outputElement.classList.remove('error');
-            
-            let capturedOutput = '';
-            
-            const customConsole = {
-                log: (...args) => {
-                    const message = args.map(a => 
-                        typeof a === 'object' && a !== null ? JSON.stringify(a, null, 2) : String(a)
-                    ).join(' ');
-                    capturedOutput += message + '\n';
-                },
-                error: (...args) => {
-                    const message = args.map(a => 
-                        typeof a === 'object' && a !== null ? JSON.stringify(a, null, 2) : String(a)
-                    ).join(' ');
-                    capturedOutput += `[ERROR] ${message}\n`;
-                }
+            consoleOutput.innerText = '';
+            const logs = [];
+            const originalLog = console.log;
+
+            // Kap mesazhet e console.log
+            console.log = (...args) => {
+                logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : a).join(' '));
+                originalLog.apply(console, args);
             };
 
             try {
-                const executableFunction = new Function('console', 'localStorage', code);
-                executableFunction(customConsole, window.localStorage);
+                // Ekzekuto HTML
+                domOutput.innerHTML = htmlCode;
+                // Ekzekuto JavaScript
+                new Function(jsCode)();
                 
-                if (capturedOutput.trim() === '') {
-                    outputElement.textContent = 'Kodi u ekzekutua me sukses. Asnjë rezultat i dukshëm duke përdorur console.log().';
-                } else {
-                    outputElement.textContent = capturedOutput.trim();
-                }
-
-            } catch (e) {
-                outputElement.textContent = `🚨 Gabim Gjatë Ekzekutimit:\n\n${e.message}\n\n--- Rezultati para gabimit ---\n${capturedOutput}`;
-                outputElement.classList.add('error');
+                consoleOutput.innerText = logs.length > 0 ? logs.join('\n') : "> Kodi u ekzekutua me sukses.";
+            } catch (err) {
+                consoleOutput.innerHTML = `<span class="text-red-400">Gabim: ${err.message}</span>`;
+            } finally {
+                console.log = originalLog;
             }
         }
 
-        window.onload = function() {
-            loadLesson(window.currentLesson);
+        function clearCode() {
+            document.getElementById('console-output').innerText = '';
+            document.getElementById('dom-output').innerHTML = '';
+        }
+
+        // Ngarkimi fillestar
+        window.onload = () => {
+            loadLesson(0);
         };
     </script>
 </body>

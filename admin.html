@@ -78,7 +78,7 @@
     <div>
       <p class="admin-eyebrow">Paneli i Administrimit</p>
       <h1>Menaxho Përdoruesit</h1>
-      <p class="admin-subtitle">Shiko të gjithë përdoruesit që janë regjistruar në platformë në kohë reale.</p>
+      <p class="admin-subtitle"></p>
     </div>
     <div class="admin-actions">
       <input type="search" id="userSearchInput" placeholder="Kërko me emër ose email..." aria-label="Kërkim përdoruesish">
@@ -154,8 +154,12 @@
   document.addEventListener('DOMContentLoaded', () => {
     enforceAdminAccess();
     fetchUsers();
+    initProfileDropdown();
+    initProfileModal();
+    initLogout();
   });
 
+  // ---------------- Admin Access ----------------
   function enforceAdminAccess() {
     const userData = localStorage.getItem('loggedInUser');
     if (!userData) {
@@ -170,13 +174,14 @@
     }
   }
 
+  // ---------------- Fetch Users ----------------
   async function fetchUsers() {
     setLoadingState(true);
     try {
-      const res = await fetch('http://localhost:5000/admin/users');
-      if (!res.ok) {
-        throw new Error('Nuk mund të marr përdoruesit');
-      }
+      // Relative URL → do përdor portin ku është serveri aktual
+      const res = await fetch('/admin/users');
+      if (!res.ok) throw new Error('Nuk mund të marr përdoruesit');
+
       const data = await res.json();
       allUsers = data;
       renderUsers(data);
@@ -191,6 +196,7 @@
     }
   }
 
+  // ---------------- Render Users ----------------
   function renderUsers(users) {
     if (!users.length) {
       usersTableBody.innerHTML = '<tr><td colspan="4" class="empty-state">Ende nuk ka përdorues të regjistruar.</td></tr>';
@@ -201,7 +207,7 @@
     usersTableBody.innerHTML = users.map((user, index) => {
       const displayName = user.name || user.email.split('@')[0];
       const avatar = user.profile_image
-        ? `<img src="http://localhost:5000/uploads/${user.profile_image}" alt="${displayName}" class="admin-avatar">`
+        ? `<img src="/uploads/${user.profile_image}" alt="${displayName}" class="admin-avatar">`
         : `<span class="admin-avatar placeholder">${displayName.charAt(0).toUpperCase()}</span>`;
 
       return `
@@ -219,12 +225,14 @@
       : `${users.length} nga ${allUsers.length} përdorues të shfaqur`;
   }
 
+  // ---------------- Update Stats ----------------
   function updateStats(users) {
     totalUsersCount.textContent = users.length;
     lastUpdatedTime.textContent = new Date().toLocaleTimeString('sq-AL');
     newUsersCount.textContent = '0';
   }
 
+  // ---------------- Error Handling ----------------
   function showError(message) {
     if (!adminError) return;
     if (message) {
@@ -242,9 +250,7 @@
     }
   }
 
-  if (refreshUsersBtn) {
-    refreshUsersBtn.addEventListener('click', fetchUsers);
-  }
+  if (refreshUsersBtn) refreshUsersBtn.addEventListener('click', fetchUsers);
 
   if (userSearchInput) {
     userSearchInput.addEventListener('input', (e) => {
@@ -257,12 +263,11 @@
     });
   }
 
+  // ---------------- CSV Export ----------------
   if (downloadCsvBtn) {
     downloadCsvBtn.addEventListener('click', () => {
       if (!allUsers.length) return;
-      const csvRows = [
-        ['ID', 'Emri', 'Email', 'Foto']
-      ];
+      const csvRows = [['ID','Emri','Email','Foto']];
       allUsers.forEach(user => {
         csvRows.push([
           user.id,
@@ -271,7 +276,7 @@
           user.profile_image ? `uploads/${user.profile_image}` : ''
         ]);
       });
-      const csvContent = csvRows.map(row => row.join(',')).join('\\n');
+      const csvContent = csvRows.map(row => row.join(',')).join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -281,6 +286,155 @@
       URL.revokeObjectURL(url);
     });
   }
+
+  // ---------------- Profile Dropdown ----------------
+  function initProfileDropdown() {
+    const trigger = document.getElementById('profileTrigger');
+    const dropdown = document.querySelector('.profile-dropdown-menu');
+    if (!trigger || !dropdown) return;
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+  }
+
+  // ---------------- Profile Modal ----------------
+  function initProfileModal() {
+    const editBtn = document.getElementById('editProfileBtn');
+    const closeBtn = document.getElementById('closeProfileModal');
+    const cancelBtn = document.getElementById('cancelProfileBtn');
+    const modal = document.getElementById('profileModal');
+    const form = document.getElementById('profileForm');
+    const imgInput = document.getElementById('profileImageInput');
+
+    if (editBtn) editBtn.addEventListener('click', openProfileModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    if (imgInput) {
+      imgInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const preview = document.getElementById('profileImagePreview');
+          const placeholder = document.getElementById('profileImagePlaceholder');
+          if (preview) {
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+          }
+          if (placeholder) placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (form) form.addEventListener('submit', saveProfile);
+  }
+
+  async function openProfileModal(e) {
+    if (e) e.preventDefault();
+    const stored = localStorage.getItem('loggedInUser');
+    if (!stored) { alert('Ju duhet të jeni të kyçur për të përditësuar profilin'); return; }
+    const user = JSON.parse(stored);
+
+    const modal = document.getElementById('profileModal');
+    const nameInput = document.getElementById('profileNameInput');
+    const emailInput = document.getElementById('profileEmailInput');
+    const preview = document.getElementById('profileImagePreview');
+    const placeholder = document.getElementById('profileImagePlaceholder');
+    const initialPreview = document.getElementById('profileInitialPreview');
+
+    if (nameInput) nameInput.value = user.name || '';
+    if (emailInput) emailInput.value = user.email || '';
+
+    if (user.profile_image) {
+      if (preview) { preview.src = `/uploads/${user.profile_image}`; preview.style.display = 'block'; }
+      if (placeholder) placeholder.style.display = 'none';
+    } else {
+      if (preview) preview.style.display = 'none';
+      if (placeholder && initialPreview) {
+        initialPreview.textContent = (user.name || user.email).charAt(0).toUpperCase();
+        placeholder.style.display = 'flex';
+      }
+    }
+
+    try {
+      const res = await fetch(`/profile/${encodeURIComponent(user.email)}`);
+      if (res.ok) {
+        const latest = await res.json();
+        if (nameInput) nameInput.value = latest.name || '';
+        if (latest.profile_image && preview) {
+          preview.src = `/uploads/${latest.profile_image}`;
+          preview.style.display = 'block';
+          if (placeholder) placeholder.style.display = 'none';
+        }
+      }
+    } catch(err){ console.error(err); }
+
+    if (modal) modal.classList.add('active');
+
+    function closeModal(){ if(modal) modal.classList.remove('active'); }
+  }
+
+  async function saveProfile(e) {
+    if (e) e.preventDefault();
+    const stored = localStorage.getItem('loggedInUser');
+    if (!stored) return;
+
+    const user = JSON.parse(stored);
+    const nameInput = document.getElementById('profileNameInput');
+    const imgInput = document.getElementById('profileImageInput');
+    const msg = document.getElementById('profileMessage');
+    const form = document.getElementById('profileForm');
+
+    const formData = new FormData();
+    formData.append('email', user.email);
+    if (nameInput?.value) formData.append('name', nameInput.value);
+    if (imgInput?.files[0]) formData.append('profile', imgInput.files[0]);
+
+    try {
+      const res = await fetch('/update-profile', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        const updated = { ...user, name: nameInput?.value || user.name, profile_image: data.profile_image || user.profile_image };
+        localStorage.setItem('loggedInUser', JSON.stringify(updated));
+        updateProfileDisplay(updated);
+        if (msg) { msg.className='profile-message success'; msg.textContent='Profili u përditësua me sukses!'; setTimeout(()=>{ msg.textContent=''; msg.className='profile-message'; }, 3000); }
+        setTimeout(()=>{ if(form) form.reset(); const modal=document.getElementById('profileModal'); if(modal) modal.classList.remove('active'); },1500);
+      } else { if(msg){ msg.className='profile-message error'; msg.textContent=data.message||'Gabim në përditësimin e profilit'; } }
+    } catch {
+      if(msg){ msg.className='profile-message error'; msg.textContent='Gabim i lidhjes me serverin'; }
+    }
+  }
+
+  function updateProfileDisplay(user) {
+    const img = document.getElementById('profileNavImage');
+    const initial = document.getElementById('profileNavInitial');
+    const nameEl = document.getElementById('profileNavName');
+    if (nameEl) nameEl.textContent = user.name || user.email.split('@')[0];
+    if (user.profile_image) { if(img){ img.src=`/uploads/${user.profile_image}`; img.style.display='block'; } if(initial) initial.style.display='none'; }
+    else { if(img) img.style.display='none'; if(initial){ initial.textContent=(user.name||user.email).charAt(0).toUpperCase(); initial.style.display='flex'; } }
+  }
+
+  function initLogout() {
+    const btn = document.getElementById('logoutBtn');
+    if(btn) btn.addEventListener('click', (e)=>{ e.preventDefault(); localStorage.removeItem('loggedInUser'); location.href='index.html'; });
+  }
+
 })();
 </script>
 

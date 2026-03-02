@@ -316,7 +316,7 @@
 
             async loadUserProgress() {
                 try {
-                    const response = await fetch(`http://localhost:5000/user-progress/${this.user.email}`);
+                    const response = await fetch(`http://localhost:3000/user-progress/${this.user.email}`);
                     if (!response.ok) throw new Error('Failed to fetch progress');
                     
                     const progressList = await response.json();
@@ -391,7 +391,7 @@
                 }).join('');
             }
         }
-
+        
         const dashboard = new Dashboard();
     </script>
 </body>

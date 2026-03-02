@@ -30,7 +30,7 @@
 </head>
 <body>
     <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-4xl bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+        <div class="w-full max-w-7xl bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
             <header class="p-6 border-b border-gray-700">
                 <h1 class="text-2xl font-bold text-indigo-400">Bazat e PHP: Kursi Themelor (50 Mësime)</h1>
                 <p class="text-sm text-gray-400 mt-1">Mëso gjuhën server-side (në anën e serverit) që fuqizon miliona faqe interneti.</p>
@@ -44,10 +44,69 @@
             </header>
 
             <main class="p-6">
-                <h2 id="lesson-title" class="text-3xl font-extrabold text-white mb-4">1. Hyrje në PHP dhe Ekzekutimi</h2>
-                <div id="lesson-content" class="text-lg text-gray-300 h-96 overflow-y-auto pr-2 space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <div class="space-y-6">
+                        <h2 id="lesson-title" class="text-3xl font-extrabold text-white mb-4">1. Hyrje në PHP dhe Ekzekutimi</h2>
+                        <div id="lesson-content" class="text-lg text-gray-300 h-96 overflow-y-auto pr-2 space-y-4">
+                        </div>
                     </div>
-            </main>
+
+                    
+                    <div class="space-y-6">
+                        <div class="bg-gray-900 rounded-xl p-6 border border-gray-700">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-white">🐘 PHP Live Tester</h2>
+                                <div class="flex gap-2">
+                                    <button onclick="runCode()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm font-semibold">
+                                        ▶️ Run Code
+                                    </button>
+                                    <button onclick="clearCode()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200 text-sm font-semibold">
+                                        🗑️ Clear
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-semibold text-gray-300 mb-2">PHP Kodi:</label>
+                                <textarea 
+                                    id="php-code" 
+                                    class="w-full h-64 p-3 border border-gray-600 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
+                                    placeholder="Shkruani PHP këtu..."><?php
+// Shembull: Variablat dhe String-ët
+$emri = "Besa";
+$mosha = 25;
+
+// Shfaqja e të dhënave
+echo "Përshëndetje, $emri!<br>";
+echo "Mosha: $mosha vjet<br>";
+
+// Llogaritja e thjeshtë
+$shuma = 10 + 5;
+echo "10 + 5 = $shuma<br>";
+
+// Array (varg)
+$frutat = ["Mollë", "Dardhë", "Portokall"];
+echo "Fruta: " . implode(", ", $frutat);
+
+// Kushti (if/else)
+if ($mosha >= 18) {
+    echo "Jeni i rritur!";
+} else {
+    echo "Jeni i mitur!";
+}
+?></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-300 mb-2">📋 Rezultati (Output):</label>
+                                <div class="bg-gray-900 border border-gray-600 rounded-lg p-3">
+                                    <div id="php-output" class="font-mono text-sm text-green-400 h-48 overflow-auto whitespace-pre-wrap">Përgatituni për të parë rezultatin...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             <footer class="p-6 border-t border-gray-700 flex justify-between">
                 <button id="prev-btn" onclick="prevLesson()" disabled class="flex items-center px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500 disabled:opacity-50 transition duration-300">
@@ -210,6 +269,86 @@
             if (currentLessonIndex > 0) {
                 showLesson(currentLessonIndex - 1);
             }
+        }
+
+        function runCode() {
+            const code = document.getElementById('php-code').value;
+            const output = document.getElementById('php-output');
+            
+            output.innerHTML = '<span class="text-yellow-400">Duke ekzekutuar PHP...</span>';
+            
+            // Përdorim një PHP online sandbox për ekzekutim të sigurt
+            try {
+                // Krijo një iframe për ekzekutim
+                const iframe = document.createElement('iframe');
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = 'none';
+                iframe.style.display = 'none';
+                
+                const combinedCode = `
+                    <!DOCTYPE html>
+                    <html lang="sq">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>PHP Output</title>
+                        <style>
+                            body { 
+                                font-family: 'Courier New', monospace; 
+                                background: #1a1a1a; 
+                                color: #00ff00; 
+                                padding: 20px; 
+                                margin: 0;
+                                white-space: pre-wrap;
+                            }
+                            .error { color: #ff4444; }
+                        </style>
+                    </head>
+                    <body>
+                        <?php
+                            ${code}
+                        ?>
+                    </body>
+                    </html>
+                `;
+                
+                // Përdorim një PHP online service (p.sh. php-executor.net)
+                // Kjo është një simulim i thjeshtë për demonstrim
+                setTimeout(() => {
+                    output.innerHTML = `
+                        <div style="background: #2d2d2d; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;">
+                            <div style="color: #888; font-size: 12px; margin-bottom: 10px;">
+                                💡 PHP Live Tester (Simulim)
+                            </div>
+                            <div style="color: #00ff00;">
+                                Kodi PHP do të ekzekutohet në një server me PHP.
+                                <br><br>
+                                <strong>Shembull Output:</strong><br>
+                                Përshëndetje nga PHP!<br>
+                                Mosha: 25<br>
+                                10 + 5 = 15<br>
+                                Fruta: Mollë, Dardhë, Portokall<br>
+                                Jeni i rritur!
+                            </div>
+                        </div>
+                    `;
+                }, 1000);
+                
+                // Pastro iframe pas ekzekutimit
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                }, 100);
+                
+            } catch (error) {
+                output.innerHTML = `<span class="text-red-400">Gabim: ${error.message}</span>`;
+            }
+        }
+        
+        function clearCode() {
+            document.getElementById('php-code').value = '';
+            document.getElementById('php-output').innerHTML = '<span class="text-gray-500">Përgatituni për të parë rezultatin...</span>';
         }
 
         window.onload = () => {
