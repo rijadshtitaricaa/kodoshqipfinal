@@ -31,11 +31,12 @@ console.log('MYSQLPASSWORD:', process.env.MYSQLPASSWORD ? '✓ Set' : '✗ Missi
 console.log('MYSQLDATABASE:', process.env.MYSQLDATABASE ? '✓ Set' : '✗ Missing');
 console.log('MYSQLPORT:', process.env.MYSQLPORT || '3306');
 
+// Simple connection test
 const pool = mysql.createPool({
-    host: process.env.MYSQLHOST,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
+    host: process.env.MYSQLHOST || 'localhost',
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQLDATABASE || 'kodoshqip',
     port: process.env.MYSQLPORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
@@ -149,6 +150,20 @@ const requireAuth = (req, res, next) => {
 
 // 👇 API endpoints (register, login, logout, profile, progress, admin, etc.)
 // ... ruaj kodin ekzistues si më lart për të gjitha endpoints ...
+
+// 👇 Simple test endpoint (no database)
+app.get('/test', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        message: 'Server is working!',
+        timestamp: new Date().toISOString(),
+        env: {
+            MYSQLHOST: process.env.MYSQLHOST ? 'Set' : 'Missing',
+            MYSQLUSER: process.env.MYSQLUSER ? 'Set' : 'Missing',
+            MYSQLDATABASE: process.env.MYSQLDATABASE ? 'Set' : 'Missing'
+        }
+    });
+});
 
 // 👇 Health check
 app.get('/health', async (req, res) => {
