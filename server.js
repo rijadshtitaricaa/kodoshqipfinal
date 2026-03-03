@@ -23,48 +23,49 @@ if (!fs.existsSync(uploadsDir)) {
 app.use('/uploads', express.static(uploadsDir));
 app.use(express.static(path.join(__dirname)));
 
-// 👇 Simple Railway MySQL connection
+// Simple Railway MySQL connection
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 
-console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL ? '✓ Set' : '✗ Missing');
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? ' Set' : ' Missing');
 
-// 👇 Session store with simple connection
-const sessionStore = new MySQLStore({
-    host: connection.config.host,
-    user: connection.config.user,
-    password: connection.config.password,
-    database: connection.config.database,
-    createDatabaseTable: true,
-    schema: {
-        tableName: 'user_sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
-    }
-});
-
-app.use(session({
-    key: 'user_sid',
-    secret: 'kodo-secret-key-2026',
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: false
-    }
-}));
-
-// 👇 Database setup
+// Database setup and session store
 connection.connect((err) => {
     if (err) {
-        console.log("❌ Database connection failed:", err.message);
+        console.log("Database connection failed:", err.message);
         return;
     }
-    console.log("✅ Connected to MySQL!");
+    console.log("Connected to MySQL!");
+
+    // Session store setup AFTER connection is ready
+    const sessionStore = new MySQLStore({
+        host: connection.config.host,
+        user: connection.config.user,
+        password: connection.config.password,
+        database: connection.config.database,
+        createDatabaseTable: true,
+        schema: {
+            tableName: 'user_sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
+        }
+    });
+
+    // Session middleware setup AFTER connection is ready
+    app.use(session({
+        key: 'user_sid',
+        secret: 'kodo-secret-key-2026',
+        store: sessionStore,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: false
+        }
+    }));
 
     const createUsersTableQuery = `
         CREATE TABLE IF NOT EXISTS users (
@@ -76,8 +77,8 @@ connection.connect((err) => {
         )
     `;
     connection.query(createUsersTableQuery, (err) => {
-        if (err) console.log("❌ Users table error:", err.message);
-        else console.log("✅ Users table ready!");
+        if (err) console.log("Users table error:", err.message);
+        else console.log("Users table ready!");
     });
 
     const createProgressTableQuery = `
@@ -95,8 +96,8 @@ connection.connect((err) => {
         )
     `;
     connection.query(createProgressTableQuery, (err) => {
-        if (err) console.log("❌ Progress table error:", err.message);
-        else console.log("✅ Progress table ready!");
+        if (err) console.log("Progress table error:", err.message);
+        else console.log("Progress table ready!");
     });
 
     // Create default admin account if not exists
@@ -105,7 +106,7 @@ connection.connect((err) => {
         ["admin@kodoshqip.com"],
         (err, results) => {
             if (err) {
-                console.log("❌ Admin check error:", err.message);
+                console.log("Admin check error:", err.message);
                 return;
             }
             
@@ -114,22 +115,22 @@ connection.connect((err) => {
                     "INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
                     ["admin@kodoshqip.com", "admin123", "Admin"],
                     (err) => {
-                        if (err) console.log("❌ Admin creation error:", err.message);
+                        if (err) console.log("Admin creation error:", err.message);
                         else {
-                            console.log("✅ Default admin account created!");
+                            console.log("Default admin account created!");
                             console.log("   Email: admin@kodoshqip.com");
                             console.log("   Password: admin123");
                         }
                     }
                 );
             } else {
-                console.log("✅ Admin account already exists");
+                console.log("Admin account already exists");
             }
         }
     );
 });
 
-// 👇 Multer setup për uploads
+// Multer setup për uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadsDir),
     filename: (req, file, cb) => {
