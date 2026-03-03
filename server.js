@@ -313,7 +313,7 @@ app.post('/save-progress', (req, res) => {
 });
 
 // Get user progress
-app.get('/progress/:email/:course_name?', (req, res) => {
+app.get('/progress/:email/:course_name', (req, res) => {
     const { email, course_name } = req.params;
     
     connection.query(
@@ -325,18 +325,14 @@ app.get('/progress/:email/:course_name?', (req, res) => {
             
             const userId = userResults[0].id;
             
-            let query = 'SELECT * FROM progress WHERE user_id = ?';
-            let params = [userId];
-            
-            if (course_name) {
-                query += ' AND course_name = ?';
-                params.push(course_name);
-            }
-            
-            connection.query(query, params, (err, results) => {
-                if (err) return res.status(500).json({ message: 'Database error' });
-                res.json(results);
-            });
+            connection.query(
+                'SELECT * FROM progress WHERE user_id = ? AND course_name = ?',
+                [userId, course_name],
+                (err, results) => {
+                    if (err) return res.status(500).json({ message: 'Database error' });
+                    res.json(results);
+                }
+            );
         }
     );
 });
