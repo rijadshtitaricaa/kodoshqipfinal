@@ -28,44 +28,44 @@ const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? ' Set' : ' Missing');
 
-// Database setup and session store
+// Session store setup (outside connection callback)
+const sessionStore = new MySQLStore({
+    host: process.env.MYSQLHOST || 'localhost',
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQLDATABASE || 'railway',
+    createDatabaseTable: true,
+    schema: {
+        tableName: 'user_sessions',
+        columnNames: {
+            session_id: 'session_id',
+            expires: 'expires',
+            data: 'data'
+        }
+    }
+});
+
+// Session middleware setup (outside connection callback)
+app.use(session({
+    key: 'user_sid',
+    secret: 'kodo-secret-key-2026',
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: false
+    }
+}));
+
+// Database setup
 connection.connect((err) => {
     if (err) {
         console.log("Database connection failed:", err.message);
         return;
     }
     console.log("Connected to MySQL!");
-
-    // Session store setup AFTER connection is ready
-    const sessionStore = new MySQLStore({
-        host: connection.config.host,
-        user: connection.config.user,
-        password: connection.config.password,
-        database: connection.config.database,
-        createDatabaseTable: true,
-        schema: {
-            tableName: 'user_sessions',
-            columnNames: {
-                session_id: 'session_id',
-                expires: 'expires',
-                data: 'data'
-            }
-        }
-    });
-
-    // Session middleware setup AFTER connection is ready
-    app.use(session({
-        key: 'user_sid',
-        secret: 'kodo-secret-key-2026',
-        store: sessionStore,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: false
-        }
-    }));
 
     const createUsersTableQuery = `
         CREATE TABLE IF NOT EXISTS users (
@@ -124,7 +124,7 @@ connection.connect((err) => {
                     }
                 );
             } else {
-                console.log("Admin account already exists");
+                console.log("✅ Admin account already exists");
             }
         }
     );
