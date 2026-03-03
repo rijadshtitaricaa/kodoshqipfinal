@@ -140,16 +140,262 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-// 👇 Middleware për auth
+// Middleware për auth
 const requireAuth = (req, res, next) => {
     if (req.session.user) next();
     else res.status(401).json({ message: "Ju nuk jeni i loguar" });
 };
 
-// 👇 API endpoints (register, login, logout, profile, progress, admin, etc.)
-// ... ruaj kodin ekzistues si më lart për të gjitha endpoints ...
+// API endpoints for KodoShqip
 
-// 👇 Simple test endpoint (no database)
+// Root endpoint - health check
+app.get('/', (req, res) => {
+    res.json({
+        status: 'ok',
+        database: 'connected',
+        timestamp: new Date().toISOString(),
+        message: 'KodoShqip API is running!'
+    });
+});
+
+// Register endpoint
+app.post('/register', (req, res) => {
+    const { email, password, name } = req.body;
+    
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+    }
+    
+    connection.query(
+        'SELECT id FROM users WHERE email = ?',
+        [email],
+        (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            
+            if (results.length > 0) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
+            
+            connection.query(
+                'INSERT INTO users (email, password, name) VALUES (?, ?, ?)',
+                [email, password, name || ''],
+                (err, result) => {
+                    if (err) return res.status(500).json({ message: 'Registration failed' });
+                    
+                    res.status(201).json({ 
+                        message: 'User registered successfully',
+                        user: { id: result.insertId, email, name: name || '' }
+                    });
+                }
+            );
+        }
+    );
+});
+
+// Login endpoint
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+    }
+    
+    connection.query(
+        'SELECT * FROM users WHERE email = ? AND password = ?',
+        [email, password],
+        (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            
+            if (results.length === 0) {
+                return res.status(401).json({ message: 'Invalid credentials' });
+            }
+            
+            const user = results[0];
+            req.session.user = user;
+            
+            res.json({
+                message: 'Login successful',
+                user: { id: user.id, email: user.email, name: user.name, profile_image: user.profile_image }
+            });
+        }
+    );
+});
+
+// Logout endpoint
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return res.status(500).json({ message: 'Logout failed' });
+        res.json({ message: 'Logout successful' });
+    });
+});
+
+// Get user profile
+app.get('/profile/:email', (req, res) => {
+    const { email } = req.params;
+    
+    connection.query(
+        'SELECT id, email, name, profile_image FROM users WHERE email = ?',
+        [email],
+        (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            if (results.length === 0) return res.status(404).json({ message: 'User not found' });
+            res.json(results[0]);
+        }
+    );
+});
+
+// Update profile
+app.post('/update-profile', upload.single('profile'), (req, res) => {
+    const { email } = req.body;
+    const profileImage = req.file ? req.file.filename : null;
+    
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+    }
+    
+    let updateQuery = 'UPDATE users SET name = ?';
+    let updateValues = [req.body.name || ''];
+    
+    if (profileImage) {
+        updateQuery += ', profile_image = ?';
+        updateValues.push(profileImage);
+    }
+    
+    updateQuery += ' WHERE email = ?';
+    updateValues.push(email);
+    
+    connection.query(updateQuery, updateValues, (err, result) => {
+        if (err) return res.status(500).json({ message: 'Update failed' });
+        
+        res.json({
+            message: 'Profile updated successfully',
+            profile_image: profileImage
+        });
+    });
+});
+
+// Save progress
+app.post('/save-progress', (req, res) => {
+    const { email, course_name, completed_lessons, total_lessons, points } = req.body;
+    
+    if (!email || !course_name) {
+        return res.status(400).json({ message: 'Email and course name are required' });
+    }
+    
+    const completion_percentage = total_lessons > 0 ? Math.round((completed_lessons / total_lessons) * 100) : 0;
+    
+    connection.query(
+        'SELECT id FROM users WHERE email = ?',
+        [email],
+        (err, userResults) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            if (userResults.length === 0) return res.status(404).json({ message: 'User not found' });
+            
+            const userId = userResults[0].id;
+            
+            connection.query(
+                `INSERT INTO progress (user_id, course_name, completed_lessons, total_lessons, completion_percentage, points)
+                 VALUES (?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE 
+                 completed_lessons = VALUES(completed_lessons),
+                 total_lessons = VALUES(total_lessons),
+                 completion_percentage = VALUES(completion_percentage),
+                 points = VALUES(points),
+                 last_accessed = CURRENT_TIMESTAMP`,
+                [userId, course_name, completed_lessons, total_lessons, completion_percentage, points],
+                (err, result) => {
+                    if (err) return res.status(500).json({ message: 'Failed to save progress' });
+                    res.json({ message: 'Progress saved successfully' });
+                }
+            );
+        }
+    );
+});
+
+// Get user progress
+app.get('/progress/:email/:course_name?', (req, res) => {
+    const { email, course_name } = req.params;
+    
+    connection.query(
+        'SELECT id FROM users WHERE email = ?',
+        [email],
+        (err, userResults) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            if (userResults.length === 0) return res.status(404).json({ message: 'User not found' });
+            
+            const userId = userResults[0].id;
+            
+            let query = 'SELECT * FROM progress WHERE user_id = ?';
+            let params = [userId];
+            
+            if (course_name) {
+                query += ' AND course_name = ?';
+                params.push(course_name);
+            }
+            
+            connection.query(query, params, (err, results) => {
+                if (err) return res.status(500).json({ message: 'Database error' });
+                res.json(results);
+            });
+        }
+    );
+});
+
+// Get all user progress
+app.get('/user-progress/:email', (req, res) => {
+    const { email } = req.params;
+    
+    connection.query(
+        'SELECT id FROM users WHERE email = ?',
+        [email],
+        (err, userResults) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            if (userResults.length === 0) return res.status(404).json({ message: 'User not found' });
+            
+            const userId = userResults[0].id;
+            
+            connection.query(
+                'SELECT * FROM progress WHERE user_id = ?',
+                [userId],
+                (err, results) => {
+                    if (err) return res.status(500).json({ message: 'Database error' });
+                    res.json(results);
+                }
+            );
+        }
+    );
+});
+
+// Get all users (admin)
+app.get('/users', (req, res) => {
+    connection.query(
+        'SELECT id, email, name, profile_image FROM users',
+        (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            res.json(results);
+        }
+    );
+});
+
+// Add user endpoint
+app.post('/addUser', (req, res) => {
+    const { name } = req.body;
+    
+    if (!name) {
+        return res.status(400).json({ message: 'Name is required' });
+    }
+    
+    connection.query(
+        'INSERT INTO users (email, password, name) VALUES (?, ?, ?)',
+        [`user_${Date.now()}@example.com`, 'password123', name],
+        (err, result) => {
+            if (err) return res.status(500).json({ message: 'Failed to add user' });
+            res.json({ message: 'User added successfully', id: result.insertId });
+        }
+    );
+});
+
+// Simple test endpoint (no database)
 app.get('/test', (req, res) => {
     res.json({ 
         status: 'ok', 
