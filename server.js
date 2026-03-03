@@ -31,31 +31,31 @@ const connection = mysql.createConnection(process.env.DATABASE_URL);
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? ' Set' : ' Missing');
 
 // Session store setup - use DATABASE_URL directly
-const sessionStore = new MySQLStore({
-    createDatabaseTable: true,
-    schema: {
-        tableName: 'user_sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
-    }
-});
+// const sessionStore = new MySQLStore({
+//     createDatabaseTable: true,
+//     schema: {
+//         tableName: 'user_sessions',
+//         columnNames: {
+//             session_id: 'session_id',
+//             expires: 'expires',
+//             data: 'data'
+//         }
+//     }
+// });
 
-// Session middleware setup (outside connection callback)
-app.use(session({
-    key: 'user_sid',
-    secret: 'kodo-secret-key-2026',
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: false
-    }
-}));
+// Session middleware setup - temporarily disabled
+// app.use(session({
+//     key: 'user_sid',
+//     secret: 'kodo-secret-key-2026',
+//     store: sessionStore,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         maxAge: 7 * 24 * 60 * 60 * 1000,
+//         httpOnly: true,
+//         secure: false
+//     }
+// }));
 
 // Database setup
 connection.connect((err) => {
@@ -209,7 +209,7 @@ app.post('/login', (req, res) => {
             }
             
             const user = results[0];
-            req.session.user = user;
+            // req.session.user = user; // Disabled temporarily
             
             res.json({
                 message: 'Login successful',
