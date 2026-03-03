@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KodoShqip - Admin Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
 </head>
 <body>
 
@@ -179,7 +180,7 @@
     setLoadingState(true);
     try {
       // Relative URL → do përdor portin ku është serveri aktual
-      const res = await fetch('/admin/users');
+      const res = await fetch(`${window.BACKEND_URL || ''}/users`);
       if (!res.ok) throw new Error('Nuk mund të marr përdoruesit');
 
       const data = await res.json();
@@ -373,7 +374,7 @@
     }
 
     try {
-      const res = await fetch(`/profile/${encodeURIComponent(user.email)}`);
+      const res = await fetch(`${window.BACKEND_URL || ''}/profile/${encodeURIComponent(user.email)}`);
       if (res.ok) {
         const latest = await res.json();
         if (nameInput) nameInput.value = latest.name || '';
@@ -386,8 +387,10 @@
     } catch(err){ console.error(err); }
 
     if (modal) modal.classList.add('active');
+  }
 
-    function closeModal(){ if(modal) modal.classList.remove('active'); }
+  function closeModal(){ 
+    if(modal) modal.classList.remove('active'); 
   }
 
   async function saveProfile(e) {
