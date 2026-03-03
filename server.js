@@ -10,8 +10,10 @@ const MySQLStore = require('express-mysql-session')(session);
 const app = express();
 
 app.use(cors({
-    origin: true,
-    credentials: true
+    origin: ['https://kodoshqipfinal-production-5988.up.railway.app', 'https://kodoshqipfinal-production.up.railway.app', true],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
