@@ -30,12 +30,8 @@ const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? ' Set' : ' Missing');
 
-// Session store setup (outside connection callback)
+// Session store setup - use DATABASE_URL directly
 const sessionStore = new MySQLStore({
-    host: process.env.MYSQLHOST || 'localhost',
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQLPASSWORD || '',
-    database: process.env.MYSQLDATABASE || 'railway',
     createDatabaseTable: true,
     schema: {
         tableName: 'user_sessions',
