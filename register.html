@@ -211,7 +211,7 @@
     const name = email.split('@')[0];
 
     try {
-      const res = await fetch('/register', {
+      const res = await fetch(`${window.BACKEND_URL || ''}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name })
@@ -219,7 +219,7 @@
 
       const data = await res.json();
 
-      if (res.ok && data.message === 'REGISTER_SUCCESS') {
+      if (res.ok && data.message === 'User registered successfully') {
         msg.className = 'success';
         msg.textContent = 'Llogaria u krijua me sukses! Po ridrejtoheni...';
         localStorage.setItem('loggedInUser', JSON.stringify({ email, name }));
