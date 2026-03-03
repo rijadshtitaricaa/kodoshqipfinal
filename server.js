@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
@@ -23,32 +23,17 @@ if (!fs.existsSync(uploadsDir)) {
 app.use('/uploads', express.static(uploadsDir));
 app.use(express.static(path.join(__dirname)));
 
-// 👇 Pool me environment variables për MySQL
-console.log('🔍 Checking environment variables:');
-console.log('MYSQLHOST:', process.env.MYSQLHOST ? '✓ Set' : '✗ Missing');
-console.log('MYSQLUSER:', process.env.MYSQLUSER ? '✓ Set' : '✗ Missing');
-console.log('MYSQLPASSWORD:', process.env.MYSQLPASSWORD ? '✓ Set' : '✗ Missing');
-console.log('MYSQLDATABASE:', process.env.MYSQLDATABASE ? '✓ Set' : '✗ Missing');
-console.log('MYSQLPORT:', process.env.MYSQLPORT || '3306');
+// 👇 Simple Railway MySQL connection
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
-// Simple connection test
-const pool = mysql.createPool({
-    host: process.env.MYSQLHOST || 'localhost',
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQLPASSWORD || '',
-    database: process.env.MYSQLDATABASE || 'kodoshqip',
-    port: process.env.MYSQLPORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-});
+console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL ? '✓ Set' : '✗ Missing');
 
-// 👇 Session store me envir    onment variables
+// 👇 Session store with simple connection
 const sessionStore = new MySQLStore({
-    host: process.env.MYSQLHOST,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
+    host: connection.config.host,
+    user: connection.config.user,
+    password: connection.config.password,
+    database: connection.config.database,
     createDatabaseTable: true,
     schema: {
         tableName: 'user_sessions',
@@ -58,7 +43,7 @@ const sessionStore = new MySQLStore({
             data: 'data'
         }
     }
-}, pool);
+});
 
 app.use(session({
     key: 'user_sid',
@@ -73,64 +58,76 @@ app.use(session({
     }
 }));
 
-// 👇 Pool connection setup
-(async () => {
-    try {
-        const connection = await pool.getConnection();
-        console.log("✅ Connected to MySQL!");
-
-        const createUsersTableQuery = `
-            CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                name VARCHAR(255) DEFAULT '',
-                profile_image VARCHAR(255) DEFAULT ''
-            )
-        `;
-        await connection.query(createUsersTableQuery);
-        console.log("✅ Users table ready!");
-
-        const createProgressTableQuery = `
-            CREATE TABLE IF NOT EXISTS progress (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                course_name VARCHAR(255) NOT NULL,
-                completed_lessons INT DEFAULT 0,
-                total_lessons INT DEFAULT 0,
-                completion_percentage INT DEFAULT 0,
-                points INT DEFAULT 0,
-                last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                UNIQUE KEY unique_course (user_id, course_name),
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `;
-        await connection.query(createProgressTableQuery);
-        console.log("✅ Progress table ready!");
-
-        // Create default admin account if not exists
-        const [adminCheck] = await connection.query(
-            "SELECT id FROM users WHERE email = ?",
-            ["admin@kodoshqip.com"]
-        );
-
-        if (adminCheck.length === 0) {
-            await connection.query(
-                "INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
-                ["admin@kodoshqip.com", "admin123", "Admin"]
-            );
-            console.log("✅ Default admin account created!");
-            console.log("   Email: admin@kodoshqip.com");
-            console.log("   Password: admin123");
-        } else {
-            console.log("✅ Admin account already exists");
-        }
-
-        connection.release();
-    } catch (err) {
+// 👇 Database setup
+connection.connect((err) => {
+    if (err) {
         console.log("❌ Database connection failed:", err.message);
+        return;
     }
-})();
+    console.log("✅ Connected to MySQL!");
+
+    const createUsersTableQuery = `
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            name VARCHAR(255) DEFAULT '',
+            profile_image VARCHAR(255) DEFAULT ''
+        )
+    `;
+    connection.query(createUsersTableQuery, (err) => {
+        if (err) console.log("❌ Users table error:", err.message);
+        else console.log("✅ Users table ready!");
+    });
+
+    const createProgressTableQuery = `
+        CREATE TABLE IF NOT EXISTS progress (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            course_name VARCHAR(255) NOT NULL,
+            completed_lessons INT DEFAULT 0,
+            total_lessons INT DEFAULT 0,
+            completion_percentage INT DEFAULT 0,
+            points INT DEFAULT 0,
+            last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_course (user_id, course_name),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    `;
+    connection.query(createProgressTableQuery, (err) => {
+        if (err) console.log("❌ Progress table error:", err.message);
+        else console.log("✅ Progress table ready!");
+    });
+
+    // Create default admin account if not exists
+    connection.query(
+        "SELECT id FROM users WHERE email = ?",
+        ["admin@kodoshqip.com"],
+        (err, results) => {
+            if (err) {
+                console.log("❌ Admin check error:", err.message);
+                return;
+            }
+            
+            if (results.length === 0) {
+                connection.query(
+                    "INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
+                    ["admin@kodoshqip.com", "admin123", "Admin"],
+                    (err) => {
+                        if (err) console.log("❌ Admin creation error:", err.message);
+                        else {
+                            console.log("✅ Default admin account created!");
+                            console.log("   Email: admin@kodoshqip.com");
+                            console.log("   Password: admin123");
+                        }
+                    }
+                );
+            } else {
+                console.log("✅ Admin account already exists");
+            }
+        }
+    );
+});
 
 // 👇 Multer setup për uploads
 const storage = multer.diskStorage({
@@ -158,21 +155,20 @@ app.get('/test', (req, res) => {
         message: 'Server is working!',
         timestamp: new Date().toISOString(),
         env: {
-            MYSQLHOST: process.env.MYSQLHOST ? 'Set' : 'Missing',
-            MYSQLUSER: process.env.MYSQLUSER ? 'Set' : 'Missing',
-            MYSQLDATABASE: process.env.MYSQLDATABASE ? 'Set' : 'Missing'
+            DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Missing'
         }
     });
 });
 
 // 👇 Health check
-app.get('/health', async (req, res) => {
-    try {
-        await pool.query('SELECT 1');
-        res.json({ status: 'ok', database: 'connected', timestamp: new Date().toISOString() });
-    } catch (err) {
-        res.status(500).json({ status: 'error', database: 'disconnected', message: err.message });
-    }
+app.get('/health', (req, res) => {
+    connection.query('SELECT 1', (err) => {
+        if (err) {
+            res.status(500).json({ status: 'error', database: 'disconnected', message: err.message });
+        } else {
+            res.json({ status: 'ok', database: 'connected', timestamp: new Date().toISOString() });
+        }
+    });
 });
 
 // 👇 404 handler
