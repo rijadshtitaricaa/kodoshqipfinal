@@ -9,20 +9,12 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-app.use(cors({
-    origin: ['https://kodoshqipfinal-production-5988.up.railway.app', 'https://kodoshqipfinal-production.up.railway.app', true],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Manual OPTIONS handler for CORS preflight
-app.options('*', (req, res) => {
+// Simple CORS setup
+app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(200);
+    next();
 });
 
 app.use(express.json());
