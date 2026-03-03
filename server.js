@@ -9,11 +9,33 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-// Simple CORS setup
+// Simple CORS setup - allow Vercel frontend
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+    const allowedOrigins = [
+        'https://kodoshqip-frontend.vercel.app',
+        'https://kodoshqipfinal-production-5988.up.railway.app',
+        'https://kodoshqipfinal-production.up.railway.app',
+        'http://localhost:3000',
+        'http://localhost:5000'
+    ];
+    
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+    } else {
+        res.header('Access-Control-Allow-Origin', '*');
+    }
+    
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+        return;
+    }
+    
     next();
 });
 
