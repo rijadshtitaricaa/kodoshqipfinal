@@ -211,7 +211,6 @@ app.post('/login', (req, res) => {
             }
             
             const user = results[0];
-            // req.session.user = user; // Disabled temporarily
             
             res.json({
                 message: 'Login successful',
@@ -223,10 +222,7 @@ app.post('/login', (req, res) => {
 
 // Logout endpoint
 app.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) return res.status(500).json({ message: 'Logout failed' });
-        res.json({ message: 'Logout successful' });
-    });
+    res.json({ message: 'Logout successful' });
 });
 
 // Get user profile
