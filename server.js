@@ -9,35 +9,44 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-// Simple CORS setup - allow Vercel frontend
-app.use((req, res, next) => {
-    const allowedOrigins = [
-        'https://kodoshqip-frontend.vercel.app',
-        'https://kodoshqipfinal-production-5988.up.railway.app',
-        'https://kodoshqipfinal-production.up.railway.app',
-        'http://localhost:3000',
-        'http://localhost:5000'
-    ];
-    
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    } else {
-        res.header('Access-Control-Allow-Origin', '*');
-    }
-    
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-        return;
-    }
-    
-    next();
-});
+// CORS: Vercel frontend → Railway API (credentials cannot use wildcard *)
+const allowedOrigins = [
+    'https://kodoshqip-frontend.vercel.app',
+    'https://kodoshqipfinal-production-5988.up.railway.app',
+    'https://kodoshqipfinal-production.up.railway.app',
+    'http://localhost:3000',
+    'http://localhost:5000'
+];
+
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+function isAllowedOrigin(origin) {
+    if (!origin) return true;
+    if (allowedOrigins.includes(origin)) return true;
+    // Vercel preview deployments: kodoshqip-frontend-xxx.vercel.app
+    if (/^https:\/\/kodoshqip-frontend[\w-]*\.vercel\.app$/.test(origin)) return true;
+    return false;
+}
+
+const corsOptions = {
+    origin(origin, callback) {
+        if (isAllowedOrigin(origin)) {
+            callback(null, origin || true);
+        } else {
+            console.warn('CORS blocked origin:', origin);
+            callback(null, false);
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
