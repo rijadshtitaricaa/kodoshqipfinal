@@ -49,9 +49,16 @@ if (!fs.existsSync(uploadsDir)) {
 app.use('/uploads', express.static(uploadsDir));
 app.use(express.static(path.join(__dirname)));
 
-// Simple Railway MySQL connection
-const connection = mysql.createConnection(process.env.DATABASE_URL);
+// Railway MySQL connection via URL (preferred: MYSQL_URL)
+const mysqlUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+const connection = mysql.createPool({
+    uri: mysqlUrl,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
+console.log('MYSQL_URL:', process.env.MYSQL_URL ? ' Set' : ' Missing');
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? ' Set' : ' Missing');
 
 // Session store setup - use DATABASE_URL directly
@@ -82,12 +89,13 @@ console.log('DATABASE_URL:', process.env.DATABASE_URL ? ' Set' : ' Missing');
 // }));
 
 // Database setup
-connection.connect((err) => {
+connection.getConnection((err, conn) => {
     if (err) {
         console.log("Database connection failed:", err.message);
         return;
     }
     console.log("Connected to MySQL!");
+    conn.release();
 
     const createUsersTableQuery = `
         CREATE TABLE IF NOT EXISTS users (
@@ -416,6 +424,7 @@ app.get('/test', (req, res) => {
         message: 'Server is working!',
         timestamp: new Date().toISOString(),
         env: {
+            MYSQL_URL: process.env.MYSQL_URL ? 'Set' : 'Missing',
             DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Missing'
         }
     });
