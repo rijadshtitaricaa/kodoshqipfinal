@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const multer = require('multer');
@@ -154,13 +154,13 @@ connection.getConnection((err, conn) => {
                     }
                 );
             } else {
-                console.log("✅ Admin account already exists");
+                console.log("Γ£à Admin account already exists");
             }
         }
     );
 });
 
-// Multer setup për uploads
+// Multer setup p├½r uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadsDir),
     filename: (req, file, cb) => {
@@ -170,7 +170,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-// Middleware për auth
+// Middleware p├½r auth
 const requireAuth = (req, res, next) => {
     if (req.session.user) next();
     else res.status(401).json({ message: "Ju nuk jeni i loguar" });
@@ -430,7 +430,7 @@ app.get('/test', (req, res) => {
     });
 });
 
-// 👇 Health check
+// ≡ƒæç Health check
 app.get('/health', (req, res) => {
     connection.query('SELECT 1', (err) => {
         if (err) {
@@ -441,19 +441,19 @@ app.get('/health', (req, res) => {
     });
 });
 
-// 👇 404 handler
+// ≡ƒæç 404 handler
 app.use((req, res) => res.status(404).json({ message: 'Endpoint not found' }));
 
-// 👇 Global error handler
+// ≡ƒæç Global error handler
 app.use((err, req, res, next) => {
-    console.error('❌ Server error:', err);
+    console.error('Γ¥î Server error:', err);
     res.status(500).json({ message: 'Internal server error' });
 });
 
-// 👇 Vetëm një deklarim i PORT
+// ≡ƒæç Vet├½m nj├½ deklarim i PORT
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📁 Uploads directory: ${uploadsDir}`);
-    console.log(`🔍 Health check: /health`);
+    console.log(`≡ƒÜÇ Server running on port ${PORT}`);
+    console.log(`≡ƒôü Uploads directory: ${uploadsDir}`);
+    console.log(`≡ƒöì Health check: /health`);
 });

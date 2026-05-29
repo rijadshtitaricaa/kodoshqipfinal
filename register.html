@@ -4,238 +4,66 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>KodoShqip - Regjistrohu</title>
-  <style>
-    :root {
-      --primary-blue: #007bff;
-      --secondary-green: #00c47a;
-      --light-bg: #f8f9fa;
-      --dark-text: #212529;
-      --gradient: linear-gradient(135deg, #00c47a 0%, #00a85a 100%);
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .box {
-      display: flex;
-      width: 100%;
-      max-width: 900px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      overflow: hidden;
-    }
-    .register-image {
-      flex: 1;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      padding: 40px;
-      text-align: center;
-    }
-    .register-image h3 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      font-weight: 700;
-    }
-    .register-image p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-      line-height: 1.6;
-    }
-    .form-section {
-      flex: 1;
-      padding: 50px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .form-section h2 {
-      font-size: 2rem;
-      color: var(--dark-text);
-      margin-bottom: 10px;
-      font-weight: 700;
-    }
-    .form-section > p {
-      color: #666;
-      margin-bottom: 30px;
-      font-size: 0.95rem;
-    }
-    input {
-      padding: 14px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: 'Poppins', sans-serif;
-      transition: all 0.3s;
-      width: 100%;
-      margin: 8px 0;
-    }
-    input:focus {
-      outline: none;
-      border-color: var(--secondary-green);
-      box-shadow: 0 0 0 4px rgba(0, 196, 122, 0.1);
-      background: white;
-    }
-    input::placeholder {
-      color: #999;
-    }
-    #registerForm {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .register-btn {
-      padding: 14px 16px;
-      border: none;
-      border-radius: 8px;
-      background: var(--gradient);
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-family: 'Poppins', sans-serif;
-      margin-top: 10px;
-      width: 100%;
-    }
-    .register-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 196, 122, 0.3);
-    }
-    .register-btn:active {
-      transform: translateY(0);
-    }
-    .small {
-      font-size:0.9rem;
-      color:#666;
-      margin-top:12px;
-    }
-    a.link {
-      color:var(--secondary-green);
-      font-weight:600;
-      text-decoration:none;
-      transition: color 0.3s;
-    }
-    a.link:hover {
-      color: #00a85a;
-      text-decoration: underline;
-    }
-    #msg {
-      font-weight: 600;
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 10px;
-      display: none;
-    }
-    #msg:not(:empty) {
-      display: block;
-    }
-    #msg.error {
-      color: #e74c3c;
-      background: #fadbd8;
-    }
-    #msg.success {
-      color: #27ae60;
-      background: #d5f4e6;
-    }
-    @media (max-width: 768px) {
-      .box {
-        flex-direction: column;
-      }
-      .register-image {
-        padding: 30px 20px;
-        min-height: 250px;
-      }
-      .register-image h3 {
-        font-size: 1.8rem;
-      }
-      .form-section {
-        padding: 30px 20px;
-      }
-      .form-section h2 {
-        font-size: 1.5rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="box">
-    <div class="register-image">
-      <div>
-        <h3>🚀 Fillimi i Juaj</h3>
-        <p>Regjistrohu tani dhe fillo udhëtimin tuaj në kodim. Bashkohu me mijëra nxënësit e tjerë të KodoShqip!</p>
-      </div>
+<body class="auth-page">
+  <div class="auth-card">
+    <div class="auth-aside">
+      <h3>Fillimi i juaj</h3>
+      <p>Regjistrohu dhe fillo udhëtimin tënd në kodim me KodoShqip.</p>
     </div>
-    <div class="form-section">
-      <h2>Krijo Llogarinë 🎉</h2>
-      <p>Plotëso formularin më poshtë për t'u regjistruar.</p>
+    <div class="auth-form-wrap">
+      <h2>Krijo llogarinë</h2>
+      <p>Plotëso formularin për t'u regjistruar.</p>
 
       <form id="registerForm">
-        <input id="email" type="email" placeholder="📧 Email Adresa" required />
-        <input id="password" type="password" placeholder="🔐 Fjalëkalimi" required />
-        <button type="submit" class="register-btn">Regjistrohu Tani</button>
-        <div id="msg" role="alert" aria-live="polite"></div>
+        <input id="email" type="email" placeholder="Email" required />
+        <input id="password" type="password" placeholder="Fjalëkalimi" required />
+        <button type="submit" class="auth-btn">Regjistrohu</button>
+        <div id="msg" class="auth-error" role="alert"></div>
       </form>
 
-      <p class="small" style="margin-top: 25px; text-align: center;">Ke tashmë llogari? <a class="link" href="login.html">Kyçu këtu →</a></p>
-      <p class="small" style="text-align: center;"><a href="index.html">← Kthehu në faqen kryesore</a></p>
+      <p class="auth-link">Ke tashmë llogari? <a href="login.html">Kyçu</a></p>
+      <p class="auth-link"><a href="index.html">Kthehu në faqen kryesore</a></p>
     </div>
   </div>
 
+  <script src="config.js"></script>
+  <script>
+    const form = document.getElementById('registerForm');
+    const msg = document.getElementById('msg');
 
-  <!-- // Pjesa e Etnikut -->
-<script src="config.js"></script>
-<script>
-  const form = document.getElementById('registerForm');
-  const msg = document.getElementById('msg');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      msg.style.color = '';
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    msg.textContent = '';
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const name = email.split('@')[0];
 
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('password').value;
-    const name = email.split('@')[0];
+      try {
+        const res = await fetch(`${window.BACKEND_URL || ''}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name })
+        });
 
-    try {
-      const res = await fetch(`${window.BACKEND_URL || ''}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name })
-      });
+        const data = await res.json();
 
-      const data = await res.json();
-
-      if (res.ok && data.message === 'User registered successfully') {
-        msg.className = 'success';
-        msg.textContent = 'Llogaria u krijua me sukses! Po ridrejtoheni...';
-        localStorage.setItem('loggedInUser', JSON.stringify({ email, name }));
-        setTimeout(() => location.href = 'index.html', 1200);
-      } else {
-        msg.className = 'error';
-        msg.textContent = data.message || 'Gabim në regjistrim';
+        if (res.ok && data.message === 'User registered successfully') {
+          msg.style.color = '#059669';
+          msg.textContent = 'Llogaria u krijua! Po ridrejtoheni...';
+          localStorage.setItem('loggedInUser', JSON.stringify({ email, name }));
+          setTimeout(() => location.href = 'index.html', 1200);
+        } else {
+          msg.textContent = data.message || 'Gabim në regjistrim';
+        }
+      } catch (err) {
+        console.error('Register error:', err);
+        msg.textContent = 'Gabim i lidhjes me serverin.';
       }
-
-    } catch (err) {
-      console.error('Register error:', err);
-      msg.className = 'error';
-      msg.textContent = 'Gabim i lidhjes me serverin.';
-    }
-  });
-</script>
-
+    });
+  </script>
 </body>
 </html>
