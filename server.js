@@ -45,8 +45,22 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && isAllowedOrigin(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+    next();
+});
+
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(express.json());
 
@@ -56,7 +70,6 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 app.use('/uploads', express.static(uploadsDir));
-app.use(express.static(path.join(__dirname)));
 
 // Railway MySQL connection via URL (preferred: MYSQL_URL)
 const mysqlUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
@@ -450,7 +463,11 @@ app.get('/health', (req, res) => {
     });
 });
 
-// ≡ƒæç 404 handler
+// Local dev only: serve HTML from this repo (production UI is on Vercel)
+if (process.env.NODE_ENV !== 'production') {
+    app.use(express.static(path.join(__dirname)));
+}
+
 app.use((req, res) => res.status(404).json({ message: 'Endpoint not found' }));
 
 // ≡ƒæç Global error handler
